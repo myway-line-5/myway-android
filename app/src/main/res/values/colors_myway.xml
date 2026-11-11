@@ -21,6 +21,8 @@
     <color name="icon_muted">#7A8296</color>
     <color name="accent_star">#FFC21A</color>
     <color name="status_error">#D93A3A</color>
+    <color name="status_danger_strong">#E53838</color>
+    <color name="border_default">#E5E8F0</color>
 
     <!-- line -->
     <color name="line2">#00A84D</color>

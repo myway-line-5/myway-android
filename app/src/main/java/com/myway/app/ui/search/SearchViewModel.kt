@@ -43,6 +43,7 @@ class SearchViewModel(
 
     private val query = MutableStateFlow("")
     private val favorites = MutableStateFlow<Set<String>>(emptySet())  // TODO: SQLite 연결
+    val favoriteNames: StateFlow<Set<String>> = favorites.asStateFlow()
     private var cachedStations: List<Station>? = null
 
     private val result: Flow<SearchUiState> = query

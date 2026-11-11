@@ -29,13 +29,19 @@ object LineStyle {
         if (key(line) == "9") R.color.text_primary else R.color.text_on_brand
 
     /** 24dp 원형 배지 하나 생성 */
-    fun badge(context: Context, line: Any, marginStartPx: Int = 0): TextView {
-        val size = context.resources.getDimensionPixelSize(R.dimen.row_badge)
+    fun badge(
+        context: Context,
+        line: Any,
+        marginStartPx: Int = 0,
+        sizeRes: Int = R.dimen.row_badge,
+        textStyle: Int = R.style.Text_MyWay_Caption12Bold
+    ): TextView {
+        val size = context.resources.getDimensionPixelSize(sizeRes)
         return TextView(context).apply {
             layoutParams = LinearLayout.LayoutParams(size, size).apply { marginStart = marginStartPx }
             gravity = Gravity.CENTER
             text = key(line)
-            setTextAppearance(R.style.Text_MyWay_Caption12Bold)
+            setTextAppearance(textStyle)
             setTextColor(context.getColor(textColorRes(line)))
             setBackgroundResource(R.drawable.bg_line_badge)
             backgroundTintList = ColorStateList.valueOf(context.getColor(colorRes(line)))
