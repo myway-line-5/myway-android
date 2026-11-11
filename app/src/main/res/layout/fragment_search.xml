@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 1-11 / 1-14 / 1-15 검색 레이어 -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_surface">
+
+    <!-- 뒤로 56dp -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="@dimen/back_button"
+        android:layout_height="@dimen/back_button"
+        android:layout_marginStart="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_l"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/search_back"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 검색창: 돋보기 + 입력 + 즐겨찾기 별 -->
+    <LinearLayout
+        android:id="@+id/searchField"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/search_field_height"
+        android:layout_marginStart="@dimen/space_s"
+        android:layout_marginEnd="@dimen/space_l"
+        android:background="@drawable/bg_search_field"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="18dp"
+        android:paddingEnd="6dp"
+        app:layout_constraintStart_toEndOf="@id/backButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/backButton">
+
+        <ImageView
+            android:layout_width="@dimen/icon"
+            android:layout_height="@dimen/icon"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_search" />
+
+        <EditText
+            android:id="@+id/searchInput"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/space_m"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="@string/search_hint"
+            android:imeOptions="actionSearch"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textAppearance="@style/Text.MyWay.Body16Medium"
+            android:textColorHint="@color/text_secondary"
+            android:textCursorDrawable="@null" />
+
+        <ImageButton
+            android:id="@+id/favoritesButton"
+            android:layout_width="@dimen/icon_button"
+            android:layout_height="@dimen/icon_button"
+            android:layout_marginStart="@dimen/space_m"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/search_open_favorites"
+            android:src="@drawable/ic_star" />
+    </LinearLayout>
+
+    <!-- 로딩: 1초 넘을 때만 체감되도록 얇은 막대 -->
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorColor="@color/brand_navy"
+        app:trackColor="@color/bg_muted"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchField" />
+
+    <!-- "검색 결과" -->
+    <TextView
+        android:id="@+id/resultLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_xxl"
+        android:paddingBottom="@dimen/space_xs"
+        android:text="@string/search_result_label"
+        android:textAppearance="@style/Text.MyWay.Label14Bold"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchField" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/stationList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/space_l"
+        android:paddingBottom="@dimen/space_xxl"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/resultLabel"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- 1-15 결과 없음 -->
+    <LinearLayout
+        android:id="@+id/emptyView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="84dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_l"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchField">
+
+        <TextView
+            android:layout_width="@dimen/empty_icon"
+            android:layout_height="@dimen/empty_icon"
+            android:background="@drawable/bg_empty_icon"
+            android:gravity="center"
+            android:importantForAccessibility="no"
+            android:text="\?"
+            android:textAppearance="@style/Text.MyWay.Display32Bold"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/emptyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textAppearance="@style/Text.MyWay.Heading18Bold" />
+
+        <TextView
+            android:id="@+id/emptyBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:textAppearance="@style/Text.MyWay.Label14Medium"
+            android:textColor="@color/text_secondary" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
