@@ -68,6 +68,47 @@
             android:src="@drawable/ic_star" />
     </LinearLayout>
 
+    <!-- 1-16 출발(또는 도착) 칩: 하나만 정해졌을 때 -->
+    <include
+        android:id="@+id/pointChip"
+        layout="@layout/view_point_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_xxl"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchField" />
+
+    <!-- 1-13 출발·도착 카드: 둘 다 정해졌을 때 검색창 대신 -->
+    <include
+        android:id="@+id/routeCard"
+        layout="@layout/view_route_points"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_l"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/findRouteButton"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/search_field_height"
+        android:layout_marginHorizontal="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_l"
+        android:background="@drawable/bg_button_primary"
+        android:gravity="center"
+        android:text="@string/route_find"
+        android:textAppearance="@style/Text.MyWay.Body16Bold"
+        android:textColor="@color/text_on_brand"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/routeCard" />
+
     <!-- 로딩: 1초 넘을 때만 체감되도록 얇은 막대 -->
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progress"
@@ -88,14 +129,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space_l"
-        android:layout_marginTop="@dimen/space_xxl"
+        android:layout_marginTop="@dimen/space_s"
         android:paddingBottom="@dimen/space_xs"
         android:text="@string/search_result_label"
         android:textAppearance="@style/Text.MyWay.Label14Bold"
         android:textColor="@color/text_secondary"
         android:visibility="gone"
+        app:layout_goneMarginTop="@dimen/space_xxl"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchField" />
+        app:layout_constraintTop_toBottomOf="@id/pointChip" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/stationList"
@@ -116,14 +158,15 @@
         android:id="@+id/emptyView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
+        android:layout_marginTop="60dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/space_l"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchField">
+        app:layout_goneMarginTop="84dp"
+        app:layout_constraintTop_toBottomOf="@id/pointChip">
 
         <TextView
             android:layout_width="@dimen/empty_icon"

@@ -25,4 +25,7 @@
     <dimen name="row_badge_area">56dp</dimen>
     <dimen name="empty_icon">72dp</dimen>
     <dimen name="dialog_side_margin">35dp</dimen>
+    <dimen name="tab_badge">32dp</dimen>
+    <dimen name="radius_card">14dp</dimen>
+    <dimen name="point_dot">10dp</dimen>
 </resources>
