@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma DepartureField (1-16): ● 출발 군자 ✕  — 누르면 지우고 다시 선택 -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_chip"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="40dp"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingEnd="10dp">
+
+    <View
+        android:id="@+id/chipDot"
+        android:layout_width="@dimen/point_dot"
+        android:layout_height="@dimen/point_dot"
+        android:background="@drawable/dot_origin" />
+
+    <TextView
+        android:id="@+id/chipLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_s"
+        android:textAppearance="@style/Text.MyWay.Caption12Bold"
+        android:textColor="@color/text_secondary" />
+
+    <TextView
+        android:id="@+id/chipName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_s"
+        android:textAppearance="@style/Text.MyWay.Label14Bold" />
+
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="6dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_close" />
+</LinearLayout>
