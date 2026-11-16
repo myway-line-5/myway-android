@@ -14,7 +14,7 @@ object RetrofitClient {
     // 앱을 켠 동안 같은 값을 계속 사용. (나중에 SharedPreferences 저장 고려)
     private val sessionId: String = UUID.randomUUID().toString()
 
-    private val okHttp = OkHtgit add app/src/main/java/com/myway/app/data/remote/RetrofitClient.kttpClient.Builder()
+    private val okHttp = OkHttpClient.Builder()
         .addInterceptor(SessionInterceptor(sessionId))
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS) // AI 해석은 서버 타임아웃이 25초라 여유 있게
