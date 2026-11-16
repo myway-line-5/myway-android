@@ -8,13 +8,13 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    // 에뮬레이터에서 내 PC의 서버로 가는 주소 (localhost가 아님)
+    // adb reverse tcp:8000 tcp:8000 으로 연결한 로컬 서버 (폰·에뮬레이터 공통)
     private const val BASE_URL = "http://127.0.0.1:8000/"
 
     // 앱을 켠 동안 같은 값을 계속 사용. (나중에 SharedPreferences 저장 고려)
     private val sessionId: String = UUID.randomUUID().toString()
 
-    private val okHttp = OkHttpClient.Builder()
+    private val okHttp = OkHtgit add app/src/main/java/com/myway/app/data/remote/RetrofitClient.kttpClient.Builder()
         .addInterceptor(SessionInterceptor(sessionId))
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS) // AI 해석은 서버 타임아웃이 25초라 여유 있게
