@@ -2,7 +2,6 @@ package com.myway.app.ui.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.myway.app.data.repository.FakeStationRepository
 import com.myway.app.data.repository.Resource
 import com.myway.app.data.repository.StationRepository
 import com.myway.app.domain.model.AppError
@@ -11,6 +10,7 @@ import com.myway.app.ui.common.LineStyle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import com.myway.app.data.repository.RepositoryProvider
 
 /**
  * 목록 한 줄 = 물리적 역 하나. 여의도(5·9)처럼 환승역은 배지 여러 개로 한 줄에.
@@ -38,7 +38,7 @@ sealed interface SearchUiState {
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class SearchViewModel(
     // 자리는 StationRepository, 지금 앉힌 건 Fake. 서버 완성되면 여기만 교체.
-    private val repo: StationRepository = FakeStationRepository()
+    private val repo: StationRepository = RepositoryProvider.stationRepository()
 ) : ViewModel() {
 
     private val query = MutableStateFlow("")

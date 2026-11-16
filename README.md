@@ -67,14 +67,28 @@ com.myway.app
 
 현재는 서버 없이 Fake 데이터로 동작합니다.
 
+### 서버와 연결해서 실행 (선택)
+
+기본값은 서버 없이 Fake 데이터로 동작합니다. 로컬 메인 서버와 연결하려면:
+
+1. `myway-main-server`를 실행합니다 (`python main.py`, 포트 8000).
+2. 폰(또는 에뮬레이터)을 USB로 연결하고 `adb reverse tcp:8000 tcp:8000`을 실행합니다.
+3. `RepositoryProvider.kt`에서 `USE_FAKE`를 `false`로 바꿉니다.
+
+debug 빌드에서만 `127.0.0.1`·`10.0.2.2`로의 http 통신이 허용됩니다.
+
 ## 진행 상황
 
 - [x] 프로젝트 생성, 패키지 구조
 - [x] 도메인 모델 (Station, StationSlot, RouteCondition, RouteResult 등)
 - [x] StationRepository + FakeStationRepository
-- [ ] RouteRepository + Fake
+- [x] RouteRepository + FakeRouteRepository
+- [x] 서버 연동 기반 (DTO, Retrofit, 세션 헤더, ErrorMapper, RealStationRepository)
+- [x] 검색 화면, 역 선택 시트 (출발·도착 지정)
+- [x] Fake/Real 전환 스위치 (RepositoryProvider)
+- [ ] 역 검색 서버 연결 실기기 확인
 - [ ] ConditionRepository (AI 모드)
 - [ ] 즐겨찾기·최근 검색 모델, Room
-- [ ] Navigation 뼈대, 화면 구현
-- [ ] 서버 연동 (DTO, ErrorMapper)
+- [ ] Navigation 뼈대, 홈·결과 화면
+- [ ] 경로 탐색 서버 연동 (서버 API 확정 후)
 - [ ] Phase 2 기능
