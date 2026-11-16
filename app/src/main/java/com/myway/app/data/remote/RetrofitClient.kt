@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
 
     // 에뮬레이터에서 내 PC의 서버로 가는 주소 (localhost가 아님)
-    private const val BASE_URL = "http://10.0.2.2:8000/"
+    private const val BASE_URL = "http://127.0.0.1:8000/"
 
     // 앱을 켠 동안 같은 값을 계속 사용. (나중에 SharedPreferences 저장 고려)
     private val sessionId: String = UUID.randomUUID().toString()
