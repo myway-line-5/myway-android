@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 즐겨찾기 카드 (경로·역 공용)
+     경로: [⊖] 출근길 (5)(9) / 군자 → 고속터미널   [최단시간] ›   [≡]
+     역:   [⊖] (5)(9) 여의도 / 5호선 · 9호선          ★       [≡] -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_fav_card"
+    android:gravity="center_vertical"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    android:paddingVertical="@dimen/space_m"
+    android:paddingStart="@dimen/space_l"
+    android:paddingEnd="@dimen/space_s">
+
+    <ImageButton
+        android:id="@+id/removeButton"
+        android:layout_width="@dimen/touch_large"
+        android:layout_height="@dimen/touch_large"
+        android:layout_marginStart="-12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_remove_circle"
+        android:visibility="gone" />
+
+    <!-- 역 카드: 왼쪽 배지 -->
+    <LinearLayout
+        android:id="@+id/leadingBadges"
+        android:layout_width="@dimen/row_badge_area"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space_m"
+        android:importantForAccessibility="no"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- 경로 카드: 이름 + 작은 배지 -->
+        <LinearLayout
+            android:id="@+id/labelRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:textAppearance="@style/Text.MyWay.Caption12Medium"
+                android:textColor="@color/text_secondary" />
+
+            <LinearLayout
+                android:id="@+id/smallBadges"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/Text.MyWay.Body16Bold" />
+
+        <TextView
+            android:id="@+id/sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/Text.MyWay.Caption12Medium"
+            android:textColor="@color/text_secondary" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/typeChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_s"
+        android:background="@drawable/bg_type_chip"
+        android:paddingHorizontal="@dimen/space_s"
+        android:paddingVertical="@dimen/space_xs"
+        android:textAppearance="@style/Text.MyWay.Caption12Bold" />
+
+    <ImageView
+        android:id="@+id/trailing"
+        android:layout_width="@dimen/icon"
+        android:layout_height="@dimen/icon"
+        android:layout_marginStart="@dimen/space_xs"
+        android:layout_marginEnd="@dimen/space_xs"
+        android:importantForAccessibility="no" />
+
+    <ImageButton
+        android:id="@+id/starButton"
+        android:layout_width="@dimen/touch_large"
+        android:layout_height="@dimen/touch_large"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_star" />
+
+    <ImageView
+        android:id="@+id/dragHandle"
+        android:layout_width="@dimen/touch_large"
+        android:layout_height="@dimen/touch_large"
+        android:scaleType="center"
+        android:src="@drawable/ic_drag_handle"
+        android:visibility="gone" />
+</LinearLayout>

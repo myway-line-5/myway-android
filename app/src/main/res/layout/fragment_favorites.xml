@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 5-3 경로 · 5-7 역 · 5-4 편집 · 5-6 빈 상태 -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_surface">
+
+    <!-- ← 즐겨찾기 ........ 편집 -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/space_xs"
+        android:paddingEnd="@dimen/space_s"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="@dimen/touch_large"
+            android:layout_height="@dimen/touch_large"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/search_back"
+            android:src="@drawable/ic_arrow_back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xs"
+            android:layout_weight="1"
+            android:accessibilityHeading="true"
+            android:text="@string/fav_title"
+            android:textAppearance="@style/Text.MyWay.Heading18Bold"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/editButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/touch_large"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:minWidth="@dimen/touch_large"
+            android:paddingHorizontal="@dimen/space_s"
+            android:text="@string/fav_edit"
+            android:textAppearance="@style/Text.MyWay.Label14Bold" />
+    </LinearLayout>
+
+    <!-- 경로 | 역 -->
+    <LinearLayout
+        android:id="@+id/segment"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_s"
+        android:background="@drawable/bg_segment_track"
+        android:orientation="horizontal"
+        android:padding="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <TextView
+            android:id="@+id/tabRoutes"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/fav_tab_routes"
+            android:textAppearance="@style/Text.MyWay.Label14Bold" />
+
+        <TextView
+            android:id="@+id/tabStations"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/fav_tab_stations"
+            android:textAppearance="@style/Text.MyWay.Label14Bold" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/space_m"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/space_l"
+        android:paddingBottom="@dimen/space_l"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/segment"
+        app:layout_constraintBottom_toTopOf="@id/hint" />
+
+    <TextView
+        android:id="@+id/hint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingVertical="@dimen/space_l"
+        android:textAppearance="@style/Text.MyWay.Caption12Medium"
+        android:textColor="@color/text_secondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- 5-6 빈 상태 -->
+    <LinearLayout
+        android:id="@+id/emptyView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_xxl"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <FrameLayout
+            android:layout_width="@dimen/empty_icon"
+            android:layout_height="@dimen/empty_icon"
+            android:background="@drawable/bg_empty_icon">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_star_outline" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/fav_empty_title"
+            android:textAppearance="@style/Text.MyWay.Heading18Bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/fav_empty_body"
+            android:textAppearance="@style/Text.MyWay.Label14Medium"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/emptyAction"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/space_xl"
+            android:background="@drawable/bg_button_primary"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/space_xl"
+            android:text="@string/fav_empty_action"
+            android:textAppearance="@style/Text.MyWay.Body16Bold"
+            android:textColor="@color/text_on_brand" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

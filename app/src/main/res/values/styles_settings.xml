@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 설정 화면 공통 스타일 -->
+    <style name="Settings_Section">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:visibility">gone</item>
+    </style>
+    <style name="Settings_Label">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/space_l</item>
+        <item name="android:layout_marginBottom">@dimen/space_s</item>
+        <item name="android:textAppearance">@style/Text.MyWay.Caption12Medium</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+    <style name="Settings_Card">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/bg_settings_card</item>
+        <item name="android:showDividers">middle</item>
+        <item name="android:divider">@drawable/divider_inset</item>
+    </style>
+    <style name="Settings_Help">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/space_s</item>
+        <item name="android:paddingHorizontal">@dimen/space_xs</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:textAppearance">@style/Text.MyWay.Caption12Medium</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+    <style name="Settings_Switch">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:paddingHorizontal">@dimen/space_l</item>
+        <item name="android:textAppearance">@style/Text.MyWay.Body16Medium</item>
+    </style>
+    <style name="Settings_Row">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingHorizontal">@dimen/space_l</item>
+    </style>
+    <style name="Settings_RowText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAppearance">@style/Text.MyWay.Body16Medium</item>
+    </style>
+    <style name="Settings_Chevron">
+        <item name="android:layout_width">@dimen/icon</item>
+        <item name="android:layout_height">@dimen/icon</item>
+        <item name="android:importantForAccessibility">no</item>
+        <item name="android:src">@drawable/ic_chevron_right</item>
+    </style>
+
+    <!-- 설정 패널: 전체 화면, 투명 배경 (딤·블러는 직접 그림) -->
+    <style name="Theme_MyWay_SettingsPanel" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/brand_navy</item>
+        <item name="colorOnPrimary">@color/text_on_brand</item>
+        <item name="colorPrimaryContainer">@color/bg_muted</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+</resources>

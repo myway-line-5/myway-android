@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 앞으로 가기: 오른쪽에서 살짝 밀려 들어오며 나타남 (Material 공유 축 X) -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/decelerate_cubic">
+    <translate android:duration="260" android:fromXDelta="8%" android:toXDelta="0" />
+    <alpha android:duration="200" android:startOffset="60" android:fromAlpha="0" android:toAlpha="1" />
+</set>

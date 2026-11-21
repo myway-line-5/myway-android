@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 6-1~6-4 권한 안내 시트 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_perm_sheet"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/space_xxl"
+    android:paddingTop="@dimen/space_m"
+    android:paddingBottom="28dp">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_handle" />
+
+    <FrameLayout
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_perm_icon">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:tint="@android:color/white" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:accessibilityHeading="true"
+        android:letterSpacing="-0.02"
+        android:textColor="@color/text_primary"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:textAppearance="@style/Text.MyWay.Label14Medium"
+        android:textColor="@color/text_secondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/laterButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/fab"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_secondary"
+            android:gravity="center"
+            android:text="@string/perm_later"
+            android:textAppearance="@style/Text.MyWay.Body16Bold"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/allowButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/fab"
+            android:layout_marginStart="@dimen/space_s"
+            android:layout_weight="2"
+            android:background="@drawable/bg_button_primary"
+            android:gravity="center"
+            android:text="@string/perm_allow"
+            android:textAppearance="@style/Text.MyWay.Body16Bold"
+            android:textColor="@color/text_on_brand" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 4-1~4-7 설정 (홈 위에 겹쳐 뜨는 패널)
+     1단계: 뒤 화면 흐림(블러/딤) + 오른쪽 메뉴가 밀려 들어옴
+     2단계: 메뉴를 누르면 왼쪽 상세가 밀려 나옴 -->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@color/scrim"
+        android:contentDescription="@string/set_close" />
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 오른쪽 메뉴 -->
+    <LinearLayout
+        android:id="@+id/navPanel"
+        android:layout_width="128dp"
+        android:layout_height="0dp"
+        android:background="@color/bg_surface"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:paddingHorizontal="@dimen/space_s"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/space_s">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:accessibilityHeading="true"
+                android:text="@string/set_title"
+                android:textAppearance="@style/Text.MyWay.Heading18Bold" />
+
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="@dimen/touch_large"
+                android:layout_height="@dimen/touch_large"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/set_close"
+                android:src="@drawable/ic_close" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+    <!-- 왼쪽 내용 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/bg_canvas"
+        android:clickable="true"
+        android:focusable="false"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/navPanel"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/space_l"
+            android:paddingBottom="@dimen/space_xxl">
+
+            <TextView
+                android:id="@+id/sectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:accessibilityHeading="true"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/Text.MyWay.Heading18Bold"
+                android:textSize="22sp" />
+
+            <!-- ===== 음성 (4-3) ===== -->
+            <LinearLayout
+                android:id="@+id/sectionVoice"
+                style="@style/Settings_Section">
+
+                <TextView style="@style/Settings_Label" android:text="@string/set_voice_guide" />
+                <LinearLayout style="@style/Settings_Card">
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swTts"
+                        style="@style/Settings_Switch"
+                        android:text="@string/set_tts" />
+                </LinearLayout>
+                <TextView style="@style/Settings_Help" android:text="@string/set_tts_help" />
+
+                <TextView style="@style/Settings_Label" android:text="@string/set_voice_input" />
+                <LinearLayout style="@style/Settings_Card">
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swStt"
+                        style="@style/Settings_Switch"
+                        android:text="@string/set_stt" />
+                </LinearLayout>
+                <TextView style="@style/Settings_Help" android:text="@string/set_stt_help" />
+
+                <TextView style="@style/Settings_Label" android:text="@string/set_voice_sound" />
+                <LinearLayout
+                    style="@style/Settings_Card"
+                    android:padding="@dimen/space_l">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_voice_gender"
+                        android:textAppearance="@style/Text.MyWay.Label14Bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:background="@drawable/bg_segment_track"
+                        android:orientation="horizontal"
+                        android:padding="3dp">
+
+                        <TextView
+                            android:id="@+id/voiceFemale"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/set_voice_female"
+                            android:textAppearance="@style/Text.MyWay.Label14Bold" />
+
+                        <TextView
+                            android:id="@+id/voiceMale"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/set_voice_male"
+                            android:textAppearance="@style/Text.MyWay.Label14Bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_l"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/set_voice_volume"
+                            android:textAppearance="@style/Text.MyWay.Label14Bold" />
+
+                        <TextView
+                            android:id="@+id/volumeValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/Text.MyWay.Caption12Medium"
+                            android:textColor="@color/text_secondary" />
+                    </LinearLayout>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/volumeSlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/set_voice_volume"
+                        android:stepSize="10"
+                        android:valueFrom="0"
+                        android:valueTo="100" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ===== 알림 (4-4) ===== -->
+            <LinearLayout
+                android:id="@+id/sectionAlert"
+                style="@style/Settings_Section">
+
+                <TextView style="@style/Settings_Label" android:text="@string/set_alert_way" />
+                <LinearLayout style="@style/Settings_Card">
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swVibrate"
+                        style="@style/Settings_Switch"
+                        android:text="@string/set_vibrate" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swNotify"
+                        style="@style/Settings_Switch"
+                        android:text="@string/set_notify" />
+                </LinearLayout>
+                <TextView style="@style/Settings_Help" android:text="@string/set_alert_way_help" />
+
+                <TextView style="@style/Settings_Label" android:text="@string/set_alert_items" />
+                <LinearLayout style="@style/Settings_Card">
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swBefore"
+                        style="@style/Settings_Switch"
+                        android:text="@string/set_alert_before" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swArrival"
+                        style="@style/Settings_Switch"
+                        android:text="@string/set_alert_arrival" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swTransfer"
+                        style="@style/Settings_Switch"
+                        android:text="@string/set_alert_transfer" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swMissed"
+                        style="@style/Settings_Switch"
+                        android:text="@string/set_alert_missed" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swWrongWay"
+                        style="@style/Settings_Switch"
+                        android:text="@string/set_alert_wrong_way" />
+                </LinearLayout>
+
+                <TextView style="@style/Settings_Label" android:text="@string/set_vibrate" />
+                <LinearLayout
+                    style="@style/Settings_Card"
+                    android:padding="@dimen/space_l">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/set_vibrate_strength"
+                            android:textAppearance="@style/Text.MyWay.Label14Bold" />
+
+                        <TextView
+                            android:id="@+id/vibrateValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/Text.MyWay.Caption12Medium"
+                            android:textColor="@color/text_secondary" />
+                    </LinearLayout>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/vibrateSlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/set_vibrate_strength"
+                        android:stepSize="10"
+                        android:valueFrom="0"
+                        android:valueTo="100" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ===== 경로 (4-6) · 화면 (4-5) · 언어 (4-7): 선택 목록은 코드에서 채움 ===== -->
+            <LinearLayout
+                android:id="@+id/sectionChoice"
+                style="@style/Settings_Section">
+
+                <TextView android:id="@+id/choiceLabel" style="@style/Settings_Label" />
+                <LinearLayout android:id="@+id/choiceList" style="@style/Settings_Card" />
+                <TextView android:id="@+id/choiceHelp" style="@style/Settings_Help" />
+            </LinearLayout>
+
+            <!-- ===== 정보 (4-2) ===== -->
+            <LinearLayout
+                android:id="@+id/sectionInfo"
+                style="@style/Settings_Section">
+
+                <TextView style="@style/Settings_Label" android:text="@string/set_info_app" />
+                <LinearLayout style="@style/Settings_Card">
+                    <LinearLayout style="@style/Settings_Row">
+                        <TextView style="@style/Settings_RowText" android:text="@string/set_version" />
+                        <TextView
+                            android:id="@+id/versionText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/Text.MyWay.Label14Medium"
+                            android:textColor="@color/text_secondary" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/mapSourceRow"
+                        style="@style/Settings_Row"
+                        android:background="?attr/selectableItemBackground">
+                        <TextView style="@style/Settings_RowText" android:text="@string/set_map_source" />
+                        <ImageView style="@style/Settings_Chevron" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/licenseRow"
+                        style="@style/Settings_Row"
+                        android:background="?attr/selectableItemBackground">
+                        <TextView style="@style/Settings_RowText" android:text="@string/set_licenses" />
+                        <ImageView style="@style/Settings_Chevron" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

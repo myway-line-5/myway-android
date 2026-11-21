@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 설정 (4-1~4-7) -->
+    <string name="set_title">설정</string>
+    <string name="set_close">설정 닫기</string>
+    <string name="set_back_menu">설정 메뉴로 돌아가기</string>
+    <string name="set_voice">음성</string>
+    <string name="set_alert">알림</string>
+    <string name="set_route">경로</string>
+    <string name="set_screen">화면</string>
+    <string name="set_language">언어</string>
+    <string name="set_info">정보</string>
+
+    <string name="set_voice_guide">음성 안내</string>
+    <string name="set_tts">음성 안내 (TTS)</string>
+    <string name="set_tts_help">이어폰이 연결된 경우 TTS로 안내받을 수 있어요</string>
+    <string name="set_voice_input">음성 입력</string>
+    <string name="set_stt">음성 입력 (STT)</string>
+    <string name="set_stt_help">말하기 버튼으로 출발·도착 조건을 입력해요. 인식에 실패하면 다시 말하거나 글자로 입력할 수 있어요</string>
+    <string name="set_voice_sound">안내 음성</string>
+    <string name="set_voice_gender">안내 목소리</string>
+    <string name="set_voice_female">여성</string>
+    <string name="set_voice_male">남성</string>
+    <string name="set_voice_volume">음성 크기</string>
+    <string name="set_percent">%d%%</string>
+
+    <string name="set_alert_way">안내 방식</string>
+    <string name="set_vibrate">진동</string>
+    <string name="set_notify">알림 표시</string>
+    <string name="set_alert_way_help">음성은 \'음성\' 메뉴에서 설정해요. 여러 방식을 함께 켤 수 있어요</string>
+    <string name="set_alert_items">음성(TTS)으로 안내받을 항목</string>
+    <string name="set_alert_before">하차 전 사전 안내</string>
+    <string name="set_alert_arrival">도착 알림</string>
+    <string name="set_alert_transfer">환승 안내</string>
+    <string name="set_alert_missed">역 지나침 경고</string>
+    <string name="set_alert_wrong_way">오탑승 경고</string>
+    <string name="set_vibrate_strength">진동 세기</string>
+
+    <string name="set_route_label">기본 경로 기준</string>
+    <string name="set_route_help">검색할 때 따로 고르지 않으면 이 기준으로 결과를 먼저 보여 줘요</string>
+    <string name="set_screen_label">테마</string>
+    <string name="set_theme_light">라이트</string>
+    <string name="set_theme_dark">다크</string>
+    <string name="set_theme_system">시스템 기본값</string>
+    <string name="set_screen_help">다크 테마는 준비 중이에요</string>
+    <string name="set_language_label">앱 언어</string>
+    <string name="set_language_help">다른 언어는 준비 중이에요. 역명은 한국어와 함께 표시돼요</string>
+    <string name="set_pending">준비 중</string>
+
+    <string name="set_info_app">앱 정보</string>
+    <string name="set_version">버전</string>
+    <string name="set_map_source">노선도 출처</string>
+    <string name="set_licenses">오픈소스 라이선스</string>
+    <string name="set_map_source_body">서울 지하철 노선도 © 서울특별시\n\n이 노선도는 서울특별시가 공공누리 제4유형(출처표시·상업적 이용금지·변경금지)으로 개방한 저작물을 이용했어요.</string>
+    <string name="set_licenses_body">AndroidX · Material Components for Android · Kotlin Coroutines · Retrofit · OkHttp · Gson\n\nApache License 2.0\nhttps://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="set_ok">확인</string>
+</resources>

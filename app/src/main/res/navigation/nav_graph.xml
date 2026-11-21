@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 화면 이동 지도. 화면이 늘면 여기에 추가 -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <!-- 어디서나 갈 수 있는 이동. 화면 전환: 앞뒤 이동 = 옆으로(nav_*), 모드 전환 = 제자리 페이드(mode_*) -->
+    <action android:id="@+id/to_favorites"
+        app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
+        app:destination="@id/favoritesFragment" />
+    <action android:id="@+id/to_search"
+        app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
+        app:destination="@id/searchFragment" />
+    <action android:id="@+id/to_result"
+        app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
+        app:destination="@id/resultFragment" />
+    <action android:id="@+id/to_settings" app:destination="@id/settingsFragment" />
+    <action android:id="@+id/to_ai_mode"
+        app:enterAnim="@anim/mode_enter" app:exitAnim="@anim/mode_exit" app:popEnterAnim="@anim/mode_enter" app:popExitAnim="@anim/mode_exit"
+        app:destination="@id/aiModeFragment" />
+    <action android:id="@+id/to_station_detail"
+        app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
+        app:destination="@id/stationDetailFragment" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.myway.app.ui.home.HomeFragment"
+        android:label="home">
+        <action
+            android:id="@+id/action_home_to_search"
+            app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
+            app:destination="@id/searchFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.myway.app.ui.search.SearchFragment"
+        android:label="search">
+        <action
+            android:id="@+id/action_search_to_result"
+            app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
+            app:destination="@id/resultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.myway.app.ui.result.RouteResultFragment"
+        android:label="result" />
+
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.myway.app.ui.favorites.FavoritesFragment"
+        android:label="favorites" />
+
+    <!-- 홈 위에 겹쳐 뜨는 패널 (dialog) -->
+    <dialog
+        android:id="@+id/settingsFragment"
+        android:name="com.myway.app.ui.settings.SettingsFragment"
+        android:label="settings" />
+
+    <fragment
+        android:id="@+id/aiModeFragment"
+        android:name="com.myway.app.ui.aimode.AiModeFragment"
+        android:label="ai_mode" />
+
+    <!-- 5-2 역 상세 (역 시트의 '역 정보') -->
+    <fragment
+        android:id="@+id/stationDetailFragment"
+        android:name="com.myway.app.ui.station.StationDetailFragment"
+        android:label="station_detail" />
+</navigation>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AI 모드 (2-1~2-10) -->
+    <string name="ai_title">AI 모드</string>
+    <string name="ai_idle_title">어디로 갈까요?</string>
+    <string name="ai_idle_sub">말하듯 입력하면 조건을 알아서 반영해요</string>
+    <string name="ai_idle_status">웨이가 듣고 있어요</string>
+    <string name="ai_input_hint">예: 여의도에서 왕십리까지</string>
+    <string name="ai_send">보내기</string>
+    <string name="ai_normal">일반</string>
+    <string name="ai_normal_desc">일반 모드로 돌아가기</string>
+
+    <string name="ai_busy_status">웨이가 조건을 해석하고 있어요</string>
+    <string name="ai_you_said">내가 한 말</string>
+    <string name="ai_quote">“%s”</string>
+    <string name="ai_busy_hint">보통 1~2초 걸려요</string>
+    <string name="ai_cancel">취소</string>
+
+    <string name="ai_confirm_title">이렇게 이해했어요</string>
+    <string name="ai_confirm_sub">틀린 부분은 눌러서 바로 고칠 수 있어요</string>
+    <string name="ai_not_found">역을 찾지 못했어요 · 눌러서 고르기</string>
+    <string name="ai_edit_desc">%s 바꾸기</string>
+    <string name="ai_priority">우선순위</string>
+    <string name="ai_limits">조건</string>
+    <string name="ai_limit_time">%d분 이내</string>
+    <string name="ai_limit_transfer_none">환승 없이</string>
+    <string name="ai_limit_transfer">환승 %d회 이하</string>
+    <string name="ai_limit_fare">%s원 이하</string>
+    <string name="ai_crit_duration">최단시간</string>
+    <string name="ai_crit_transfers">환승 적게</string>
+    <string name="ai_crit_fare">요금 적게</string>
+    <string name="ai_priority_help">앞 기준이 같으면 다음 기준으로 비교해요</string>
+    <string name="ai_go">이대로 길찾기</string>
+    <string name="ai_edit_manually">직접 수정</string>
+
+    <string name="ai_pick_title">어느 역인가요?</string>
+    <string name="ai_pick_sub">“%s”(으)로 찾은 역이 여러 개예요</string>
+    <string name="ai_pick_search">역 직접 검색</string>
+
+    <string name="ai_unsupported_title">아직 못 하는 조건이에요</string>
+    <string name="ai_unsupported_ask">지원하는 조건으로 찾아볼까요?</string>
+    <string name="ai_say_again">다시 말하기</string>
+
+    <string name="ai_failed_title">AI 연결이 원활하지 않아요</string>
+    <string name="ai_failed_sub">역을 직접 골라 길찾기는 계속할 수 있어요</string>
+    <string name="ai_failed_body">입력한 조건은 그대로예요. 다시 시도하거나 역을 직접 골라 주세요</string>
+    <string name="ai_pick_manually">역 직접 선택</string>
+    <string name="ai_retry">AI로 다시 시도</string>
+
+    <!-- 결과 화면 배너 (2-6) -->
+    <string name="ai_banner">AI  “%1$s” 반영 · %2$s 순서로 비교했어요</string>
+    <string name="ai_banner_simple">AI  “%s” 반영</string>
+
+    <!-- 이해 못 함 -->
+    <string name="ai_unknown_title">무슨 말인지 잘 모르겠어요</string>
+    <string name="ai_unknown_tip">출발역과 도착역을 함께 말해 주면 정확해요</string>
+    <string name="ai_unknown_examples">이렇게 말해 보세요</string>
+    <string name="ai_example_tap">눌러서 바로 찾기</string>
+    <string name="ai_edit_again">다시 입력하기</string>
+    <string name="ai_ex_1">강남에서 잠실까지</string>
+    <string name="ai_ex_2">여의도에서 을지로3가까지 환승 적게</string>
+    <string name="ai_ex_3">왕십리에서 시청까지 40분 이내</string>
+    <string name="ai_missing_origin">출발역을 알려 주세요</string>
+    <string name="ai_missing_destination">도착역을 알려 주세요</string>
+    <string name="ai_back_desc">이전 단계로</string>
+    <string name="ai_listen">음성으로 말하기</string>
+    <string name="ai_listen_prompt">어디로 갈까요? 말해 보세요</string>
+    <string name="ai_listen_unavailable">이 기기에서는 음성 입력을 쓸 수 없어요. 글자로 입력해 주세요</string>
+</resources>

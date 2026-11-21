@@ -92,4 +92,19 @@
             android:textAppearance="@style/Text.MyWay.Label14Bold"
             android:textColor="@color/text_on_brand" />
     </LinearLayout>
+
+    <!-- 5-2 역 상세로 (보조 동작: 주 버튼 아래 한 줄) -->
+    <TextView
+        android:id="@+id/detailButton"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_large"
+        android:layout_marginHorizontal="@dimen/space_xl"
+        android:layout_marginTop="@dimen/space_s"
+        android:background="?attr/selectableItemBackground"
+        android:drawableEnd="@drawable/ic_chevron_right"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/space_xs"
+        android:text="@string/station_detail_open"
+        android:textAppearance="@style/Text.MyWay.Label14Bold"
+        android:textColor="@color/text_primary" />
 </LinearLayout>

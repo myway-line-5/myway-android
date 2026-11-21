@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 1-2 홈: 상단바 / 노선도 선택 바 / 노선도(핀치 줌) / [AI][역명 검색 ☆] (엄지 영역) -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_muted">
+
+    <!-- 상단바: ? · MYWAY · ⚙ -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/top_bar_height"
+        android:layout_marginTop="@dimen/space_s"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_l"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/helpButton"
+            android:layout_width="@dimen/icon_button"
+            android:layout_height="@dimen/icon_button"
+            android:background="@drawable/bg_icon_box"
+            android:contentDescription="@string/home_help"
+            android:foreground="?attr/selectableItemBackground"
+            android:src="@drawable/ic_help" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/home_title"
+            android:textAppearance="@style/Text.MyWay.Body16Bold" />
+
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="@dimen/icon_button"
+            android:layout_height="@dimen/icon_button"
+            android:background="@drawable/bg_icon_box"
+            android:contentDescription="@string/home_settings"
+            android:foreground="?attr/selectableItemBackground"
+            android:src="@drawable/ic_settings" />
+    </LinearLayout>
+
+    <!-- 노선도 선택 바: ● 전체 노선도 선택 ▾ -->
+    <LinearLayout
+        android:id="@+id/linePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/top_bar_height"
+        android:layout_marginStart="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_m"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/space_s"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <View
+            android:id="@+id/lineDot"
+            android:layout_width="@dimen/point_dot"
+            android:layout_height="@dimen/point_dot"
+            android:background="@drawable/bg_dot" />
+
+        <TextView
+            android:id="@+id/linePickerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_s"
+            android:textAppearance="@style/Text.MyWay.Body16Bold" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="@dimen/space_xs"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_expand_more" />
+    </LinearLayout>
+
+    <!-- 노선도 카드 -->
+    <FrameLayout
+        android:id="@+id/mapCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_m"
+        android:layout_marginBottom="@dimen/space_l"
+        android:background="@drawable/bg_map_card"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linePicker"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar">
+
+        <com.myway.app.ui.home.ZoomableMapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/pinchHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
+            android:layout_margin="@dimen/space_m"
+            android:background="@drawable/bg_pinch_hint"
+            android:importantForAccessibility="no"
+            android:paddingHorizontal="@dimen/space_m"
+            android:paddingVertical="6dp"
+            android:text="@string/home_pinch_hint"
+            android:textAppearance="@style/Text.MyWay.Caption12Medium"
+            android:textColor="@color/text_on_brand" />
+
+        <!-- 서비스 중 2 5 9 -->
+        <LinearLayout
+            android:id="@+id/serviceChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/space_m"
+            android:background="@drawable/bg_service_chip"
+            android:contentDescription="@string/home_service_desc"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_m"
+            android:paddingVertical="@dimen/space_s">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:text="@string/home_service"
+                android:textAppearance="@style/Text.MyWay.Caption12Bold" />
+
+            <LinearLayout
+                android:id="@+id/serviceBadges"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:orientation="horizontal" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- 하단: AI 전환(Von Restorff) + 역명 검색(엄지 영역, Fitts) -->
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_l"
+        android:layout_marginBottom="@dimen/space_l"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/aiButton"
+            android:layout_width="@dimen/fab"
+            android:layout_height="@dimen/fab"
+            android:background="@drawable/bg_ai_fab"
+            android:contentDescription="@string/home_ai_desc"
+            android:foreground="@drawable/fg_circle_ripple"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_sparkle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:text="@string/home_ai"
+                android:textAppearance="@style/Text.MyWay.Caption12Bold"
+                android:textColor="@color/text_on_brand" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/searchBar"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/search_field_height"
+            android:layout_marginStart="@dimen/space_s"
+            android:layout_weight="1"
+            android:background="@drawable/bg_search_bar"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="18dp"
+            android:paddingEnd="6dp">
+
+            <ImageView
+                android:layout_width="@dimen/icon"
+                android:layout_height="@dimen/icon"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_search" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_m"
+                android:layout_weight="1"
+                android:text="@string/search_hint"
+                android:textAppearance="@style/Text.MyWay.Body16Medium"
+                android:textColor="@color/text_secondary" />
+
+            <ImageButton
+                android:id="@+id/favoritesButton"
+                android:layout_width="@dimen/icon_button"
+                android:layout_height="@dimen/icon_button"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/search_open_favorites"
+                android:src="@drawable/ic_star" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
