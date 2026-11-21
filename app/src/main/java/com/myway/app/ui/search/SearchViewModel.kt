@@ -1,8 +1,13 @@
 package com.myway.app.ui.search
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.myway.app.data.local.AppDatabase
+import com.myway.app.data.repository.FavoriteRepository
+import com.myway.app.data.repository.RepositoryProvider
 import com.myway.app.data.repository.Resource
+import com.myway.app.data.repository.RoomFavoriteRepository
 import com.myway.app.data.repository.StationRepository
 import com.myway.app.domain.model.AppError
 import com.myway.app.domain.model.Station
@@ -12,7 +17,7 @@ import com.myway.app.data.local.LocalStore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import com.myway.app.data.repository.RepositoryProvider
+import kotlinx.coroutines.launch
 
 /**
  * 목록 한 줄 = 물리적 역 하나. 여의도(5·9)처럼 환승역은 배지 여러 개로 한 줄에.
@@ -38,13 +43,19 @@ sealed interface SearchUiState {
 }
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-class SearchViewModel(
-    // 자리는 StationRepository, 지금 앉힌 건 Fake. 서버 완성되면 여기만 교체.
+class SearchViewModel(application: Application) : AndroidViewModel(application) {
+
+    // 자리는 StationRepository, 지금 앉힌 건 Fake. 서버 완성되면 RepositoryProvider 쪽만 교체.
     private val repo: StationRepository = RepositoryProvider.stationRepository()
-) : ViewModel() {
+    private val favoriteRepo: FavoriteRepository =
+        RoomFavoriteRepository(AppDatabase.getInstance(application).favoriteDao())
 
     private val query = MutableStateFlow("")
-    /** 즐겨찾기한 역 이름 (LocalStore: 앱을 꺼도 유지) */
+    /**
+     * 즐겨찾기한 역 이름.
+     * 지금은 즐겨찾기 화면·역 상세·노선도 시트와 같은 저장소(LocalStore)를 써서 어디서 ★를 눌러도 똑같이 보이게 함.
+     * TODO(팀 논의): Room(favoriteRepo)으로 한 번에 옮기기 — 역의 노선 정보·경로 즐겨찾기·순서까지 Room 스키마에 필요
+     */
     val favoriteNames: StateFlow<Set<String>> = LocalStore.favoriteStations
         .map { list -> list.map { it.name }.toSet() }
         .stateIn(viewModelScope, SharingStarted.Eagerly,

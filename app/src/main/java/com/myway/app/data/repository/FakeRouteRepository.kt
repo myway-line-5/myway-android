@@ -10,29 +10,30 @@ import kotlinx.coroutines.delay
 
 class FakeRouteRepository : RouteRepository {
 
-    // ---- 샘플 역 (진짜 서버 ID가 아님. 화면 확인용) ----
-    private val yeouido = Station("L5_FAKE_01", "여의도", "5", true)
-    private val gongdeok = Station("L5_FAKE_02", "공덕", "5", true)
-    private val euljiro4Line5 = Station("L5_FAKE_03", "을지로4가", "5", true)
-    private val euljiro4Line2 = Station("L2_FAKE_01", "을지로4가", "2", true)
-    private val euljiro3Line2 = Station("L2_FAKE_02", "을지로3가", "2", true)
+    // ---- 샘플 역: 서버 data/stations.csv·segments.csv 의 실제 ID (2·5호선) ----
+    private val jongno3Line5 = Station("L5_MAIN_025", "종로3가", "5", true)
+    private val euljiro4Line5 = Station("L5_MAIN_026", "을지로4가", "5", true)
+    private val euljiro4Line2 = Station("L2_MAIN_004", "을지로4가", "2", true)
+    private val euljiro3Line2 = Station("L2_MAIN_003", "을지로3가", "2", true)
 
-    // ---- 샘플 경로: 여의도(5) -> 공덕 -> 을지로4가(5) -> 환승 -> 을지로4가(2) -> 을지로3가 ----
+    // ---- 샘플 경로: 종로3가(5) -> 을지로4가(5) -> 환승 -> 을지로4가(2) -> 을지로3가(2) ----
+    // 시간·거리는 서버 segments.csv / transfers.csv 값 (환승 64초·77m)
     private val segments = listOf(
-        RouteSegment(yeouido, gongdeok, "5", seconds = 540, meters = 4200, isTransfer = false),
-        RouteSegment(gongdeok, euljiro4Line5, "5", seconds = 900, meters = 6100, isTransfer = false),
-        RouteSegment(euljiro4Line5, euljiro4Line2, "2", seconds = 240, meters = 200, isTransfer = true),
-        RouteSegment(euljiro4Line2, euljiro3Line2, "2", seconds = 120, meters = 900, isTransfer = false)
+        RouteSegment(jongno3Line5, euljiro4Line5, "5", seconds = 100, meters = 1000, isTransfer = false),
+        RouteSegment(euljiro4Line5, euljiro4Line2, "2", seconds = 64, meters = 77, isTransfer = true),
+        RouteSegment(euljiro4Line2, euljiro3Line2, "2", seconds = 60, meters = 600, isTransfer = false)
     )
 
     // 구간 합계로 총합을 계산하므로 숫자가 서로 어긋나지 않는다
+    // totalFareKrw 는 임시값. 운임 규칙(FarePolicy)이 서버에서 확정되면 교체
     private fun result(type: RouteType) = RouteResult(
         type = type,
         segments = segments,
         totalSeconds = segments.sumOf { it.seconds },
         totalMeters = segments.sumOf { it.meters },
         totalFareKrw = 1550,
-        transferCount = segments.count { it.isTransfer }
+        transferCount = segments.count { it.isTransfer },
+        fareVersion = "fare_250628"
     )
 
     override suspend fun findRoutes(condition: RouteCondition): Resource<List<RouteResult>> {
