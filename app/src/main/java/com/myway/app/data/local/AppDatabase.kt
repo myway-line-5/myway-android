@@ -6,13 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [FavoriteStationEntity::class],
-    version = 1,
+    entities = [FavoriteStationEntity::class, RecentSearchEntity::class],
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun favoriteDao(): FavoriteDao
+    abstract fun recentSearchDao(): RecentSearchDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null

@@ -17,5 +17,7 @@ data class RouteResult(
     val totalSeconds: Int,
     val totalMeters: Int,
     val totalFareKrw: Int,
-    val transferCount: Int
+    val transferCount: Int,
+    val dataVersion: String,          // 그래프 데이터 버전 (즐겨찾기 스냅샷 저장용, 표 4-14)
+    val fareVersion: String           // 운임 규칙 버전 (즐겨찾기 스냅샷 저장용, 표 4-14)
 )
