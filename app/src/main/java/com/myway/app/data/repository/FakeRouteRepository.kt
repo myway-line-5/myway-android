@@ -33,8 +33,7 @@ class FakeRouteRepository : RouteRepository {
         totalMeters = segments.sumOf { it.meters },
         totalFareKrw = 1550,
         transferCount = segments.count { it.isTransfer },
-        dataVersion = "fake-data-v1",
-        fareVersion = "fake-fare-v1"
+        fareVersion = "fare_250628"
     )
 
     override suspend fun findRoutes(condition: RouteCondition): Resource<List<RouteResult>> {
