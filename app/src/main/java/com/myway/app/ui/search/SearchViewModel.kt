@@ -1,8 +1,13 @@
 package com.myway.app.ui.search
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.myway.app.data.local.AppDatabase
+import com.myway.app.data.repository.FavoriteRepository
+import com.myway.app.data.repository.RepositoryProvider
 import com.myway.app.data.repository.Resource
+import com.myway.app.data.repository.RoomFavoriteRepository
 import com.myway.app.data.repository.StationRepository
 import com.myway.app.domain.model.AppError
 import com.myway.app.domain.model.Station
@@ -10,7 +15,7 @@ import com.myway.app.ui.common.LineStyle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import com.myway.app.data.repository.RepositoryProvider
+import kotlinx.coroutines.launch
 
 /**
  * 목록 한 줄 = 물리적 역 하나. 여의도(5·9)처럼 환승역은 배지 여러 개로 한 줄에.
@@ -36,14 +41,17 @@ sealed interface SearchUiState {
 }
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-class SearchViewModel(
-    // 자리는 StationRepository, 지금 앉힌 건 Fake. 서버 완성되면 여기만 교체.
+class SearchViewModel(application: Application) : AndroidViewModel(application) {
+
+    // 자리는 StationRepository, 지금 앉힌 건 Fake. 서버 완성되면 RepositoryProvider 쪽만 교체.
     private val repo: StationRepository = RepositoryProvider.stationRepository()
-) : ViewModel() {
+    private val favoriteRepo: FavoriteRepository =
+        RoomFavoriteRepository(AppDatabase.getInstance(application).favoriteDao())
 
     private val query = MutableStateFlow("")
-    private val favorites = MutableStateFlow<Set<String>>(emptySet())  // TODO: SQLite 연결
-    val favoriteNames: StateFlow<Set<String>> = favorites.asStateFlow()
+    private val favorites: StateFlow<Set<String>> = favoriteRepo.observeFavoriteNames()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
+    val favoriteNames: StateFlow<Set<String>> = favorites
     private var cachedStations: List<Station>? = null
 
     private val result: Flow<SearchUiState> = query
@@ -67,7 +75,7 @@ class SearchViewModel(
     fun onQueryChange(text: String) { query.value = text }
 
     fun onToggleFavorite(item: StationGroupItem) {
-        favorites.update { if (item.name in it) it - item.name else it + item.name }
+        viewModelScope.launch { favoriteRepo.toggle(item.name) }
     }
 
     private suspend fun search(q: String): SearchUiState {
