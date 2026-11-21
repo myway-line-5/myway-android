@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2-5: ● 출발  군자  ✎ -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="56dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_l"
+    android:paddingEnd="@dimen/space_s">
+
+    <View
+        android:id="@+id/dot"
+        android:layout_width="@dimen/point_dot"
+        android:layout_height="@dimen/point_dot"
+        android:background="@drawable/dot_origin" />
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textAppearance="@style/Text.MyWay.Caption12Bold"
+        android:textColor="@color/ai_text_secondary" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/Text.MyWay.Heading18Bold"
+        android:textColor="@android:color/white" />
+
+    <ImageView
+        android:layout_width="@dimen/touch_large"
+        android:layout_height="@dimen/touch_large"
+        android:importantForAccessibility="no"
+        android:scaleType="center"
+        android:src="@drawable/ic_edit" />
+</LinearLayout>

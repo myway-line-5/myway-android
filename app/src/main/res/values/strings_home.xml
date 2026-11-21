@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">MYWAY</string>
+    <string name="home_help">도움말</string>
+    <string name="home_settings">설정</string>
+    <string name="home_ai">AI</string>
+    <string name="home_ai_desc">AI 모드로 전환</string>
+    <string name="home_pinch_hint">두 손가락으로 확대·축소</string>
+    <string name="home_service">서비스 중</string>
+    <string name="home_service_desc">2·5·9호선 서비스 중</string>
+    <string name="home_map_desc">%s. 두 손가락으로 확대·축소</string>
+    <string name="home_map_missing">노선도 이미지를 넣으면 여기에 표시돼요</string>
+    <string name="feature_pending">준비 중인 기능이에요</string>
+
+    <!-- 노선도 선택 (1-6~1-9) -->
+    <string name="line_picker_title">노선도 선택</string>
+    <string name="line_picker_close">닫기</string>
+    <string name="map_all_label">전체 노선도 선택</string>
+    <string name="map_line2_label">2호선 노선도 선택</string>
+    <string name="map_line5_label">5호선 노선도 선택</string>
+    <string name="map_line9_label">9호선 노선도 선택</string>
+    <string name="map_all_title">전체 노선도</string>
+    <string name="map_line2_title">2호선</string>
+    <string name="map_line5_title">5호선</string>
+    <string name="map_line9_title">9호선</string>
+    <string name="map_all_desc">2·5·9호선만 서비스 중</string>
+    <string name="map_line2_desc">순환선 · 성수·신정 지선</string>
+    <string name="map_line5_desc">방화 ~ 하남검단산 · 마천 지선</string>
+    <string name="map_line9_desc">개화 ~ 중앙보훈병원 · 급행 운행</string>
+</resources>

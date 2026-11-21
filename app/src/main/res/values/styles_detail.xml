@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 5-2 역 상세 카드 (Figma: 흰 바탕 · 1dp 테두리 · 14dp 모서리 · 16dp 안쪽 여백) -->
+    <style name="Detail_Card">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/space_m</item>
+        <item name="android:background">@drawable/bg_detail_card</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/space_l</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="Detail_CardLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:accessibilityHeading">true</item>
+        <item name="android:textAppearance">@style/Text.MyWay.Caption12Bold</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="Detail_TimeHeader">
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">@style/Text.MyWay.Caption12Medium</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+</resources>

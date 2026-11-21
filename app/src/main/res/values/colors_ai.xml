@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AI 모드 (어두운 남색 테마) -->
+    <color name="ai_bg">#1B2046</color>
+    <color name="ai_surface">#283062</color>
+    <color name="ai_surface_2">#343C76</color>
+    <color name="ai_text_secondary">#AEB4D6</color>
+    <color name="ai_purple">#7B5CFF</color>
+    <color name="ai_purple_light">#9B87FF</color>
+    <color name="ai_cyan">#4FE3F0</color>
+    <color name="ai_error_bg">#4A2C3D</color>
+    <color name="ai_error_text">#FFB8B8</color>
+    <color name="ai_banner_bg">#EFEAFF</color>
+    <color name="ai_banner_text">#4B33C7</color>
+</resources>

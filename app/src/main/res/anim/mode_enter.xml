@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 일반 ↔ AI 모드 전환: 제자리에서 살짝 커지며 나타남 (Material fade through) -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/decelerate_cubic">
+    <scale android:duration="300" android:startOffset="90" android:fromXScale="0.94" android:toXScale="1"
+        android:fromYScale="0.94" android:toYScale="1" android:pivotX="50%" android:pivotY="50%" />
+    <alpha android:duration="210" android:startOffset="90" android:fromAlpha="0" android:toAlpha="1" />
+</set>

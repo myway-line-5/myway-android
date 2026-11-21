@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 경로 결과 (1-18 · 1-20 · 1-21) -->
+    <string name="result_tab_time">최단시간</string>
+    <string name="result_tab_transfer">최소환승</string>
+    <string name="result_tab_fare">최소비용</string>
+    <string name="result_tab_sub">%1$s·%2$d회</string>
+    <string name="result_close">결과 닫기</string>
+    <string name="result_duration_label">소요시간</string>
+    <string name="result_transfers">환승 %d회</string>
+    <string name="result_fare">%s원</string>
+    <string name="result_min">%d분</string>
+    <string name="result_hour_min">%1$d시간 %2$d분</string>
+    <string name="result_depart">출발</string>
+    <string name="result_arrive">도착</string>
+    <string name="result_favorite">경로 즐겨찾기 추가</string>
+    <string name="result_favorite_remove">경로 즐겨찾기 해제</string>
+
+    <string name="result_board">%s호선 승차</string>
+    <string name="result_transfer_to">%s호선 환승</string>
+    <string name="result_ride">%1$d개 역 (%2$d분)</string>
+    <string name="result_walk">환승 (도보 %d분)</string>
+    <string name="result_badge_transfer">환승</string>
+    <string name="result_badge_alight">하차</string>
+
+    <string name="result_error_not_found">조건에 맞는 경로가 없어요</string>
+    <string name="result_error_not_found_body">출발·도착역을 바꿔 다시 찾아 주세요.</string>
+    <string name="result_error_network">인터넷 연결을 확인해 주세요</string>
+    <string name="result_error_generic">경로를 불러오지 못했어요</string>
+    <string name="result_error_generic_body">잠시 후 다시 찾아 주세요.</string>
+    <string name="result_retry">다시 찾기</string>
+</resources>

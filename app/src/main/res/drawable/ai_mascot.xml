@@ -1,0 +1,14 @@
+<!-- AI 모드 마스코트 '웨이' (임시 벡터). 피그마 이미지로 바꾸려면 이 파일을 지우고 ai_mascot.png 를 drawable-nodpi 에 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp" android:height="120dp"
+    android:viewportWidth="120" android:viewportHeight="120">
+    <path android:fillColor="#8C7BFF" android:pathData="M58,18h4v16h-4z" />
+    <path android:fillColor="@color/ai_cyan" android:pathData="M54,16a6,6 0,1 0,12 0a6,6 0,1 0,-12 0z" />
+    <path android:fillColor="#6B55E8" android:pathData="M13,58h9v22h-9zM98,58h9v22h-9z" />
+    <path android:fillColor="#8E78FF" android:pathData="M42,32H78A22,22 0,0 1,100 54V80A22,22 0,0 1,78 102H42A22,22 0,0 1,20 80V54A22,22 0,0 1,42 32Z" />
+    <path android:fillColor="#A897FF" android:pathData="M42,32H78A22,22 0,0 1,100 54V58H20V54A22,22 0,0 1,42 32Z" />
+    <path android:fillColor="#1A1E3C" android:pathData="M44,46H76A14,14 0,0 1,90 60V72A14,14 0,0 1,76 86H44A14,14 0,0 1,30 72V60A14,14 0,0 1,44 46Z" />
+    <path android:fillColor="@color/ai_cyan" android:pathData="M45,57h8v11h-8zM67,57h8v11h-8z" />
+    <path android:strokeColor="@color/ai_cyan" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M53,75Q60,80 67,75" />
+    <path android:fillColor="#FF8FB1" android:pathData="M30,94a4,4 0,1 0,8 0a4,4 0,1 0,-8 0zM82,94a4,4 0,1 0,8 0a4,4 0,1 0,-8 0z" />
+</vector>

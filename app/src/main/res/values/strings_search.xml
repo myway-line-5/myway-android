@@ -18,8 +18,8 @@
     <string name="favorite_remove">%s 즐겨찾기 해제</string>
 
     <!-- 1-17 안내 팝업 (Figma 문구) -->
-    <string name="inactive_dialog_title">운행이 종료된 역이에요</string>
-    <string name="inactive_dialog_body">선택한 역은 현재 열차가 서지 않아요.\n다른 역을 검색해 주세요.</string>
+    <string name="inactive_dialog_title">지금은 이용할 수 없는 역이에요</string>
+    <string name="inactive_dialog_body">공사·폐쇄 등으로 이 역에는 열차가 서지 않아요.\n다른 역을 골라 주세요.</string>
     <string name="inactive_dialog_action">확인</string>
 
     <!-- 미지원 노선 (2·5·9호선 외) -->
@@ -39,4 +39,11 @@
     <string name="route_find_pending">경로 결과 화면은 다음 단계에서 연결돼요</string>
     <string name="same_station_title">출발역과 도착역이 같아요</string>
     <string name="same_station_body">다른 역을 선택해 주세요.</string>
+
+    <!-- 1-10 최근 검색 -->
+    <string name="recent_stations">최근 검색</string>
+    <string name="recent_routes">최근 경로</string>
+    <string name="recent_clear_all">전체 삭제</string>
+    <string name="recent_remove">%s 최근 기록에서 지우기</string>
+    <string name="recent_route_name">%1$s → %2$s</string>
 </resources>

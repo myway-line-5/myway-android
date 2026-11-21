@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 6-1~6-4 권한 안내 -->
+    <string name="perm_later">나중에</string>
+    <string name="perm_allow">권한 허용</string>
+    <string name="perm_mic_title">음성으로 말하려면\n마이크 권한이 필요해요</string>
+    <string name="perm_mic_body">말하기 버튼을 누를 때만 사용해요. 허용하지 않아도 글자로 입력할 수 있어요</string>
+    <string name="perm_notify_title">하차·환승 알림을 받으려면\n알림 권한이 필요해요</string>
+    <string name="perm_notify_body">화면이 꺼져 있어도 내릴 역과 환승 시점을 알려드려요</string>
+    <string name="perm_battery_title">화면이 꺼져도\n안내가 이어지게 해주세요</string>
+    <string name="perm_battery_body">배터리 최적화에서 마이웨이를 제외하면 이동 중 안내가 끊기지 않아요</string>
+    <string name="perm_nearby_title">이어폰 마이크로 말하려면\n근처 기기 권한이 필요해요</string>
+    <string name="perm_nearby_body">연결된 이어폰을 찾아 마이크로 쓸 때만 사용해요. 허용하지 않아도 이어폰 소리로 안내받을 수 있어요</string>
+
+    <!-- T-1~T-8 튜토리얼 -->
+    <string name="tut_skip">건너뛰기</string>
+    <string name="tut_start">시작하기</string>
+    <string name="tut_hint_next">탭하거나 옆으로 밀어서 다음  ›</string>
+    <string name="tut_hint_ai">탭하면 AI 모드로 넘어가요  ›</string>
+    <string name="tut_a11y">%1$d / %2$d 단계. %3$s. %4$s. 두 번 탭하면 다음</string>
+    <string name="tut_1_title">노선 골라 보기</string>
+    <string name="tut_1_body">보고 싶은 노선만 골라서 노선도를 볼 수 있어요</string>
+    <string name="tut_2_title">노선도에서 바로 지정</string>
+    <string name="tut_2_body">역을 누르면 출발·도착이 정해져요. 두 손가락으로 확대·축소도 돼요</string>
+    <string name="tut_3_title">역 검색 · 즐겨찾기</string>
+    <string name="tut_3_body">이름이나 초성으로 찾고, 별을 눌러 자주 가는 길을 저장해요</string>
+    <string name="tut_4_title">AI 모드로 전환</string>
+    <string name="tut_4_body">“환승 적게 가고 싶어”처럼 말하듯 입력하면 조건을 알아서 반영해요</string>
+    <string name="tut_5_title">말하듯 입력하세요</string>
+    <string name="tut_5_body">문장으로 입력하거나 마이크로 말해요. 출발·도착·우선순위를 자동으로 읽어요</string>
+    <string name="tut_6_title">일반 모드로 돌아가기</string>
+    <string name="tut_6_body">역을 직접 고르고 싶을 땐 언제든 눌러서 전환해요</string>
+    <string name="tut_7_title">설정</string>
+    <string name="tut_7_body">음성·알림·경로 기준·언어를 내 방식대로 바꿔요</string>
+    <string name="tut_8_title">도움말</string>
+    <string name="tut_8_body">이 안내는 ? 버튼에서 언제든 다시 볼 수 있어요</string>
+</resources>

@@ -2,7 +2,10 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.MyWay" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- 스위치·슬라이더·진행 막대 등 기본 강조색 = 브랜드 남색 -->
+        <item name="colorPrimary">@color/brand_navy</item>
+        <item name="colorOnPrimary">@color/text_on_brand</item>
+        <item name="colorPrimaryContainer">@color/bg_muted</item>
     </style>
 
     <style name="Theme.MyWay" parent="Base.Theme.MyWay" />

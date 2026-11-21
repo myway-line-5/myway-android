@@ -1,6 +1,11 @@
 package com.myway.app.ui.route
 
 import androidx.lifecycle.ViewModel
+import com.myway.app.data.local.LocalStore
+import com.myway.app.domain.model.Constraints
+import com.myway.app.domain.model.Preference
+import com.myway.app.domain.model.RouteType
+import com.myway.app.ui.common.toSaved
 import com.myway.app.ui.search.StationGroupItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +39,26 @@ class RouteSelectionViewModel : ViewModel() {
     private val _points = MutableStateFlow(Points())
     val points: StateFlow<Points> = _points.asStateFlow()
 
+    /** AI 모드에서 확인한 제한·선호. 사용자가 출발·도착을 직접 바꾸면 지운다 */
+    data class AiExtras(
+        val said: String,                       // 사용자가 한 말
+        val constraints: Constraints,
+        val preference: Preference?,
+        val preferredType: RouteType?
+    )
+    private val _aiExtras = MutableStateFlow<AiExtras?>(null)
+    val aiExtras: StateFlow<AiExtras?> = _aiExtras.asStateFlow()
+
+    /** 2-9에서 고른 기준: 다음 결과 화면이 이 탭부터 (한 번 쓰면 사라짐) */
+    private var pendingType: RouteType? = null
+    fun setPreferredType(type: RouteType) { pendingType = type }
+    fun consumePreferredType(): RouteType? = pendingType.also { pendingType = null }
+
+    fun setAiRoute(origin: StationGroupItem, destination: StationGroupItem, extras: AiExtras) {
+        _aiExtras.value = extras
+        _points.value = Points(origin, destination)
+    }
+
     /** 역 선택 시트(1-12)에 띄울 역 */
     private val _focused = MutableStateFlow<StationGroupItem?>(null)
     val focused: StateFlow<StationGroupItem?> = _focused.asStateFlow()
@@ -45,8 +70,21 @@ class RouteSelectionViewModel : ViewModel() {
         val p = _points.value
         val other = if (slot == Slot.ORIGIN) p.destination else p.origin
         if (other != null && other.sameStationAs(item)) return false
+        _aiExtras.value = null
         _points.value = if (slot == Slot.ORIGIN) p.copy(origin = item) else p.copy(destination = item)
+        LocalStore.addRecentStation(item.toSaved())          // 1-10 최근 검색
         return true
+    }
+
+    /** 최근 경로·즐겨찾기에서 바로 길찾기 */
+    fun setRoute(origin: StationGroupItem, destination: StationGroupItem) {
+        _aiExtras.value = null
+        _points.value = Points(origin, destination)
+    }
+
+    /** 새 검색 시작: 지난 검색이 끝난(둘 다 찬) 상태면 비움. 하나만 고른 상태는 이어서 쓰도록 유지 */
+    fun startFresh() {
+        if (_points.value.isComplete) { _points.value = Points(); _aiExtras.value = null }
     }
 
     fun clear(slot: Slot) = _points.update {

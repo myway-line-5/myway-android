@@ -29,4 +29,10 @@
     <color name="line5">#996BAB</color>
     <color name="line9">#B29959</color>
     <color name="line_unknown">#7A8296</color>
+
+    <!-- 홈 (1-2) -->
+    <color name="alpha_navy_88">#E01C2659</color>
+    <color name="alpha_surface_94">#F0FFFFFF</color>
+    <color name="ai_gradient_start">#8B5CFF</color>
+    <color name="ai_gradient_end">#3D7BFF</color>
 </resources>

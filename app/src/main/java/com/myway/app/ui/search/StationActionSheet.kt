@@ -2,6 +2,7 @@ package com.myway.app.ui.search
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
+import com.myway.app.ui.common.NoticeDialog
+import com.myway.app.ui.station.StationDetailFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.myway.app.R
 import com.myway.app.databinding.SheetStationActionBinding
@@ -45,6 +50,12 @@ class StationActionSheet : BottomSheetDialogFragment() {
         b.departButton.setOnClickListener { pick(Slot.ORIGIN, item) }
         b.arriveButton.setOnClickListener { pick(Slot.DESTINATION, item) }
         b.favoriteButton.setOnClickListener { searchVm.onToggleFavorite(item) }
+        b.detailButton.setOnClickListener {
+            val parent = requireParentFragment()
+            dismiss()
+            parent.findNavController().navigate(R.id.to_station_detail,
+                bundleOf(StationDetailFragment.ARG_LINE to selectedIndex))
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -99,10 +110,24 @@ class StationActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun pick(slot: Slot, item: StationGroupItem) {
+        val parent = parentFragment
+        if (parent !is SearchFragment) routeVm.startFresh()     // 노선도·즐겨찾기 = 새 검색
         val ok = routeVm.set(slot, item)
-        val parent = parentFragment as? SearchFragment
         dismiss()
-        if (!ok) parent?.showSameStationNotice()
+        when {
+            parent is SearchFragment -> if (!ok) parent.showSameStationNotice()
+            parent == null -> Unit
+            !ok -> NoticeDialog.show(parent, R.string.same_station_title, R.string.same_station_body)
+            // 노선도·즐겨찾기에서 골랐을 때: 둘 다 정해졌으면 바로 결과, 아니면 남은 칸을 검색에서
+            routeVm.points.value.isComplete -> parent.findNavController().navigate(R.id.to_result)
+            else -> parent.findNavController().navigate(R.id.to_search)
+        }
+    }
+
+    /** 닫히면 부모(홈)가 '지금 누른 역' 핀을 거두도록 알림 */
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (isAdded) parentFragmentManager.setFragmentResult(RESULT_CLOSED, Bundle())
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -117,6 +142,7 @@ class StationActionSheet : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "StationActionSheet"
+        const val RESULT_CLOSED = "station_sheet_closed"
         private const val KEY_TAB = "tab"
     }
 }

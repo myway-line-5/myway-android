@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -16,12 +15,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.myway.app.R
+import com.myway.app.data.local.LocalStore
+import com.myway.app.ui.common.toItem
+import com.myway.app.ui.common.Motion
 import com.myway.app.databinding.DialogNoticeBinding
 import com.myway.app.databinding.FragmentSearchBinding
 import com.myway.app.ui.route.RouteSelectionViewModel
 import com.myway.app.ui.route.RouteSelectionViewModel.Points
 import com.myway.app.ui.route.RouteSelectionViewModel.Slot
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /**
@@ -43,12 +47,27 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         onFavoriteClick = { vm.onToggleFavorite(it) }
     )
 
+    private var recentRows: List<RecentRow> = emptyList()
+    private val recentAdapter = RecentAdapter(
+        onClearAll = { LocalStore.clearRecent() },
+        onStation = { onStationClick(it.toItem()) },
+        onStationFavorite = { LocalStore.toggleFavoriteStation(it) },
+        onStationRemove = { LocalStore.removeRecentStation(it.name) },
+        onRoute = { r ->
+            routeVm.setRoute(r.origin.toItem(), r.destination.toItem())
+            findNavController().navigate(R.id.action_search_to_result)
+        },
+        onRouteFavorite = { LocalStore.toggleFavoriteRoute(it) },
+        onRouteRemove = { LocalStore.removeRecentRoute(it) }
+    )
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val b = FragmentSearchBinding.bind(view).also { _b = it }
 
         b.stationList.adapter = adapter
         b.backButton.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
-        b.favoritesButton.setOnClickListener { /* TODO: 즐겨찾기 화면(61~65)으로 이동 */ }
+        b.favoritesButton.setOnClickListener { findNavController().navigate(R.id.to_favorites) }
+        b.recentList.adapter = recentAdapter
         b.searchInput.doAfterTextChanged { vm.onQueryChange(it?.toString().orEmpty()) }
 
         // 칩: 누르면 그 칸을 비우고 다시 고르기
@@ -65,8 +84,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             destinationClear.setOnClickListener { routeVm.clear(Slot.DESTINATION) }
         }
         b.findRouteButton.setOnClickListener {
-            // TODO: RouteRepository Fake 생기면 경로 결과(1-18)로 이동
-            Toast.makeText(requireContext(), R.string.route_find_pending, Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_search_to_result)
         }
 
         showKeyboard()
@@ -75,6 +93,23 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { vm.state.collect { lastState = it; render() } }
                 launch { routeVm.points.collect(::renderPoints) }
+                launch {
+                    combine(LocalStore.recentStations, LocalStore.recentRoutes,
+                        LocalStore.favoriteStations, LocalStore.favoriteRoutes) { st, rt, fs, fr ->
+                        buildList {
+                            if (st.isNotEmpty()) {
+                                add(RecentRow.Header(R.string.recent_stations, showClearAll = true))
+                                st.forEach { s -> add(RecentRow.StationRow(s, fs.any { it.name == s.name })) }
+                            }
+                            if (rt.isNotEmpty()) {
+                                add(RecentRow.Header(R.string.recent_routes, showClearAll = st.isEmpty()))
+                                rt.forEach { r ->
+                                    add(RecentRow.RouteRow(r, fr.any { it.samePair(r.origin.name, r.destination.name) }))
+                                }
+                            }
+                        }
+                    }.collect { rows -> recentRows = rows; recentAdapter.submitList(rows); render() }
+                }
             }
         }
     }
@@ -85,11 +120,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         val b = _b ?: return
         val changed = lastPoints != null && lastPoints != p
         lastPoints = p
+        if (changed) Motion.change(b.root as android.view.ViewGroup)   // 칩·카드가 툭 튀지 않게
 
         // 1-13 카드
         b.routeCard.root.isVisible = p.isComplete
         b.findRouteButton.isVisible = p.isComplete
-        b.backButton.isVisible = !p.isComplete
         b.searchField.isVisible = !p.isComplete
         p.origin?.let { b.routeCard.originName.text = it.name }
         p.destination?.let { b.routeCard.destinationName.text = it.name }
@@ -131,6 +166,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         b.resultLabel.isVisible = hasResult
         b.stationList.isVisible = hasResult
         b.emptyView.isVisible = searching && (state is SearchUiState.Empty || state is SearchUiState.Error)
+        b.recentList.isVisible = searching && state is SearchUiState.Idle && recentRows.isNotEmpty()
 
         when (state) {
             is SearchUiState.Success -> adapter.submitList(state.items)
