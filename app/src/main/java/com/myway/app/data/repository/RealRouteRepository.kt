@@ -15,13 +15,18 @@ class RealRouteRepository(
 ) : RouteRepository {
 
     override suspend fun findRoutes(condition: RouteCondition): Resource<List<RouteResult>> {
-        val origin = condition.origin?.station
-        val destination = condition.destination?.station
-        if (origin == null || destination == null) {
+        val rawOrigin = condition.origin?.station
+        val rawDestination = condition.destination?.station
+        if (rawOrigin == null || rawDestination == null) {
             return Resource.Failure(AppError.UnsupportedCondition)
         }
-        // 노선도에서 만든 임시 역(서버에 없는 역)은 서버로 보내지 않는다
-        if (origin.stationId.startsWith("map:") || destination.stationId.startsWith("map:")) {
+
+        // 노선도에서 만든 임시 역(map:)은 서버의 같은 이름·호선 역으로 바꿔서 보낸다
+        val origin = resolve(rawOrigin)
+        val destination = resolve(rawDestination)
+        android.util.Log.d("MyWayRoute", "요청 origin=${origin?.stationId} destination=${destination?.stationId}")
+        if (origin == null || destination == null) {
+            android.util.Log.d("MyWayRoute", "서버에 없는 역 -> UnsupportedCondition")
             return Resource.Failure(AppError.UnsupportedCondition)
         }
 
@@ -34,6 +39,17 @@ class RealRouteRepository(
         }
     }
 
+    // "map:{호선}:{이름}" 임시 역 -> 서버에서 같은 이름·호선 역을 찾는다. 못 찾으면 null
+    private suspend fun resolve(s: Station): Station? {
+        if (!s.stationId.startsWith("map:")) return s
+        val parts = s.stationId.split(":", limit = 3)
+        if (parts.size < 3) return null
+        val line = parts[1]
+        val name = parts[2]
+        val res = safeApiCall { api.searchStations(name).toDomain() }
+        return (res as? Resource.Success)?.data?.firstOrNull { it.name == name && it.line == line }
+    }
+
     // 서버 status/error_code -> 앱 결과
     private fun RouteSearchResponseDto.toResource(
         origin: Station,
@@ -42,7 +58,10 @@ class RealRouteRepository(
         "ok" -> {
             val result = route?.toDomain()
             if (result != null) Resource.Success(listOf(result))
-            else Resource.Failure(AppError.Server)
+            else {
+                android.util.Log.e("MyWayRoute", "응답 변환 실패: $this")
+                Resource.Failure(AppError.Server)
+            }
         }
         "no_route" -> Resource.Failure(AppError.RouteNotFound)
         "incomplete" -> Resource.Failure(AppError.Server)
