@@ -86,9 +86,14 @@ debug 빌드에서만 `127.0.0.1`·`10.0.2.2`로의 http 통신이 허용됩니�
 - [x] 서버 연동 기반 (DTO, Retrofit, 세션 헤더, ErrorMapper, RealStationRepository)
 - [x] 검색 화면, 역 선택 시트 (출발·도착 지정)
 - [x] Fake/Real 전환 스위치 (RepositoryProvider)
-- [ ] 역 검색 서버 연결 실기기 확인
-- [ ] ConditionRepository (AI 모드)
-- [ ] 즐겨찾기·최근 검색 모델, Room
-- [ ] Navigation 뼈대, 홈·결과 화면
-- [ ] 경로 탐색 서버 연동 (서버 API 확정 후)
+- [x] 역 검색 서버 연결 실기기 확인
+- [x] Navigation 뼈대, 홈(노선도)·결과 화면
+- [x] 즐겨찾기·최근 검색·최근 경로 (LocalStore, 로컬 저장)
+- [x] 경로 탐색 서버 연동 (`/v1/routes/search`, RealRouteRepository, 실기기 확인)
+- [ ] 환승역에서 두 호선 모두 전달해 경로 탐색 (현재는 첫 호선만 전달)
+- [ ] 경로 기준(최단시간/최소환승/최소요금) 요청에 직접 전달 (서버 확인 필요)
+- [ ] 요금 표시 (서버가 현재 null 반환)
+- [ ] ConditionRepository (AI 모드, `/v1/conditions/interpret`)
+- [ ] 역 상세 정보 (서버 API 확인 필요)
+- [ ] 안 쓰는 Room 코드 정리 (즐겨찾기·최근 검색은 LocalStore로 통일됨)
 - [ ] Phase 2 기능
