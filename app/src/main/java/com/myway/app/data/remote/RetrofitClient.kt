@@ -18,6 +18,7 @@ object RetrofitClient {
         .addInterceptor(SessionInterceptor(sessionId))
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS) // AI 해석은 서버 타임아웃이 25초라 여유 있게
+        .retryOnConnectionFailure(false) // 연결이 끊겼을 때 같은 요청을 자동으로 다시 보내지 않음
         .build()
 
     val api: MyWayApi = Retrofit.Builder()
