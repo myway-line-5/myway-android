@@ -23,5 +23,6 @@ suspend fun <T> safeApiCall(block: suspend () -> T): Resource<T> =
     } catch (e: CancellationException) {
         throw e   // 화면이 닫혀서 취소된 건 에러가 아니므로 그대로 던짐
     } catch (e: Exception) {
+        android.util.Log.e("MyWayApi", "API 호출 실패", e)
         Resource.Failure(ErrorMapper.fromThrowable(e))
     }
