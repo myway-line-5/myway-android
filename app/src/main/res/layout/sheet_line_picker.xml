@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 1-6~1-9 노선도 선택 시트 -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/space_xl"
+    android:paddingBottom="@dimen/space_xxl">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_handle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/line_picker_title"
+            android:textAppearance="@style/Text.MyWay.Heading18Bold"
+            android:textSize="20sp" />
+
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="@dimen/touch_large"
+            android:layout_height="@dimen/touch_large"
+            android:layout_marginEnd="-14dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/line_picker_close"
+            android:src="@drawable/ic_close" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/rowContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m"
+        android:orientation="vertical" />
+</LinearLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 5-5 삭제 확인: 제목 / 본문 / [취소][삭제] -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/space_xxl"
+    android:paddingTop="@dimen/space_xxl"
+    android:paddingEnd="@dimen/space_xxl"
+    android:paddingBottom="@dimen/space_xl">
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Text.MyWay.Heading18Bold" />
+
+    <TextView
+        android:id="@+id/dialogBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:textAppearance="@style/Text.MyWay.Label14Medium"
+        android:textColor="@color/text_secondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xl"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/cancelButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_secondary"
+            android:gravity="center"
+            android:text="@string/fav_cancel"
+            android:textAppearance="@style/Text.MyWay.Body16Bold" />
+
+        <TextView
+            android:id="@+id/confirmButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="@dimen/space_s"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_danger"
+            android:gravity="center"
+            android:textAppearance="@style/Text.MyWay.Body16Bold"
+            android:textColor="@color/text_on_brand" />
+    </LinearLayout>
+</LinearLayout>

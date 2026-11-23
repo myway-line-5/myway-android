@@ -87,11 +87,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/space_l"
-        android:layout_marginTop="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_s"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/backButton" />
 
     <TextView
         android:id="@+id/findRouteButton"
@@ -151,6 +151,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/resultLabel"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- 1-10 최근 검색 · 최근 경로 (검색어가 비었을 때) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recentList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/space_s"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/space_l"
+        android:paddingBottom="@dimen/space_xxl"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_goneMarginTop="@dimen/space_l"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pointChip"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <!-- 1-15 결과 없음 -->

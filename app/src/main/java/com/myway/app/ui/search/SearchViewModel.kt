@@ -12,6 +12,8 @@ import com.myway.app.data.repository.StationRepository
 import com.myway.app.domain.model.AppError
 import com.myway.app.domain.model.Station
 import com.myway.app.ui.common.LineStyle
+import com.myway.app.ui.common.toSaved
+import com.myway.app.data.local.LocalStore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -49,9 +51,15 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
         RoomFavoriteRepository(AppDatabase.getInstance(application).favoriteDao())
 
     private val query = MutableStateFlow("")
-    private val favorites: StateFlow<Set<String>> = favoriteRepo.observeFavoriteNames()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
-    val favoriteNames: StateFlow<Set<String>> = favorites
+    /**
+     * 즐겨찾기한 역 이름.
+     * 지금은 즐겨찾기 화면·역 상세·노선도 시트와 같은 저장소(LocalStore)를 써서 어디서 ★를 눌러도 똑같이 보이게 함.
+     * TODO(팀 논의): Room(favoriteRepo)으로 한 번에 옮기기 — 역의 노선 정보·경로 즐겨찾기·순서까지 Room 스키마에 필요
+     */
+    val favoriteNames: StateFlow<Set<String>> = LocalStore.favoriteStations
+        .map { list -> list.map { it.name }.toSet() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly,
+            LocalStore.favoriteStations.value.map { it.name }.toSet())
     private var cachedStations: List<Station>? = null
 
     private val result: Flow<SearchUiState> = query
@@ -66,7 +74,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
 
-    val state: StateFlow<SearchUiState> = combine(result, favorites) { s, favs ->
+    val state: StateFlow<SearchUiState> = combine(result, favoriteNames) { s, favs ->
         if (s is SearchUiState.Success)
             s.copy(items = s.items.map { it.copy(isFavorite = it.name in favs) })
         else s
@@ -75,7 +83,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     fun onQueryChange(text: String) { query.value = text }
 
     fun onToggleFavorite(item: StationGroupItem) {
-        viewModelScope.launch { favoriteRepo.toggle(item.name) }
+        LocalStore.toggleFavoriteStation(item.toSaved())
     }
 
     private suspend fun search(q: String): SearchUiState {

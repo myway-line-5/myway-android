@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 1-12 역 시트 → 5-2 역 상세 -->
+    <string name="station_detail_open">역 정보 · 첫차 · 시간표</string>
+    <!-- 5-2 역 상세 -->
+    <string name="detail_back">뒤로 가기</string>
+    <string name="detail_error">역 정보를 불러오지 못했어요.\n잠시 후 다시 시도해 주세요.</string>
+    <string name="detail_first_last">첫차 · 막차</string>
+    <string name="detail_direction">방면</string>
+    <string name="detail_first">첫차</string>
+    <string name="detail_last">막차</string>
+    <string name="detail_timetable">시간표</string>
+    <string name="detail_weekday">평일</string>
+    <string name="detail_saturday">토요일</string>
+    <string name="detail_holiday">공휴일</string>
+    <string name="detail_next_trains">%s · 지금부터</string>
+    <string name="detail_service_over">오늘 운행이 끝났어요 · 첫차 %s</string>
+    <string name="detail_congestion">시간대별 혼잡도 (평일)</string>
+    <string name="detail_now">지금 %s</string>
+    <string name="detail_level_low">여유</string>
+    <string name="detail_level_mid">보통</string>
+    <string name="detail_level_high">혼잡</string>
+    <string name="detail_bar_desc">%1$d시 %2$s</string>
+    <string name="detail_facilities">편의시설</string>
+    <string name="detail_time_next">다음 열차 %s</string>
+    <!-- 노선도 탭 -->
+    <string name="map_station_desc">%s역</string>
+    <string name="map_pin_origin">출발 %s  ✕</string>
+    <string name="map_pin_destination">도착 %s  ✕</string>
+    <string name="map_pin_removed_origin">출발 %s 핀을 지웠어요</string>
+    <string name="map_pin_removed_destination">도착 %s 핀을 지웠어요</string>
+    <string name="map_pin_undo">되돌리기</string>
+    <string name="map_pin_selected">%s역을 골랐어요</string>
+</resources>
