@@ -9,8 +9,8 @@ object RepositoryProvider {
     fun stationRepository(): StationRepository =
         if (USE_FAKE) FakeStationRepository() else RealStationRepository(RetrofitClient.api)
 
-    // TODO: RealRouteRepository 생기면 USE_FAKE로 전환
-    fun routeRepository(): RouteRepository = FakeRouteRepository()
+    fun routeRepository(): RouteRepository =
+        if (USE_FAKE) FakeRouteRepository() else RealRouteRepository(RetrofitClient.api)
 
     // TODO: RealConditionRepository(메인 서버 /conditions/interpret) 생기면 USE_FAKE로 전환
     fun conditionRepository(): ConditionRepository = FakeConditionRepository()
