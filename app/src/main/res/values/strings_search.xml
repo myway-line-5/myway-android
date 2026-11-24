@@ -9,6 +9,8 @@
     <string name="search_empty_title">\'%s\'을(를) 찾을 수 없어요</string>
     <string name="search_empty_body">현재는 2·5·9호선 역만 검색할 수 있어요.\n초성 검색도 가능해요 (예: ㅇㅇㄷ)</string>
     <string name="search_error_title">역 정보를 불러오지 못했어요</string>
+    <string name="search_offline_title">인터넷에 연결되어 있지 않아요</string>
+    <string name="search_offline_body">연결되면 다시 검색해 주세요. 즐겨찾기는 지금도 볼 수 있어요.</string>
     <string name="search_error_body">잠시 후 다시 검색해 주세요.</string>
 
     <!-- 목록 행 -->
@@ -18,8 +20,10 @@
     <string name="favorite_remove">%s 즐겨찾기 해제</string>
 
     <!-- 1-17 안내 팝업 (Figma 문구) -->
-    <string name="inactive_dialog_title">지금은 이용할 수 없는 역이에요</string>
-    <string name="inactive_dialog_body">공사·폐쇄 등으로 이 역에는 열차가 서지 않아요.\n다른 역을 골라 주세요.</string>
+    <!-- 29 비활성 역: 데이터상 서비스 대상 아님 (당일 막차 종료와 다른 개념 · 설계서 #14) -->
+    <string name="inactive_dialog_title">현재 검색 대상이 아닌 역이에요</string>
+    <string name="inactive_dialog_body">이 역은 지금 길찾기에 쓸 수 없어요.\n다른 역을 골라 주세요.</string>
+    <string name="inactive_caption">%s · 검색 대상 아님</string>
     <string name="inactive_dialog_action">확인</string>
 
     <!-- 미지원 노선 (2·5·9호선 외) -->
@@ -46,4 +50,7 @@
     <string name="recent_clear_all">전체 삭제</string>
     <string name="recent_remove">%s 최근 기록에서 지우기</string>
     <string name="recent_route_name">%1$s → %2$s</string>
+    <string name="search_hint_line">%s호선 역 검색</string>
+    <string name="search_line_filter">%s호선 역만 찾는 중</string>
+    <string name="search_line_filter_desc">%s호선 필터 해제</string>
 </resources>

@@ -18,8 +18,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.myway.app.R
 import com.myway.app.data.local.LocalStore
+import com.myway.app.data.remote.NetworkMonitor
+import com.myway.app.domain.model.AppError
 import com.myway.app.ui.common.toItem
 import com.myway.app.ui.common.Motion
+import com.myway.app.ui.common.blockedOffline
+import com.myway.app.ui.common.LineStyle
 import com.myway.app.databinding.DialogNoticeBinding
 import com.myway.app.databinding.FragmentSearchBinding
 import com.myway.app.ui.route.RouteSelectionViewModel
@@ -27,6 +31,8 @@ import com.myway.app.ui.route.RouteSelectionViewModel.Points
 import com.myway.app.ui.route.RouteSelectionViewModel.Slot
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import com.myway.app.ui.common.displayName
+import com.myway.app.ui.common.bilingualKeyboard
 
 /**
  * 검색 레이어
@@ -54,8 +60,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         onStationFavorite = { LocalStore.toggleFavoriteStation(it) },
         onStationRemove = { LocalStore.removeRecentStation(it.name) },
         onRoute = { r ->
-            routeVm.setRoute(r.origin.toItem(), r.destination.toItem())
-            findNavController().navigate(R.id.action_search_to_result)
+            // 오프라인이어도 즐겨찾기에 경로째 저장돼 있으면 그 저장본을 보여 줄 수 있음
+            if (LocalStore.savedSnapshot(r.origin.name, r.destination.name) != null || !blockedOffline()) {
+                routeVm.setRoute(r.origin.toItem(), r.destination.toItem())
+                findNavController().navigate(R.id.action_search_to_result)
+            }
         },
         onRouteFavorite = { LocalStore.toggleFavoriteRoute(it) },
         onRouteRemove = { LocalStore.removeRecentRoute(it) }
@@ -64,10 +73,15 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val b = FragmentSearchBinding.bind(view).also { _b = it }
 
+        // 노선별 노선도에서 왔으면 그 호선만 (칩의 ✕로 전체 검색)
+        if (savedInstanceState == null) vm.setLineFilter(arguments?.getString(ARG_LINE))
+        b.lineFilterChip.setOnClickListener { vm.setLineFilter(null) }
+
         b.stationList.adapter = adapter
         b.backButton.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         b.favoritesButton.setOnClickListener { findNavController().navigate(R.id.to_favorites) }
         b.recentList.adapter = recentAdapter
+        b.searchInput.bilingualKeyboard()          // 영어 화면에서도 한글로 역 검색
         b.searchInput.doAfterTextChanged { vm.onQueryChange(it?.toString().orEmpty()) }
 
         // 칩: 누르면 그 칸을 비우고 다시 고르기
@@ -84,13 +98,26 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             destinationClear.setOnClickListener { routeVm.clear(Slot.DESTINATION) }
         }
         b.findRouteButton.setOnClickListener {
-            findNavController().navigate(R.id.action_search_to_result)
+            val p = routeVm.points.value
+            val saved = LocalStore.savedSnapshot(p.origin?.name.orEmpty(), p.destination?.name.orEmpty()) != null
+            if (saved || !blockedOffline()) findNavController().navigate(R.id.action_search_to_result)
         }
 
         showKeyboard()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    vm.lineFilter.collect { line ->
+                        val b2 = _b ?: return@collect
+                        b2.lineFilterChip.isVisible = line != null
+                        if (line != null) {
+                            b2.lineFilterChip.text = getString(R.string.search_line_filter, line)
+                            b2.lineFilterChip.contentDescription = getString(R.string.search_line_filter_desc, line)
+                            b2.lineFilterChip.compoundDrawablesRelative[0]?.mutate()?.setTint(requireContext().getColor(LineStyle.colorRes(line)))
+                        }
+                    }
+                }
                 launch { vm.state.collect { lastState = it; render() } }
                 launch { routeVm.points.collect(::renderPoints) }
                 launch {
@@ -126,8 +153,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         b.routeCard.root.isVisible = p.isComplete
         b.findRouteButton.isVisible = p.isComplete
         b.searchField.isVisible = !p.isComplete
-        p.origin?.let { b.routeCard.originName.text = it.name }
-        p.destination?.let { b.routeCard.destinationName.text = it.name }
+        p.origin?.let { b.routeCard.originName.text = it.name.displayName() }
+        p.destination?.let { b.routeCard.destinationName.text = it.name.displayName() }
         b.routeCard.originClear.contentDescription = getString(R.string.point_clear_desc, getString(R.string.point_origin))
         b.routeCard.destinationClear.contentDescription = getString(R.string.point_clear_desc, getString(R.string.point_destination))
 
@@ -139,8 +166,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             val label = getString(if (isOrigin) R.string.point_origin else R.string.point_destination)
             b.pointChip.chipDot.setBackgroundResource(if (isOrigin) R.drawable.dot_origin else R.drawable.dot_destination)
             b.pointChip.chipLabel.text = label
-            b.pointChip.chipName.text = chipItem.name
-            b.pointChip.root.contentDescription = getString(R.string.point_chip_desc, label, chipItem.name)
+            b.pointChip.chipName.text = chipItem.name.displayName()
+            b.pointChip.root.contentDescription = getString(R.string.point_chip_desc, label, chipItem.name.displayName())
         }
         b.searchInput.setHint(
             when (p.missing) {
@@ -157,11 +184,22 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         render()
     }
 
+    private var lastKind = -1
+
     private fun render() {
         val b = _b ?: return
         val state = lastState
         val searching = routeVm.points.value.isComplete.not()
         val hasResult = searching && state is SearchUiState.Success
+        // 결과 ↔ 없음 ↔ 최근 목록이 바뀌는 순간만 부드럽게 (글자 칠 때마다 움직이지 않게)
+        val kind = when {
+            !searching -> 0
+            hasResult -> 1
+            state is SearchUiState.Empty || state is SearchUiState.Error -> 2
+            else -> 3
+        }
+        if (lastKind != -1 && kind != lastKind) Motion.change(b.root as android.view.ViewGroup, 200)
+        lastKind = kind
         b.progress.isVisible = searching && state is SearchUiState.Loading
         b.resultLabel.isVisible = hasResult
         b.stationList.isVisible = hasResult
@@ -174,9 +212,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 b.emptyTitle.text = getString(R.string.search_empty_title, state.query)
                 b.emptyBody.setText(R.string.search_empty_body)
             }
-            is SearchUiState.Error -> {          // TODO: ErrorPresenter 로 교체
-                b.emptyTitle.setText(R.string.search_error_title)
-                b.emptyBody.setText(R.string.search_error_body)
+            is SearchUiState.Error -> {
+                val offline = state.error is AppError.Network || !NetworkMonitor.isOnline
+                b.emptyTitle.setText(if (offline) R.string.search_offline_title else R.string.search_error_title)
+                b.emptyBody.setText(if (offline) R.string.search_offline_body else R.string.search_error_body)
             }
             else -> adapter.submitList(emptyList())
         }
@@ -241,6 +280,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onDestroyView() {
         _b = null
         lastPoints = null
+        lastKind = -1
         super.onDestroyView()
+    }
+
+    companion object {
+        const val ARG_LINE = "line"
     }
 }

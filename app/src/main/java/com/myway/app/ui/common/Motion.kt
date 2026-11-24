@@ -27,6 +27,23 @@ object Motion {
             .setInterpolator(ease))
     }
 
+    /** 같은 자리 내용이 바뀔 때(탭 전환 등): 살짝 옅어졌다 옆에서 들어옴. dir = +1 오른쪽 탭으로, -1 왼쪽 */
+    fun refresh(v: View, dir: Int = 0) {
+        val d = v.resources.displayMetrics.density
+        v.animate().cancel()
+        v.alpha = 0f
+        v.translationX = dir * 16 * d
+        v.animate().alpha(1f).translationX(0f).setDuration(220).setInterpolator(ease).start()
+    }
+
+    /** 처음 나타날 때: 아래에서 살짝 떠오름 */
+    fun rise(v: View, delay: Long = 0) {
+        val d = v.resources.displayMetrics.density
+        v.alpha = 0f
+        v.translationY = 10 * d
+        v.animate().alpha(1f).translationY(0f).setStartDelay(delay).setDuration(260).setInterpolator(ease).start()
+    }
+
     /** 카드들이 아래에서 차례로 떠오름 */
     fun stagger(views: List<View>, step: Long = 45) {
         val d = views.firstOrNull()?.resources?.displayMetrics?.density ?: return

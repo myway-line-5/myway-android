@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Text.MyWay.Display40Bold">
-        <item name="android:textSize">40sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_hero</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_bold</item>
         <item name="android:letterSpacing">-0.03</item>
     </style>
 </resources>

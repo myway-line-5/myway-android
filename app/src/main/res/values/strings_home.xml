@@ -27,4 +27,7 @@
     <string name="map_line2_desc">순환선 · 성수·신정 지선</string>
     <string name="map_line5_desc">방화 ~ 하남검단산 · 마천 지선</string>
     <string name="map_line9_desc">개화 ~ 중앙보훈병원 · 급행 운행</string>
+    <string name="home_offline">오프라인 · 즐겨찾기와 최근 기록만 볼 수 있어요</string>
+    <string name="offline_title">인터넷에 연결되어 있지 않아요</string>
+    <string name="offline_body">경로 찾기와 역 정보는 연결되면 볼 수 있어요. 즐겨찾기·최근 목록은 지금도 볼 수 있어요.</string>
 </resources>

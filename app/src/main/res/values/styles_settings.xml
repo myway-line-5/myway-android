@@ -38,6 +38,8 @@
         <item name="android:minHeight">52dp</item>
         <item name="android:paddingHorizontal">@dimen/space_l</item>
         <item name="android:textAppearance">@style/Text.MyWay.Body16Medium</item>
+        <!-- 스위치 기본 글자색(테마)이 글자 모양보다 우선이라 직접 지정 → 다크에서도 보임 -->
+        <item name="android:textColor">@color/text_primary</item>
     </style>
     <style name="Settings_Row">
         <item name="android:layout_width">match_parent</item>
@@ -52,6 +54,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textAppearance">@style/Text.MyWay.Body16Medium</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
     <style name="Settings_Chevron">
         <item name="android:layout_width">@dimen/icon</item>
@@ -61,7 +64,10 @@
     </style>
 
     <!-- 설정 패널: 전체 화면, 투명 배경 (딤·블러는 직접 그림) -->
-    <style name="Theme_MyWay_SettingsPanel" parent="Theme.Material3.Light.NoActionBar">
+    <!-- DayNight: 라이트 고정이면 다크에서 기본 글자가 검게 나옴 -->
+    <style name="Theme_MyWay_SettingsPanel" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:fontFamily">@font/noto_sans_kr</item>
+        <item name="fontFamily">@font/noto_sans_kr</item>
         <item name="colorPrimary">@color/brand_navy</item>
         <item name="colorOnPrimary">@color/text_on_brand</item>
         <item name="colorPrimaryContainer">@color/bg_muted</item>

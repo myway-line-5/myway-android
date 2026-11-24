@@ -26,6 +26,10 @@
     <string name="result_error_not_found">조건에 맞는 경로가 없어요</string>
     <string name="result_error_not_found_body">출발·도착역을 바꿔 다시 찾아 주세요.</string>
     <string name="result_error_network">인터넷 연결을 확인해 주세요</string>
+    <string name="result_error_network_body">연결되면 다시 찾기를 눌러 주세요.</string>
+    <string name="result_error_unsupported">아직 이 구간은 안내하지 않아요</string>
+    <string name="result_error_unsupported_body">2·5·9호선 역끼리만 찾을 수 있어요. 다른 역으로 바꿔 주세요.</string>
+    <string name="result_error_server">서버가 잠시 응답하지 않아요</string>
     <string name="result_error_generic">경로를 불러오지 못했어요</string>
     <string name="result_error_generic_body">잠시 후 다시 찾아 주세요.</string>
     <string name="result_retry">다시 찾기</string>

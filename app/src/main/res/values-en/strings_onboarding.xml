@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_onboarding.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
+<resources>
+    <string name="perm_later">Later</string>
+    <string name="perm_allow">Allow</string>
+    <string name="perm_mic_title">To speak your request,\nallow the microphone</string>
+    <string name="perm_mic_body">Used only when you tap the speak button. You can always type instead</string>
+    <string name="perm_notify_title">To get stop and transfer alerts,\nallow notifications</string>
+    <string name="perm_notify_body">We\'ll tell you when to get off and transfer, even with the screen off</string>
+    <string name="perm_battery_title">Keep guidance going\nwith the screen off</string>
+    <string name="perm_battery_body">Exclude MyWay from battery optimization so guidance isn\'t cut off on the move</string>
+    <string name="perm_nearby_title">To talk through your earphones,\nallow nearby devices</string>
+    <string name="perm_nearby_body">Used only to find connected earphones for the mic. You\'ll still hear guidance without it</string>
+    <string name="tut_skip">Skip</string>
+    <string name="tut_start">Get started</string>
+    <string name="tut_hint_next">Tap or swipe for next  ›</string>
+    <string name="tut_hint_ai">Tap to go to AI mode  ›</string>
+    <string name="tut_a11y">Step %1$d of %2$d. %3$s. %4$s. Double-tap for next</string>
+    <string name="tut_1_title">Pick a line</string>
+    <string name="tut_1_body">Show just the line you want on the map</string>
+    <string name="tut_2_title">Choose on the map</string>
+    <string name="tut_2_body">Tap a station to set From and To. Pinch to zoom</string>
+    <string name="tut_3_title">Search · Favorites</string>
+    <string name="tut_3_body">Find stations by name or initials, and star your usual trips</string>
+    <string name="tut_4_title">Switch to AI mode</string>
+    <string name="tut_4_body">Type it like you\'d say it, such as “fewer transfers please”</string>
+    <string name="tut_5_title">Just say it</string>
+    <string name="tut_5_body">Type a sentence or use the mic. From, To and priority are picked up automatically</string>
+    <string name="tut_6_title">Back to basic mode</string>
+    <string name="tut_6_body">Tap anytime to choose stations yourself</string>
+    <string name="tut_7_title">Settings</string>
+    <string name="tut_7_body">Make voice, alerts, route criteria and language your own</string>
+    <string name="tut_8_title">Help</string>
+    <string name="tut_8_body">You can replay this guide anytime from the ? button</string>
+</resources>

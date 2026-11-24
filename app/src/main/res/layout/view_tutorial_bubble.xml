@@ -26,8 +26,8 @@
         android:importantForAccessibility="no"
         android:letterSpacing="-0.02"
         android:textColor="@color/text_primary"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textSize="@dimen/text_heading20"
+        android:fontFamily="@font/noto_sans_kr_bold" />
 
     <TextView
         android:id="@+id/tutBody"

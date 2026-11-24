@@ -23,6 +23,10 @@
         app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
         app:destination="@id/stationDetailFragment" />
 
+    <action android:id="@+id/to_route_map"
+        app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
+        app:destination="@id/routeMapFragment" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.myway.app.ui.home.HomeFragment"
@@ -69,4 +73,10 @@
         android:id="@+id/stationDetailFragment"
         android:name="com.myway.app.ui.station.StationDetailFragment"
         android:label="station_detail" />
+
+    <!-- 59 선택 경로 지도 (결과의 지도 버튼) -->
+    <fragment
+        android:id="@+id/routeMapFragment"
+        android:name="com.myway.app.ui.result.RouteMapFragment"
+        android:label="route_map" />
 </navigation>

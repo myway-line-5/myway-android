@@ -11,6 +11,7 @@ import com.myway.app.R
 import com.myway.app.databinding.ItemTimelineLegBinding
 import com.myway.app.databinding.ItemTimelineStopBinding
 import com.myway.app.ui.common.LineStyle
+import com.myway.app.ui.common.displayName
 
 class TimelineAdapter : ListAdapter<TimelineRow, RecyclerView.ViewHolder>(Diff) {
 
@@ -33,10 +34,10 @@ class TimelineAdapter : ListAdapter<TimelineRow, RecyclerView.ViewHolder>(Diff) 
                 badge.text = row.badge
                 badge.backgroundTintList = ColorStateList.valueOf(ctx.getColor(LineStyle.colorRes(row.line)))
                 badge.setTextColor(ctx.getColor(LineStyle.textColorRes(row.line)))
-                name.text = row.name
+                name.text = row.name.displayName()
                 sub.text = row.sub
                 sub.isVisible = !row.sub.isNullOrEmpty()
-                root.contentDescription = listOfNotNull(row.time, row.name, row.sub).joinToString(", ")
+                root.contentDescription = listOfNotNull(row.time, row.name.displayName(), row.sub).joinToString(", ")
             }
             is TimelineRow.Leg -> with((holder as LegVH).b) {
                 rail.setBackgroundColor(

@@ -78,8 +78,18 @@ class ZoomableMapView @JvmOverloads constructor(
     private val pinText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
         textSize = 14f * resources.displayMetrics.scaledDensity
-        typeface = Typeface.DEFAULT_BOLD
+        typeface = Typeface.DEFAULT_BOLD          // 아래 init 에서 Noto Sans KR Bold 로 교체
         textAlign = Paint.Align.CENTER
+    }
+    init {
+        // 다운로드 글꼴은 비동기로 받아서 적용 (화면 멈춤 없음)
+        runCatching {
+            androidx.core.content.res.ResourcesCompat.getFont(context, R.font.noto_sans_kr_bold,
+                object : androidx.core.content.res.ResourcesCompat.FontCallback() {
+                    override fun onFontRetrieved(typeface: Typeface) { pinText.typeface = typeface; invalidate() }
+                    override fun onFontRetrievalFailed(reason: Int) = Unit
+                }, null)
+        }
     }
     private val ringFill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
     private val ringStroke = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = 3 * dp }
@@ -92,6 +102,46 @@ class ZoomableMapView @JvmOverloads constructor(
         PinKind.DESTINATION to ContextCompat.getColor(context, R.color.status_danger_strong)
     )
     private var drawOrder: List<Pin> = emptyList()                // 출발·도착 → 지금 누른 역(맨 위)
+
+    /**
+     * 경로 강조(화면 59): 지도를 옅게 덮고 지나는 역을 노선색 선으로 잇는다. 그림 좌표.
+     * major = 출발·환승·도착(큰 점). connector = 환승 걷는 구간(회색 점선)
+     */
+    data class RouteStop(val x: Float, val y: Float, val color: Int, val major: Boolean, val connector: Boolean)
+    var route: List<RouteStop> = emptyList()
+        set(value) {
+            field = value
+            // 출발 → 도착 방향으로 선이 그려지며 나타남 (경로의 흐름이 보이게)
+            routeAnim?.cancel()
+            routeProgress = 0f
+            routeAnim = ValueAnimator.ofFloat(0f, 1f).apply {
+                duration = (300L + value.size * 25L).coerceAtMost(900L)
+                startDelay = 150
+                interpolator = DecelerateInterpolator()
+                addUpdateListener { routeProgress = it.animatedValue as Float; invalidate() }
+                start()
+            }
+        }
+    private var routeProgress = 1f
+    private var routeAnim: ValueAnimator? = null
+    private val dim = Paint().apply { color = 0xA6FFFFFF.toInt() }   // 알파는 그릴 때 정함
+    private val routeCase = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE; strokeCap = Paint.Cap.ROUND; strokeJoin = Paint.Join.ROUND
+        color = Color.WHITE; strokeWidth = 11 * dp
+    }
+    private val routeLine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE; strokeCap = Paint.Cap.ROUND; strokeJoin = Paint.Join.ROUND
+        strokeWidth = 6 * dp
+    }
+    private val walkLine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE; strokeCap = Paint.Cap.ROUND; strokeWidth = 4 * dp
+        color = ContextCompat.getColor(context, R.color.line_unknown)
+        pathEffect = android.graphics.DashPathEffect(floatArrayOf(2 * dp, 6 * dp), 0f)
+    }
+    private val stopStroke = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
+    private val ra = FloatArray(2)
+    private val rb = FloatArray(2)
+    private var pendingRegion: RectF? = null
 
     private val matrix = Matrix()
     private val values = FloatArray(9)
@@ -156,11 +206,15 @@ class ZoomableMapView @JvmOverloads constructor(
         if (d == null) {
             canvas.drawText(placeholderText, width / 2f, height / 2f, placeholderPaint); return
         }
-        if (!fitted) fit()
+        if (!fitted) {
+            fit()
+            pendingRegion?.let { if (fitted) { applyRegion(it); pendingRegion = null } }
+        }
         canvas.save()
         canvas.concat(matrix)
         d.draw(canvas)
         canvas.restore()
+        if (route.size >= 2) drawRoute(canvas)
         // 핀: 출발·도착 먼저, 지금 누른 역이 맨 위
         for (i in leaving.indices.reversed()) drawPin(canvas, leaving[i])
         for (p in drawOrder) drawPin(canvas, p)
@@ -190,7 +244,7 @@ class ZoomableMapView @JvmOverloads constructor(
         pinFill.alpha = (255 * t.coerceIn(0f, 1f)).toInt()
         pinText.alpha = pinFill.alpha
         canvas.drawRoundRect(pill, h / 2, h / 2, pinFill)
-        pinHit[p] = RectF(pill)
+        pinHit.getOrPut(p) { RectF() }.set(pill)       // 매 프레임 새 객체를 만들지 않게
         tip.reset()
         tip.moveTo(vx - 6 * dp, bottom - 1)
         tip.lineTo(vx + 6 * dp, bottom - 1)
@@ -198,6 +252,49 @@ class ZoomableMapView @JvmOverloads constructor(
         tip.close()
         canvas.drawPath(tip, pinFill)
         canvas.drawText(p.label, vx, pill.centerY() - (pinText.descent() + pinText.ascent()) / 2, pinText)
+    }
+
+    /** 선 굵기는 확대와 상관없이 일정 (화면 좌표로 그림) */
+    private fun drawRoute(canvas: Canvas) {
+        dim.alpha = (0xA6 * (routeProgress * 3f).coerceAtMost(1f)).toInt()
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), dim)
+        val reach = routeProgress * (route.size - 1)          // 몇 번째 구간까지 그렸나 (소수 = 그리는 중)
+        for (pass in 0..1) for (i in 1 until route.size) {
+            if (i - 1 >= reach) break
+            val p = route[i - 1]; val q = route[i]
+            val f = (reach - (i - 1)).coerceAtMost(1f)
+            ra[0] = p.x; ra[1] = p.y; rb[0] = p.x + (q.x - p.x) * f; rb[1] = p.y + (q.y - p.y) * f
+            matrix.mapPoints(ra); matrix.mapPoints(rb)
+            when {
+                q.connector -> if (pass == 1) canvas.drawLine(ra[0], ra[1], rb[0], rb[1], walkLine)
+                pass == 0 -> canvas.drawLine(ra[0], ra[1], rb[0], rb[1], routeCase)
+                else -> { routeLine.color = q.color; canvas.drawLine(ra[0], ra[1], rb[0], rb[1], routeLine) }
+            }
+        }
+        route.forEachIndexed { i, s ->
+            if (i > reach + 0.01f) return@forEachIndexed
+            ra[0] = s.x; ra[1] = s.y; matrix.mapPoints(ra)
+            stopStroke.color = s.color
+            stopStroke.strokeWidth = (if (s.major) 3f else 2f) * dp
+            val r = (if (s.major) 6.5f else 3.5f) * dp
+            canvas.drawCircle(ra[0], ra[1], r, ringFill.apply { alpha = 255 })
+            canvas.drawCircle(ra[0], ra[1], r, stopStroke)
+        }
+    }
+
+    /** 그림의 이 영역이 화면에 꽉 차게 (여백 포함). 그림이 아직 없으면 그린 뒤에 적용 */
+    fun showRegion(r: RectF) {
+        if (fitted && width > 0 && drawable != null) { applyRegion(r); invalidate() }
+        else pendingRegion = RectF(r)
+    }
+
+    private fun applyRegion(r: RectF) {
+        val pad = 56 * dp
+        val w = r.width().coerceAtLeast(1f); val h = r.height().coerceAtLeast(1f)
+        val s = minOf((width - 2 * pad) / w, (height - 2 * pad) / h).coerceIn(minScale, maxScale)
+        matrix.setScale(s, s)
+        matrix.postTranslate(width / 2f - r.centerX() * s, height / 2f - r.centerY() * s)
+        clamp()
     }
 
     /** 지워지는 핀: 위로 살짝 떠오르며 사라짐 */

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.myway.app.R
 import com.myway.app.databinding.ItemStationBinding
 import com.myway.app.ui.common.LineStyle
+import com.myway.app.ui.common.displayName
 
 class StationAdapter(
     private val onClick: (StationGroupItem) -> Unit,
@@ -31,8 +32,12 @@ class StationAdapter(
             item.stations.forEachIndexed { i, s ->
                 badgeContainer.addView(LineStyle.badge(ctx, s.line, if (i == 0) 0 else gap))
             }
-            stationName.text = item.name
-            if (item.isSupported) {
+            stationName.text = item.name.displayName()
+            if (item.isSupported && !item.isActive) {
+                // 29: 데이터상 검색 대상이 아닌 역. 오늘 운행이 끝난 것(막차)과는 다름 → 역 상세에서 따로 표시
+                lineNames.text = ctx.getString(R.string.inactive_caption, lineLabels.joinToString(" · "))
+                lineNames.setTextColor(ctx.getColor(R.color.text_secondary))
+            } else if (item.isSupported) {
                 lineNames.text = lineLabels.joinToString(" · ")
                 lineNames.setTextColor(ctx.getColor(R.color.text_secondary))
             } else {
@@ -43,7 +48,7 @@ class StationAdapter(
             }
 
             row.alpha = if (item.isActive || !item.isSupported) 1f else 0.45f
-            row.contentDescription = "${item.name}, ${lineNames.text}"
+            row.contentDescription = "${item.name.displayName()}, ${lineNames.text}"
             row.setOnClickListener { onClick(item) }
             favoriteButton.visibility = if (item.isSupported) View.VISIBLE else View.INVISIBLE
 
@@ -51,7 +56,7 @@ class StationAdapter(
                 if (item.isFavorite) R.drawable.ic_star else R.drawable.ic_star_outline
             )
             favoriteButton.contentDescription = ctx.getString(
-                if (item.isFavorite) R.string.favorite_remove else R.string.favorite_add, item.name
+                if (item.isFavorite) R.string.favorite_remove else R.string.favorite_add, item.name.displayName()
             )
             favoriteButton.setOnClickListener { onFavoriteClick(item) }
         }

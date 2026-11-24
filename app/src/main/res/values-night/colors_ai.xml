@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 다크 테마: AI 모드는 원래 어두워서 그대로, 결과 화면의 AI 배너만 어둡게 -->
+<resources>
+    <color name="ai_banner_bg">#2B2550</color>
+    <color name="ai_banner_text">#C9BDFF</color>
+</resources>

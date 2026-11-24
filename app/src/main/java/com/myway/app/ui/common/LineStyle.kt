@@ -26,7 +26,7 @@ object LineStyle {
     /** 9호선 금색은 흰 글자 대비가 낮아 navy 글자 (Figma 동일) */
     @ColorRes
     fun textColorRes(line: Any): Int =
-        if (key(line) == "9") R.color.text_primary else R.color.text_on_brand
+        if (key(line) == "9") R.color.on_line9 else R.color.text_on_brand
 
     /** 24dp 원형 배지 하나 생성 */
     fun badge(

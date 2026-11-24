@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 일반 모드 경로 조건(UC-05) · 결과 보강 · 경로 지도(59) -->
+<resources>
+    <!-- 조건 시트 -->
+    <string name="cond_title">경로 조건</string>
+    <string name="cond_sub">고른 제한을 넘는 경로는 보여 주지 않아요</string>
+    <string name="cond_time">최대 소요시간</string>
+    <string name="cond_transfers">최대 환승</string>
+    <string name="cond_fare">최대 요금</string>
+    <string name="cond_priority">무엇을 먼저 볼까요</string>
+    <string name="cond_priority_help">고른 기준으로 먼저 비교한 경로를 ‘맞춤’ 탭에 보여 줘요</string>
+    <string name="cond_none">제한 없음</string>
+    <string name="cond_minutes">%d분</string>
+    <string name="cond_transfer_zero">환승 없이</string>
+    <string name="cond_transfer_n">%d회</string>
+    <string name="cond_fare_n">%s원</string>
+    <string name="cond_pref_default">기본</string>
+    <string name="cond_pref_duration">빠른 길</string>
+    <string name="cond_pref_transfers">적은 환승</string>
+    <string name="cond_pref_fare">낮은 요금</string>
+    <string name="cond_reset">초기화</string>
+    <string name="cond_apply">이 조건으로 찾기</string>
+    <string name="cond_close">조건 닫기</string>
+
+    <!-- 조건 칩 -->
+    <string name="cond_add">조건 추가</string>
+    <string name="cond_edit">조건</string>
+    <string name="chip_minutes">%d분 이내</string>
+    <string name="chip_transfer_zero">환승 없이</string>
+    <string name="chip_transfer_n">환승 %d회 이하</string>
+    <string name="chip_fare">%s원 이하</string>
+    <string name="chip_pref_duration">빠른 길 우선</string>
+    <string name="chip_pref_transfers">적은 환승 우선</string>
+    <string name="chip_pref_fare">낮은 요금 우선</string>
+
+    <!-- 결과 보강 -->
+    <string name="result_tab_pref">맞춤</string>
+    <string name="result_pref_label">맞춤 · %s 순</string>
+    <string name="result_error_not_found_cond">정한 조건을 조금 풀면 경로가 나올 수 있어요.</string>
+    <string name="result_change_conditions">조건 바꾸기</string>
+    <string name="result_time_pending">시각을 골라 찾는 기능은 준비 중이에요 · 지금 출발 기준이에요</string>
+    <string name="result_saved_banner">저장된 경로 · %s 기준 · 연결되면 새로 찾아요</string>
+    <string name="result_map">경로 지도 보기</string>
+
+    <!-- 경로 지도 (59) -->
+    <string name="route_map_title">%1$s → %2$s</string>
+    <string name="route_map_summary">%1$s · 환승 %2$d회 · %3$s</string>
+    <string name="route_map_back">뒤로</string>
+    <string name="route_map_missing">노선도에서 이 경로의 위치를 찾지 못했어요</string>
+</resources>

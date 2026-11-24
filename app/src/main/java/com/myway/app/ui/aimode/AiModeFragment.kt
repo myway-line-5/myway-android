@@ -27,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.myway.app.R
+import com.myway.app.data.remote.NetworkMonitor
 import com.myway.app.databinding.FragmentAiModeBinding
 import com.myway.app.databinding.ItemAiPointBinding
 import com.myway.app.domain.model.Criterion
@@ -42,6 +43,8 @@ import com.myway.app.ui.search.StationGroupItem
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
+import com.myway.app.ui.common.displayName
+import com.myway.app.ui.common.bilingualKeyboard
 
 /** Figma 2-1~2-10 AI 모드 */
 class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
@@ -63,6 +66,7 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
         b.normalButton.setOnClickListener { findNavController().popBackStack() }
         // 입력창 오른쪽 버튼: 비었으면 🎤 말하기, 글자가 있으면 ↑ 보내기 (Figma MicButton 424:43)
         b.sendButton.setOnClickListener { if (b.input.text.isNullOrBlank()) listen() else send() }
+        b.input.bilingualKeyboard()                // 화면 언어와 상관없이 한·영 문장 입력
         b.input.doAfterTextChanged { updateSendButton() }
         updateSendButton()
         b.input.setOnEditorActionListener { _, id, _ -> (id == EditorInfo.IME_ACTION_SEND).also { if (it) send() } }
@@ -147,7 +151,7 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
     private fun listen() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
             .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            .putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
+            .putExtra(RecognizerIntent.EXTRA_LANGUAGE, if (com.myway.app.ui.common.StationNames.english) "en-US" else "ko-KR")
             .putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.ai_listen_prompt))
         try { speech.launch(intent) }
         catch (e: ActivityNotFoundException) {
@@ -171,6 +175,10 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
 
     private fun send() {
         val b = _b ?: return
+        if (!NetworkMonitor.isOnline) {   // 오프라인: AI 해석 불가, 입력은 유지
+            Toast.makeText(requireContext(), R.string.ai_offline, Toast.LENGTH_SHORT).show()
+            return
+        }
         vm.submit(b.input.text.toString())
         hideKeyboard()
     }
@@ -328,7 +336,7 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
         val label = getString(if (isOrigin) R.string.point_origin else R.string.point_destination)
         row.dot.setBackgroundResource(if (isOrigin) R.drawable.dot_origin else R.drawable.dot_destination)
         row.label.text = label
-        row.name.text = item?.name ?: raw?.let { "$it · ${getString(R.string.ai_not_found)}" }
+        row.name.text = item?.name?.displayName() ?: raw?.let { "$it · ${getString(R.string.ai_not_found)}" }
             ?: getString(if (isOrigin) R.string.ai_missing_origin else R.string.ai_missing_destination)
         row.name.setTextColor(requireContext().getColor(if (item != null) android.R.color.white else R.color.ai_error_text))
         row.root.contentDescription = getString(R.string.ai_edit_desc, "$label ${row.name.text}")
@@ -358,7 +366,7 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
         b.options.removeAllViews()
         items.forEach { item ->
             val lines = item.stations.joinToString(" · ") { getString(R.string.line_format, LineStyle.key(it.line)) }
-            b.options.addView(option(item.name, lines) { vm.choose(item) })
+            b.options.addView(option(item.name.displayName(), lines) { vm.choose(item) })
         }
     }
 

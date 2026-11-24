@@ -12,6 +12,7 @@ import com.myway.app.databinding.ItemRecentBinding
 import com.myway.app.databinding.ItemRecentHeaderBinding
 import com.myway.app.domain.model.RouteType
 import com.myway.app.ui.common.LineStyle
+import com.myway.app.ui.common.displayName
 
 /** Figma 1-10: 최근 검색(역) · 최근 경로. 행마다 ☆ 즐겨찾기 + ✕ 지우기 */
 sealed interface RecentRow {
@@ -51,20 +52,20 @@ class RecentAdapter(
             }
             is RecentRow.StationRow -> with((holder as RowVH).b) {
                 bindBadges(this, row.station)
-                title.text = row.station.name
+                title.text = row.station.name.displayName()
                 sub.text = row.station.stations.joinToString(" · ") {
                     ctx.getString(R.string.line_format, LineStyle.key(it.line))
                 }
-                bindStar(this, row.favorite, row.station.name)
+                bindStar(this, row.favorite, row.station.name.displayName())
                 root.setOnClickListener { onStation(row.station) }
                 favoriteButton.setOnClickListener { onStationFavorite(row.station) }
-                removeButton.contentDescription = ctx.getString(R.string.recent_remove, row.station.name)
+                removeButton.contentDescription = ctx.getString(R.string.recent_remove, row.station.name.displayName())
                 removeButton.setOnClickListener { onStationRemove(row.station) }
             }
             is RecentRow.RouteRow -> with((holder as RowVH).b) {
                 val r = row.route
                 bindBadges(this, r.origin)
-                val name = ctx.getString(R.string.recent_route_name, r.origin.name, r.destination.name)
+                val name = ctx.getString(R.string.recent_route_name, r.origin.name.displayName(), r.destination.name.displayName())
                 title.text = name
                 sub.text = listOfNotNull(
                     ctx.getString(typeLabel(r.type)),

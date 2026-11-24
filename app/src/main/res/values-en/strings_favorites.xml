@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_favorites.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
+<resources>
+    <string name="fav_title">Favorites</string>
+    <string name="fav_edit">Edit</string>
+    <string name="fav_done">Done</string>
+    <string name="fav_tab_routes">Routes</string>
+    <string name="fav_tab_stations">Stations</string>
+    <string name="fav_hint_routes">Tap to start · Long-press and drag to reorder</string>
+    <string name="fav_hint_stations">Tap to set as From/To · Long-press and drag to reorder</string>
+    <string name="fav_empty_title">No favorites yet</string>
+    <string name="fav_empty_body">Tap the star on a route or station\nto keep your usual trips handy</string>
+    <string name="fav_empty_action">Search stations</string>
+    <string name="fav_delete_title">Delete \'%s\'?</string>
+    <string name="fav_delete_body">It will be removed from your favorites.</string>
+    <string name="fav_delete">Delete</string>
+    <string name="fav_cancel">Cancel</string>
+    <string name="fav_remove_desc">Delete %s</string>
+    <string name="fav_drag_desc">Reorder %s</string>
+    <string name="fav_route_label">%1$s · %2$s</string>
+</resources>

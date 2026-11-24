@@ -30,6 +30,7 @@ import com.myway.app.domain.model.Station
 import com.myway.app.ui.common.LineStyle
 import com.myway.app.ui.common.Motion
 import com.myway.app.ui.common.NoticeDialog
+import com.myway.app.ui.common.blockedOffline
 import com.myway.app.ui.route.RouteSelectionViewModel.Slot
 import com.myway.app.ui.search.StationGroupItem
 import com.myway.app.ui.common.toSaved
@@ -40,6 +41,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import com.myway.app.ui.common.displayName
+import com.myway.app.ui.common.StationNames
 
 class StationDetailViewModel(
     private val repo: StationDetailRepository = RepositoryProvider.stationDetailRepository()
@@ -90,7 +93,7 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
         if (stations.isEmpty()) { findNavController().popBackStack(); return }
         if (savedInstanceState == null) vm.lineIndex = arguments?.getInt(ARG_LINE, 0)?.coerceIn(0, stations.lastIndex) ?: 0
 
-        b.title.text = item.name
+        b.title.text = item.name.displayName()
         b.backButton.setOnClickListener { findNavController().popBackStack() }
         b.favoriteButton.setOnClickListener { LocalStore.toggleFavoriteStation(item.toSaved()) }
         b.departButton.setOnClickListener { pick(Slot.ORIGIN, item) }
@@ -117,13 +120,21 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
     /** 검색에서 왔으면 검색으로 돌아가 이어서, 그 외(노선도·즐겨찾기)는 새 검색: 둘 다 차면 결과, 아니면 검색 */
     private fun pick(slot: Slot, item: StationGroupItem) {
         val nav = findNavController()
-        val fromSearch = nav.previousBackStackEntry?.destination?.id == R.id.searchFragment
+        val prev = nav.previousBackStackEntry?.destination?.id
+        val fromSearch = prev == R.id.searchFragment
         if (!fromSearch) routeVm.startFresh()
         if (!routeVm.set(slot, item)) {
             NoticeDialog.show(this, R.string.same_station_title, R.string.same_station_body); return
         }
+        // 둘 다 정해져 결과로 갈 차례인데 오프라인이면 이 화면에 머물며 안내 (역은 지정된 상태 유지)
+        if (!fromSearch && routeVm.points.value.isComplete && blockedOffline()) return
         nav.popBackStack()
-        if (!fromSearch) nav.navigate(if (routeVm.points.value.isComplete) R.id.to_result else R.id.to_search)
+        when {
+            fromSearch -> Unit                                              // 검색이 칩·카드로 이어받음
+            routeVm.points.value.isComplete -> nav.navigate(R.id.to_result)
+            prev == R.id.homeFragment -> Unit                               // 노선도로 돌아가 핀으로 확인 (검색은 선택)
+            else -> nav.navigate(R.id.to_search)
+        }
     }
 
     /** 노선 탭: 선택 = 진하게 + 남색 밑줄 (검색 역 시트와 같은 모양) */
@@ -178,8 +189,8 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
                 minimumHeight = dp(40)
-                contentDescription = "${fl.direction}, ${getString(R.string.detail_first)} ${fl.first}, ${getString(R.string.detail_last)} ${fl.last}"
-                addView(text(fl.direction, R.style.Text_MyWay_Body16Bold, R.color.text_primary),
+                contentDescription = "${StationNames.direction(fl.direction)}, ${getString(R.string.detail_first)} ${fl.first}, ${getString(R.string.detail_last)} ${fl.last}"
+                addView(text(StationNames.direction(fl.direction), R.style.Text_MyWay_Body16Bold, R.color.text_primary),
                     LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
                 addView(text(fl.first, R.style.Text_MyWay_Body16Bold, R.color.text_primary).apply { gravity = Gravity.CENTER },
                     LinearLayout.LayoutParams(dp(72), ViewGroup.LayoutParams.WRAP_CONTENT))
@@ -260,12 +271,12 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
         }
         b.barLabels.removeAllViews()
         listOf(6, 9, 12, 15, 18, 21).forEach { h ->
-            b.barLabels.addView(text("%02d시".format(h), R.style.Text_MyWay_Caption12Medium, R.color.text_secondary),
+            b.barLabels.addView(text(getString(R.string.detail_hour, h), R.style.Text_MyWay_Caption12Medium, R.color.text_secondary),
                 LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         }
-        val ampm = if (hourNow < 12) "오전" else "오후"
+        val ampm = getString(if (hourNow < 12) R.string.detail_am else R.string.detail_pm)
         val h12 = (hourNow % 12).let { if (it == 0) 12 else it }
-        b.nowText.text = getString(R.string.detail_now, "$ampm ${h12}시")
+        b.nowText.text = getString(R.string.detail_now, getString(R.string.detail_hour_12, ampm, h12))
         b.nowLevel.setText(level(dt.congestion.getOrElse(hourNow) { 0 }))
     }
 
@@ -287,14 +298,14 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
                 gravity = Gravity.CENTER_VERTICAL
                 minimumHeight = dp(44)
                 setPadding(0, dp(10), 0, 0)
-                contentDescription = "${f.name}, ${f.where}"
+                contentDescription = "${facilityName(f)}, ${f.where}"
                 addView(text(f.code, R.style.Text_MyWay_Caption12Bold, R.color.text_primary).apply {
                     gravity = Gravity.CENTER; setBackgroundResource(R.drawable.bg_detail_code)
                     importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                 }, LinearLayout.LayoutParams(dp(36), dp(36)))
                 addView(LinearLayout(ctx).apply {
                     orientation = LinearLayout.VERTICAL
-                    addView(text(f.name, R.style.Text_MyWay_Body16Bold, R.color.text_primary))
+                    addView(text(facilityName(f), R.style.Text_MyWay_Body16Bold, R.color.text_primary))
                     addView(text(f.where, R.style.Text_MyWay_Label14Medium, R.color.text_secondary))
                 }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginStart = dp(12) })
             })
@@ -305,6 +316,13 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
         text = s
         setTextAppearance(style)
         setTextColor(requireContext().getColor(color))
+    }
+
+    /** 편의시설 이름: 코드로 번역 (모르는 코드는 받은 이름 그대로) */
+    private fun facilityName(f: com.myway.app.data.repository.Facility) = when (f.code) {
+        "WC" -> getString(R.string.detail_fac_wc)
+        "EV" -> getString(R.string.detail_fac_ev)
+        else -> f.name
     }
 
     override fun onDestroyView() {

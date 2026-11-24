@@ -44,12 +44,14 @@ class FakeRouteRepository : RouteRepository {
             return Resource.Failure(AppError.UnsupportedCondition)
         }
 
-        return Resource.Success(
-            listOf(
-                result(RouteType.SHORTEST_TIME),
-                result(RouteType.MIN_FARE),
-                result(RouteType.MIN_TRANSFERS)
-            )
-        )
+        // 선호가 있으면 '맞춤'(PREFERENCE) 결과를 함께, 제한을 넘는 경로는 뺀다 (서버 규칙 흉내)
+        val types = listOf(RouteType.SHORTEST_TIME, RouteType.MIN_FARE, RouteType.MIN_TRANSFERS) +
+            listOfNotNull(RouteType.PREFERENCE.takeIf { condition.preference != null })
+        val c = condition.constraints
+        return Resource.Success(types.map(::result).filter { r ->
+            (c.maxDurationMinutes?.let { r.totalSeconds <= it * 60 } ?: true) &&
+                (c.maxTransfers?.let { r.transferCount <= it } ?: true) &&
+                (c.maxFareKrw?.let { r.totalFareKrw <= it } ?: true)
+        })
     }
-}
+}

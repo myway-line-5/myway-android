@@ -31,4 +31,14 @@
     <string name="map_pin_removed_destination">도착 %s 핀을 지웠어요</string>
     <string name="map_pin_undo">되돌리기</string>
     <string name="map_pin_selected">%s역을 골랐어요</string>
+    <!-- 노선도에서 하나만 고른 뒤 안내 (검색은 선택) -->
+    <string name="map_next_destination">출발 %s · 도착역을 노선도에서 눌러 주세요</string>
+    <string name="map_next_origin">도착 %s · 출발역을 노선도에서 눌러 주세요</string>
+    <string name="map_next_search">검색</string>
+    <string name="detail_hour">%02d시</string>
+    <string name="detail_hour_12">%1$s %2$d시</string>
+    <string name="detail_am">오전</string>
+    <string name="detail_pm">오후</string>
+    <string name="detail_fac_wc">화장실</string>
+    <string name="detail_fac_ev">엘리베이터</string>
 </resources>

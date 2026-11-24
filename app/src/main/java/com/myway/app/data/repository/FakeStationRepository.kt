@@ -2,6 +2,8 @@ package com.myway.app.data.repository
 
 import com.myway.app.domain.model.AppError
 import com.myway.app.domain.model.Station
+import com.myway.app.ui.common.LineStyle
+import com.myway.app.ui.home.MapStations
 
 class FakeStationRepository : StationRepository {
 
@@ -31,16 +33,30 @@ class FakeStationRepository : StationRepository {
         Station("L9_FAKE_999", "시험용비활성역", "9", false)
     )
 
+    // 노선도에 있는 2·5·9호선 역 전부 (위 목록에 없으면 임시 ID "map:호선:이름").
+    // 검색·AI 해석이 노선도에서 고를 수 있는 역을 똑같이 알도록 (전엔 위 13개만 알아서 '강남' 등이 없다고 나옴)
+    // RealRouteRepository 가 map: 역을 서버의 같은 이름·호선 역으로 바꿔 보낸다
+    // 한 번만 만들어 모든 인스턴스가 같이 씀 (RepositoryProvider 가 부를 때마다 새로 만들지 않게)
+    private val all: List<Station> get() = merged(stations)
+
     override suspend fun getStations(): Resource<List<Station>> {
-        return Resource.Success(stations)
+        return Resource.Success(all)
+    }
+
+    private companion object {
+        @Volatile private var cached: List<Station>? = null
+        fun merged(base: List<Station>): List<Station> = cached ?: (base + MapStations.all
+            .filter { m -> base.none { it.name == m.name && LineStyle.key(it.line) == m.line } }
+            .distinctBy { it.line to it.name }
+            .map { Station("map:${it.line}:${it.name}", it.name, it.line, true) }).also { cached = it }
     }
 
     override suspend fun searchStations(query: String): Resource<List<Station>> {
-        val result = stations.filter { it.name.contains(query.trim()) }
+        val result = all.filter { it.name.contains(query.trim()) }
         return if (result.isEmpty()) {
             Resource.Failure(AppError.StationNotFound(query))
         } else {
             Resource.Success(result)
         }
     }
-}
+}

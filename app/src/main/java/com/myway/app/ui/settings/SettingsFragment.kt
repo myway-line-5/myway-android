@@ -31,8 +31,11 @@ import com.myway.app.R
 import com.myway.app.data.local.SettingsStore
 import com.myway.app.data.local.SettingsStore.Key
 import com.myway.app.databinding.DialogNoticeBinding
+import com.myway.app.ui.common.ScreenSwap
 import com.myway.app.databinding.FragmentSettingsBinding
 import com.myway.app.domain.model.RouteType
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 
 /**
  * Figma 4-1~4-7 설정. 홈 위에 겹쳐 뜨는 패널.
@@ -101,6 +104,7 @@ class SettingsFragment : DialogFragment() {
                 nav.isVisible = true
                 b.scrim.alpha = 1f
                 b.content.isVisible = section != null
+                ScreenSwap.reveal(ScreenSwap.SETTINGS, dialog?.window)   // 테마·언어 바꾼 직후 부드럽게
             }
         }
     }
@@ -200,22 +204,37 @@ class SettingsFragment : DialogFragment() {
                     Choice(RouteType.MIN_TRANSFERS.name, getString(R.string.result_tab_transfer)),
                     Choice(RouteType.MIN_FARE.name, getString(R.string.result_tab_fare))
                 ))
-            // 색 팔레트가 아직 라이트뿐이라 다크·시스템은 '준비 중'으로 잠금
+            // 고르면 바로 적용 (화면이 다시 그려지며 설정 패널은 그대로 열려 있음)
             Section.SCREEN -> bindChoice(R.string.set_screen_label, R.string.set_screen_help, Key.THEME,
                 listOf(
                     Choice("light", getString(R.string.set_theme_light)),
-                    Choice("dark", getString(R.string.set_theme_dark), enabled = false),
-                    Choice("system", getString(R.string.set_theme_system), enabled = false)
-                ))
+                    Choice("dark", getString(R.string.set_theme_dark)),
+                    Choice("system", getString(R.string.set_theme_system))
+                )) { swap { AppCompatDelegate.setDefaultNightMode(nightMode(it)) } }
+            // 언어 이름은 그 언어로 (못 읽는 언어로 적혀 있으면 찾을 수 없음)
             Section.LANGUAGE -> bindChoice(R.string.set_language_label, R.string.set_language_help, Key.LANGUAGE,
                 listOf(
                     Choice("ko", "한국어"),
-                    Choice("en", "English", enabled = false),
+                    Choice("en", "English"),
                     Choice("zh", "中文", enabled = false),
                     Choice("ja", "日本語", enabled = false)
-                ))
+                )) { swap { AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(it)) } }
             else -> Unit
         }
+    }
+
+    /**
+     * 테마·언어 적용: ✓가 옮겨 간 모습을 잠깐 보여 준 뒤 화면(홈+설정 패널)을 찍어 두고 적용.
+     * 다시 만들어진 화면 위에서 찍어 둔 모습이 걷히며 넘어가서 깜빡임·버벅임이 안 보인다.
+     */
+    private fun swap(apply: () -> Unit) {
+        val root = _b?.root ?: return apply()
+        root.postDelayed({
+            ScreenSwap.capture(ScreenSwap.ACTIVITY, activity?.window)
+            ScreenSwap.capture(ScreenSwap.SETTINGS, dialog?.window)
+            apply()
+        }, 120)
+        root.postDelayed({ ScreenSwap.clear() }, 2000)   // 바뀐 게 없어 화면이 다시 안 만들어졌으면 찍어 둔 것 버림
     }
 
     /** 선택된 메뉴: 남색 알약 + 흰 글자 */
@@ -233,6 +252,10 @@ class SettingsFragment : DialogFragment() {
                 setPadding(dp(12), 0, dp(8), 0)
                 setText(s.title)
                 setTextAppearance(R.style.Text_MyWay_Label14Bold)
+                // 긴 영어 단어(Language 등)가 한 글자씩 줄바꿈되지 않게: 한 줄 + 칸에 맞춰 글자만 조금 작게
+                maxLines = 1
+                androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    this, 11, 14, 1, android.util.TypedValue.COMPLEX_UNIT_SP)
                 setTextColor(color)
                 setCompoundDrawablesRelativeWithIntrinsicBounds(s.icon, 0, 0, 0)
                 compoundDrawablePadding = dp(10)
@@ -300,7 +323,8 @@ class SettingsFragment : DialogFragment() {
 
     private data class Choice(val value: String, val label: String, val enabled: Boolean = true)
 
-    private fun bindChoice(@StringRes label: Int, @StringRes help: Int, key: Key, options: List<Choice>) {
+    private fun bindChoice(@StringRes label: Int, @StringRes help: Int, key: Key, options: List<Choice>,
+                           onPicked: (String) -> Unit = {}) {
         val b = _b ?: return
         val ctx = requireContext()
         b.choiceLabel.setText(label)
@@ -326,8 +350,10 @@ class SettingsFragment : DialogFragment() {
                     ctx.theme.resolveAttribute(android.R.attr.selectableItemBackground, tv, true)
                     setBackgroundResource(tv.resourceId)
                     setOnClickListener {
+                        if (opt.value == SettingsStore.string(key)) return@setOnClickListener
                         SettingsStore.set(key, opt.value)
-                        bindChoice(label, help, key, options)
+                        bindChoice(label, help, key, options, onPicked)
+                        onPicked(opt.value)
                     }
                 }
             }
@@ -381,5 +407,12 @@ class SettingsFragment : DialogFragment() {
         private const val EXIT_MS = 200L
         private const val SWITCH_MS = 180L
         private val BARS = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+
+        /** 설정 값 → 다크 모드 (MainActivity 시작 때도 같이 씀) */
+        fun nightMode(theme: String) = when (theme) {
+            "dark" -> AppCompatDelegate.MODE_NIGHT_YES
+            "system" -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            else -> AppCompatDelegate.MODE_NIGHT_NO
+        }
     }
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_station.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
+<resources>
+    <string name="station_detail_open">Station info · First train · Timetable</string>
+    <string name="detail_back">Back</string>
+    <string name="detail_error">Couldn\'t load station info.\nPlease try again in a moment.</string>
+    <string name="detail_first_last">First · Last train</string>
+    <string name="detail_direction">Toward</string>
+    <string name="detail_first">First</string>
+    <string name="detail_last">Last</string>
+    <string name="detail_timetable">Timetable</string>
+    <string name="detail_weekday">Weekday</string>
+    <string name="detail_saturday">Saturday</string>
+    <string name="detail_holiday">Holiday</string>
+    <string name="detail_next_trains">%s · From now</string>
+    <string name="detail_service_over">Service has ended today · First train %s</string>
+    <string name="detail_congestion">Crowding by hour (weekdays)</string>
+    <string name="detail_now">Now %s</string>
+    <string name="detail_level_low">Quiet</string>
+    <string name="detail_level_mid">Moderate</string>
+    <string name="detail_level_high">Crowded</string>
+    <string name="detail_bar_desc">%1$d:00 %2$s</string>
+    <string name="detail_facilities">Facilities</string>
+    <string name="detail_time_next">Next train %s</string>
+    <string name="map_station_desc">%s Station</string>
+    <string name="map_pin_origin">From %s  ✕</string>
+    <string name="map_pin_destination">To %s  ✕</string>
+    <string name="map_pin_removed_origin">From pin removed: %s</string>
+    <string name="map_pin_removed_destination">To pin removed: %s</string>
+    <string name="map_pin_undo">Undo</string>
+    <string name="map_pin_selected">Selected %s</string>
+    <string name="map_next_destination">From %s · Now tap your destination on the map</string>
+    <string name="map_next_origin">To %s · Now tap your starting station on the map</string>
+    <string name="map_next_search">Search</string>
+    <string name="detail_hour">%02d</string>
+    <string name="detail_hour_12">%2$d %1$s</string>
+    <string name="detail_am">AM</string>
+    <string name="detail_pm">PM</string>
+    <string name="detail_fac_wc">Restroom</string>
+    <string name="detail_fac_ev">Elevator</string>
+</resources>

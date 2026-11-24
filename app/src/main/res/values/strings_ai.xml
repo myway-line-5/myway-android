@@ -43,7 +43,7 @@
 
     <string name="ai_failed_title">AI 연결이 원활하지 않아요</string>
     <string name="ai_failed_sub">역을 직접 골라 길찾기는 계속할 수 있어요</string>
-    <string name="ai_failed_body">입력한 조건은 그대로예요. 다시 시도하거나 역을 직접 골라 주세요</string>
+    <string name="ai_failed_body">기존 조건은 유지했어요. 다시 요청하거나 역을 직접 선택해 주세요</string>
     <string name="ai_pick_manually">역 직접 선택</string>
     <string name="ai_retry">AI로 다시 시도</string>
 
@@ -66,4 +66,5 @@
     <string name="ai_listen">음성으로 말하기</string>
     <string name="ai_listen_prompt">어디로 갈까요? 말해 보세요</string>
     <string name="ai_listen_unavailable">이 기기에서는 음성 입력을 쓸 수 없어요. 글자로 입력해 주세요</string>
+    <string name="ai_offline">오프라인에서는 AI가 말을 해석할 수 없어요</string>
 </resources>

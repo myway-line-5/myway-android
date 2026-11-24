@@ -6,8 +6,8 @@
     <string name="fav_done">완료</string>
     <string name="fav_tab_routes">경로</string>
     <string name="fav_tab_stations">역</string>
-    <string name="fav_hint_routes">경로를 누르면 바로 길찾기를 시작해요</string>
-    <string name="fav_hint_stations">역을 누르면 출발·도착으로 지정할 수 있어요</string>
+    <string name="fav_hint_routes">누르면 바로 길찾기 · 길게 눌러 끌면 순서 변경</string>
+    <string name="fav_hint_stations">누르면 출발·도착 지정 · 길게 눌러 끌면 순서 변경</string>
     <string name="fav_empty_title">아직 즐겨찾기가 없어요</string>
     <string name="fav_empty_body">경로 결과나 역 화면에서 별을 누르면\n자주 가는 길을 바로 꺼내 쓸 수 있어요</string>
     <string name="fav_empty_action">역 검색하기</string>

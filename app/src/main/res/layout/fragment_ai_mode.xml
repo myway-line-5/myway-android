@@ -95,7 +95,7 @@
                     android:gravity="center"
                     android:textAppearance="@style/Text.MyWay.Heading18Bold"
                     android:textColor="@android:color/white"
-                    android:textSize="26sp" />
+                    android:textSize="@dimen/text_ai_title" />
 
                 <TextView
                     android:id="@+id/subtitle"
@@ -110,8 +110,8 @@
             <!-- 마스코트 '웨이' + 빛 -->
             <FrameLayout
                 android:id="@+id/mascotBox"
-                android:layout_width="240dp"
-                android:layout_height="240dp"
+                android:layout_width="@dimen/ai_glow"
+                android:layout_height="@dimen/ai_glow"
                 android:layout_marginTop="@dimen/space_s"
                 android:importantForAccessibility="noHideDescendants">
 
@@ -122,8 +122,8 @@
 
                 <ImageView
                     android:id="@+id/mascot"
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
+                    android:layout_width="@dimen/ai_mascot"
+                    android:layout_height="@dimen/ai_mascot"
                     android:layout_gravity="center"
                     android:src="@drawable/ai_mascot" />
             </FrameLayout>
