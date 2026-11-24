@@ -254,6 +254,20 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- 경로 읽어주기 (TTS, 최지윤 PR #18) -->
+            <TextView
+                android:id="@+id/speakButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_l"
+                android:layout_marginBottom="@dimen/space_s"
+                android:background="@drawable/bg_time_chip"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:text="@string/result_speak"
+                android:textAppearance="@style/Text.MyWay.Body16Bold"
+                android:textColor="@color/text_primary" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/timeline"
                 android:layout_width="match_parent"

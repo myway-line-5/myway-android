@@ -33,4 +33,9 @@
     <string name="result_error_generic">경로를 불러오지 못했어요</string>
     <string name="result_error_generic_body">잠시 후 다시 찾아 주세요.</string>
     <string name="result_retry">다시 찾기</string>
+    <string name="result_speak">🔊 경로 읽어주기</string>
+    <string name="result_speak_text">%1$s까지 약 %2$d분 걸리고, %3$s</string>
+    <string name="result_speak_no_transfer">환승 없이 갈 수 있어요</string>
+    <string name="result_speak_transfers">환승은 %d회예요</string>
+    <string name="result_fare_pending">요금 확인 중</string>
 </resources>

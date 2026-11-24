@@ -23,6 +23,8 @@ import com.myway.app.ui.common.Motion
 import com.myway.app.ui.route.RouteSelectionViewModel
 import com.myway.app.ui.route.RouteSelectionViewModel.Conditions
 import com.myway.app.ui.route.RouteSelectionViewModel.Slot
+import com.myway.app.ui.common.StationNames
+import com.myway.app.voice.TtsManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -37,6 +39,7 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
     private val routeVm: RouteSelectionViewModel by activityViewModels()
     private var _b: FragmentRouteResultBinding? = null
     private val adapter = TimelineAdapter()
+    private var tts: TtsManager? = null
     private var cond = Conditions()
     private var lastKind: kotlin.reflect.KClass<*>? = null
     private var lastSelected: RouteType? = null
@@ -73,6 +76,10 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
         b.closeButton.setOnClickListener { findNavController().popBackStack() }
         b.favoriteButton.setOnClickListener { vm.toggleFavorite(routeVm.points.value) }
         b.mapButton.setOnClickListener { openMap() }
+
+        // 경로 읽어주기 (TTS): 화면 언어로 읽음
+        tts = TtsManager(requireContext(), if (StationNames.english) java.util.Locale.ENGLISH else java.util.Locale.KOREAN)
+        b.speakButton.setOnClickListener { speakRoute() }
 
         // 31·34: 시각 선택은 시간표 탐색 확정 전까지 비활성 → 눌러도 이유를 알려 준다
         listOf(b.departChip, b.arriveChip).forEach { chip ->
@@ -132,6 +139,15 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
                 }
             }
         }
+    }
+
+    /** 선택된 기준의 경로 요약을 소리로 읽어준다 */
+    private fun speakRoute() {
+        val route = vm.currentRoute() ?: return
+        val dest = routeVm.points.value.destination?.name?.displayName() ?: return
+        val transfer = if (route.transferCount == 0) getString(R.string.result_speak_no_transfer)
+        else getString(R.string.result_speak_transfers, route.transferCount)
+        tts?.speak(getString(R.string.result_speak_text, dest, Timeline.minutes(route.totalSeconds), transfer))
     }
 
     private fun openMap() {
@@ -219,7 +235,9 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
                 else getString(R.string.result_duration_label)
                 b.totalTime.text = Timeline.duration(ctx, route.totalSeconds)
                 b.transfers.text = getString(R.string.result_transfers, route.transferCount)
-                b.fare.text = Timeline.fare(ctx, route.totalFareKrw)
+                // 서버가 요금을 아직 안 주면(0) '0원' 대신 확인 중으로
+                b.fare.text = if (route.totalFareKrw > 0) Timeline.fare(ctx, route.totalFareKrw)
+                else getString(R.string.result_fare_pending)
                 b.departTime.text = Timeline.clock(state.departAt)
                 b.arriveTime.text = Timeline.clock(state.departAt.plusSeconds(route.totalSeconds.toLong()))
                 adapter.submitList(Timeline.build(ctx, route, state.departAt))
@@ -255,6 +273,8 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
     }
 
     override fun onDestroyView() {
+        tts?.shutdown()
+        tts = null
         _b = null
         lastKind = null; lastSelected = null; lastFav = null
         super.onDestroyView()

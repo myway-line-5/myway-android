@@ -31,4 +31,9 @@
     <string name="result_error_generic">Couldn\'t load the route</string>
     <string name="result_error_generic_body">Please try again in a moment.</string>
     <string name="result_retry">Search again</string>
+    <string name="result_speak">🔊 Read route aloud</string>
+    <string name="result_speak_text">About %2$d min to %1$s, %3$s</string>
+    <string name="result_speak_no_transfer">no transfers needed</string>
+    <string name="result_speak_transfers">%d transfer(s)</string>
+    <string name="result_fare_pending">Fare pending</string>
 </resources>
