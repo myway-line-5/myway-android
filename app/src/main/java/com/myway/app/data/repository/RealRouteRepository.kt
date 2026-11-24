@@ -9,6 +9,9 @@ import com.myway.app.domain.model.AppError
 import com.myway.app.domain.model.RouteCondition
 import com.myway.app.domain.model.RouteResult
 import com.myway.app.domain.model.Station
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 class RealRouteRepository(
     private val api: MyWayApi
@@ -21,33 +24,65 @@ class RealRouteRepository(
             return Resource.Failure(AppError.UnsupportedCondition)
         }
 
-        // 노선도에서 만든 임시 역(map:)은 서버의 같은 이름·호선 역으로 바꿔서 보낸다
-        val origin = resolve(rawOrigin)
-        val destination = resolve(rawDestination)
-        android.util.Log.d("MyWayRoute", "요청 origin=${origin?.stationId} destination=${destination?.stationId}")
-        if (origin == null || destination == null) {
+        // 같은 이름의 서버 역을 모두 찾는다 (환승역이면 호선별로 여러 개)
+        val origins = candidates(rawOrigin)
+        val destinations = candidates(rawDestination)
+        val pairs = origins.flatMap { o -> destinations.map { d -> o to d } }
+            .filter { (o, d) -> o.stationId != d.stationId }
+        android.util.Log.d(
+            "MyWayRoute",
+            "후보 출발=${origins.map { it.stationId }} 도착=${destinations.map { it.stationId }}"
+        )
+        if (pairs.isEmpty()) {
             android.util.Log.d("MyWayRoute", "서버에 없는 역 -> UnsupportedCondition")
             return Resource.Failure(AppError.UnsupportedCondition)
         }
 
         // TODO: condition.constraints / preference 는 서버 요청에 실을 자리가 생기면 추가
-        return when (val res = safeApiCall {
-            api.searchRoute(RouteSearchRequestDto(origin.stationId, destination.stationId))
-        }) {
-            is Resource.Failure -> res
-            is Resource.Success -> res.data.toResource(origin, destination)
+        // 조합마다 서버에 물어본다
+        val results = coroutineScope {
+            pairs.map { (o, d) ->
+                async<Resource<List<RouteResult>>> {
+                    when (val res = safeApiCall {
+                        api.searchRoute(RouteSearchRequestDto(o.stationId, d.stationId))
+                    }) {
+                        is Resource.Failure -> res
+                        is Resource.Success -> res.data.toResource(o, d)
+                    }
+                }
+            }.awaitAll()
         }
+
+        // 성공한 것 중 가장 빠른 경로를 고른다. 전부 실패하면 첫 실패를 돌려준다
+        val routes = mutableListOf<RouteResult>()
+        var firstFailure: Resource.Failure? = null
+        for (r in results) {
+            when (r) {
+                is Resource.Success -> routes += r.data
+                is Resource.Failure -> if (firstFailure == null) firstFailure = r
+            }
+        }
+        val best = routes.minWithOrNull(compareBy({ it.totalSeconds }, { it.transferCount }))
+        if (best != null) return Resource.Success(listOf(best))
+        return firstFailure ?: Resource.Failure(AppError.Server)
     }
 
-    // "map:{호선}:{이름}" 임시 역 -> 서버에서 같은 이름·호선 역을 찾는다. 못 찾으면 null
-    private suspend fun resolve(s: Station): Station? {
-        if (!s.stationId.startsWith("map:")) return s
-        val parts = s.stationId.split(":", limit = 3)
-        if (parts.size < 3) return null
-        val line = parts[1]
-        val name = parts[2]
+    // 역 하나 -> 같은 이름의 서버 역 목록 (노선도 임시 역 "map:{호선}:{이름}"도 같은 방식)
+    private suspend fun candidates(s: Station): List<Station> {
+        val isMap = s.stationId.startsWith("map:")
+        val name = if (isMap) {
+            s.stationId.split(":", limit = 3).getOrNull(2) ?: return emptyList()
+        } else s.name
+
         val res = safeApiCall { api.searchStations(name).toDomain() }
-        return (res as? Resource.Success)?.data?.firstOrNull { it.name == name && it.line == line }
+        val found = (res as? Resource.Success)?.data.orEmpty()
+            // 서버 이름이 "흑석(중앙대입구)"처럼 괄호가 붙어도 같은 역으로 본다
+            .filter { it.name == name || it.name.startsWith("$name(") }
+        val all = if (!isMap && found.none { it.stationId == s.stationId }) found + s else found
+
+        // 운행 중인 역이 있으면 그것만 쓰고, 없으면 그대로 둬서 서버가 비활성 오류를 내게 한다
+        val active = all.filter { it.isActive }
+        return if (active.isNotEmpty()) active else all
     }
 
     // 서버 status/error_code -> 앱 결과

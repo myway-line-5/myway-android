@@ -90,10 +90,11 @@ debug 빌드에서만 `127.0.0.1`·`10.0.2.2`로의 http 통신이 허용됩니�
 - [x] Navigation 뼈대, 홈(노선도)·결과 화면
 - [x] 즐겨찾기·최근 검색·최근 경로 (LocalStore, 로컬 저장)
 - [x] 경로 탐색 서버 연동 (`/v1/routes/search`, RealRouteRepository, 실기기 확인)
-- [ ] 환승역에서 두 호선 모두 전달해 경로 탐색 (현재는 첫 호선만 전달)
-- [ ] 경로 기준(최단시간/최소환승/최소요금) 요청에 직접 전달 (서버 확인 필요)
+- [x] 환승역에서 모든 호선 후보로 경로 탐색해 가장 빠른 경로 선택 (실기기 확인)
+- [ ] 3기준(최단시간·최소환승·최소요금) 경로를 요청해서 탭 3개로 표시 (서버 확인 필요)
 - [ ] 요금 표시 (서버가 현재 null 반환)
-- [ ] ConditionRepository (AI 모드, `/v1/conditions/interpret`)
+- [x] AI 모드 해석 서버 연동 (`/v1/conditions/interpret`, RealConditionRepository, mock으로 실기기 확인)
+- [ ] AI 모드 역 후보 선택·확정 연동 (`/v1/stations/confirm`, Gemini 모드에서 확인 필요)
 - [ ] 역 상세 정보 (서버 API 확인 필요)
 - [ ] 안 쓰는 Room 코드 정리 (즐겨찾기·최근 검색은 LocalStore로 통일됨)
 - [ ] Phase 2 기능

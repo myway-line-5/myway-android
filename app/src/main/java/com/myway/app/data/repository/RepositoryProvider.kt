@@ -12,8 +12,8 @@ object RepositoryProvider {
     fun routeRepository(): RouteRepository =
         if (USE_FAKE) FakeRouteRepository() else RealRouteRepository(RetrofitClient.api)
 
-    // TODO: RealConditionRepository(메인 서버 /conditions/interpret) 생기면 USE_FAKE로 전환
-    fun conditionRepository(): ConditionRepository = FakeConditionRepository()
+    fun conditionRepository(): ConditionRepository =
+        if (USE_FAKE) FakeConditionRepository() else RealConditionRepository(RetrofitClient.api)
 
     // TODO: 역 정보 API(첫차·막차·시간표·혼잡도·편의시설) 생기면 USE_FAKE로 전환
     fun stationDetailRepository(): StationDetailRepository = FakeStationDetailRepository()
