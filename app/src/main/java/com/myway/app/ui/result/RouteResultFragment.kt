@@ -19,6 +19,7 @@ import com.myway.app.domain.model.Criterion
 import com.myway.app.domain.model.RouteType
 import com.myway.app.ui.route.RouteSelectionViewModel
 import com.myway.app.ui.route.RouteSelectionViewModel.Slot
+import com.myway.app.voice.TtsManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -29,6 +30,7 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
     private val routeVm: RouteSelectionViewModel by activityViewModels()
     private var _b: FragmentRouteResultBinding? = null
     private val adapter = TimelineAdapter()
+    private var tts: TtsManager? = null   // ★ 추가
 
     private fun tabs(): Map<RouteType, ItemRouteTabBinding> {
         val b = _b ?: return emptyMap()
@@ -59,6 +61,9 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
         b.closeButton.setOnClickListener { findNavController().popBackStack() }
         b.retryButton.setOnClickListener { vm.retry() }
         b.favoriteButton.setOnClickListener { vm.toggleFavorite(routeVm.points.value) }
+
+        tts = TtsManager(requireContext())                 // ★ 추가
+        b.speakButton.setOnClickListener { speakRoute() }  // ★ 추가
 
         // 결과 화면의 출발·도착 카드: ✕ 대신, 줄을 누르면 검색으로 돌아가 다시 고르기
         with(b.routeCard) {
@@ -95,6 +100,17 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
                 }
             }
         }
+    }
+
+    /** 선택된 기준의 경로 요약을 소리로 읽어준다 */   // ★ 추가
+    private fun speakRoute() {
+        val s = vm.state.value as? RouteResultUiState.Success ?: return
+        val route = s.routes[vm.selected.value] ?: s.routes.values.first()
+        val dest = routeVm.points.value.destination?.name ?: return
+        val min = Timeline.minutes(route.totalSeconds)
+        val transferText = if (route.transferCount == 0) "환승 없이 갈 수 있어요"
+        else "환승은 ${route.transferCount}회예요"
+        tts?.speak("${dest}까지 약 ${min}분 걸리고, $transferText")
     }
 
     /** 2-6: AI 조건을 반영했다는 표시 */
@@ -174,6 +190,8 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
     }
 
     override fun onDestroyView() {
+        tts?.shutdown()   // ★ 추가
+        tts = null        // ★ 추가
         _b = null
         super.onDestroyView()
     }
