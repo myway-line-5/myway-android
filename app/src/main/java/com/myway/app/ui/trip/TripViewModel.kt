@@ -22,7 +22,7 @@ class TripViewModel : ViewModel() {
     val state = TripEngine.state
     val feed = TripEngine.feed
     val muted = TripEngine.muted
-    val hop = TripEngine.hop
+    val pos = TripEngine.pos
     val waitLeft = TripEngine.waitLeft
     val canUndo = TripEngine.canUndo
 

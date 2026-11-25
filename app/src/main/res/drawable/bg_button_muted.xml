@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 소리 꺼짐 상태: 칠한 배경 + 진한 테두리로 '켜짐'과 한눈에 구분 -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="#1F1C2659">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/bg_muted" />
+            <stroke android:width="1.5dp" android:color="@color/border_strong" />
+            <corners android:radius="@dimen/radius_button" />
+        </shape>
+    </item>
+</ripple>

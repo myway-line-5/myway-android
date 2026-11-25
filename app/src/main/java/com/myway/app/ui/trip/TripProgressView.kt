@@ -11,9 +11,14 @@ import com.myway.app.R
 class TripProgressView @JvmOverloads constructor(ctx: Context, attrs: AttributeSet? = null) : View(ctx, attrs) {
 
     var color: Int = ctx.getColor(R.color.brand_navy); set(v) { field = v; invalidate() }
-    /** 0..1 지나온 비율 */
+    /** 0..1 지나온 비율 (목표). 그리는 값(shown)이 화면 주사율로 부드럽게 따라감, 뒤로 가면(새 구간) 바로 */
     var fraction: Float = 0f
-        set(v) { field = v.coerceIn(0f, 1f); invalidate() }
+        set(v) {
+            field = v.coerceIn(0f, 1f)
+            if (field < shown) shown = field
+            postInvalidateOnAnimation()
+        }
+    private var shown = 0f
 
     private val d = resources.displayMetrics.density
     private val track = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = ctx.getColor(R.color.border_default); strokeWidth = 8 * d; strokeCap = Paint.Cap.ROUND }
@@ -28,7 +33,11 @@ class TripProgressView @JvmOverloads constructor(ctx: Context, attrs: AttributeS
         val r = 9 * d
         val inset = r + ring.strokeWidth / 2 + 1 * d            // 테두리 두께까지 넣어야 양 끝 동그라미가 안 잘림
         val left = paddingLeft + inset; val right = width - paddingRight - inset
-        val x = left + (right - left) * fraction
+        if (shown != fraction) {
+            shown += (fraction - shown) * 0.3f
+            if (kotlin.math.abs(fraction - shown) < 0.0005f) shown = fraction else postInvalidateOnAnimation()
+        }
+        val x = left + (right - left) * shown
         c.drawLine(left, y, right, y, track)
         fill.color = color; dot.color = color; ring.color = color
         c.drawLine(left, y, x, y, fill)

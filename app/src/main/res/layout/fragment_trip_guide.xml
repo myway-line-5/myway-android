@@ -535,6 +535,47 @@
                     android:textAppearance="@style/Text.MyWay.Caption12Bold"
                     android:textColor="@color/text_on_brand" />
             </LinearLayout>
+
+            <!-- 도착 인사: 시간대별 한마디 (날씨 API 붙으면 greetSub 자리에 날씨) -->
+            <LinearLayout
+                android:id="@+id/greetCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:background="@drawable/bg_greet_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/space_xl">
+
+                <ImageView
+                    android:id="@+id/greetIcon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:importantForAccessibility="no"
+                    app:tint="@color/brand_navy" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_l"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/greetTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/Text.MyWay.Heading18Bold" />
+
+                    <TextView
+                        android:id="@+id/greetSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:textAppearance="@style/Text.MyWay.Label14Medium"
+                        android:textColor="@color/text_secondary" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </FrameLayout>
 

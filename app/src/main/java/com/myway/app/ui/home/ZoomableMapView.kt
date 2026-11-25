@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.CornerPathEffect
 import android.graphics.Path
 import kotlin.math.hypot
 import android.graphics.Typeface
@@ -133,10 +134,12 @@ class ZoomableMapView @JvmOverloads constructor(
     private val routeCase = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE; strokeCap = Paint.Cap.ROUND; strokeJoin = Paint.Join.ROUND
         color = Color.WHITE; strokeWidth = 11 * dp
+        pathEffect = CornerPathEffect(12 * dp)       // 선로 꺾임을 둥글게 (노선도처럼 매끈하게)
     }
     private val routeLine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE; strokeCap = Paint.Cap.ROUND; strokeJoin = Paint.Join.ROUND
         strokeWidth = 6 * dp
+        pathEffect = CornerPathEffect(12 * dp)
     }
     private val walkLine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE; strokeCap = Paint.Cap.ROUND; strokeWidth = 4 * dp

@@ -36,7 +36,11 @@ class GuideService : Service() {
     private lateinit var notifier: TripNotifier
     private var tts: TtsManager? = null
     private var lastKey: Any? = null
-    private var lastProgress: String? = null
+    private var shown: Shown? = null
+    private var arrivedNote: Pair<String, String>? = null      // 도착하면 서비스가 끝난 뒤 남길 알림
+
+    /** 지금 떠 있는 알림 내용 (같으면 다시 안 띄움, 밀어서 지우면 이걸로 다시 띄움) */
+    private data class Shown(val title: String, val text: String, val done: Int, val max: Int)
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -47,7 +51,7 @@ class GuideService : Service() {
         val title = p?.let { getString(R.string.trip_route, it.origin.displayName(), it.destination.displayName()) }
             ?: getString(R.string.trip_ch_progress)
         ServiceCompat.startForeground(this, TripNotifier.ID_PROGRESS,
-            notifier.buildProgress(title, getString(R.string.trip_ch_progress)),
+            notifier.build(title, getString(R.string.trip_ch_progress)),
             if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0)
         tts = TtsManager(this, if (StationNames.english) java.util.Locale.ENGLISH else java.util.Locale.KOREAN)
         scope.launch {
@@ -55,7 +59,11 @@ class GuideService : Service() {
         }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_NOT_STICKY
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // 밀어서 지운 진행 알림 다시 띄우기
+        if (intent?.action == ACTION_REPOST) shown?.let { notifier.show(it.title, it.text, it.done, it.max) }
+        return START_NOT_STICKY
+    }
 
     private fun onState(s: TripState, muted: Boolean) {
         val p = TripEngine.plan ?: return stopSelf()
@@ -66,46 +74,44 @@ class GuideService : Service() {
         when (s) {
             is TripState.Waiting -> {
                 val leg = p.legs[s.leg]
-                progress(title, getString(R.string.trip_wait_sub, leg.line, leg.toward.displayName()))
+                show(title, getString(R.string.trip_wait_sub, leg.line, leg.toward.displayName()), p, s.leg, 0)
                 // 못 탔어요 → 다음 열차 기다림 안내
                 if (first && (prev is TripState.BoardCheck || prev is TripState.Riding))
                     say(getString(R.string.trip_say_missed, (s.seconds + 59) / 60), muted)
             }
             is TripState.BoardCheck -> {
                 if (!first) return
-                progress(title, getString(R.string.trip_board_check_title))
-                notifier.alert(getString(R.string.trip_board_check_title), getString(R.string.trip_board_check_sub))
+                show(getString(R.string.trip_board_check_title), getString(R.string.trip_board_check_sub), p, s.leg, 0, urgent = true)
                 // 말로 시작했으면 화면(Fragment)이 묻고 듣는다. 아니면 여기서 말로만 알림
                 if (!TripEngine.handsFree) say(getString(R.string.trip_say_board_check), muted)
             }
             is TripState.Riding -> {
                 val leg = p.legs[s.leg]
                 val left = leg.stops.lastIndex - s.at
-                progress(title, getString(R.string.trip_noti_progress, leg.alight.name.displayName(), left))
+                val soon = left == 2
+                if (soon) show(getString(R.string.trip_noti_soon, left), getString(R.string.trip_noti_soon_body, leg.alight.name.displayName()), p, s.leg, s.at, urgent = first)
+                else show(title, getString(R.string.trip_noti_progress, leg.alight.name.displayName(), left), p, s.leg, s.at)
                 if (!first) return
                 if (s.at == 0) say(getString(R.string.trip_say_board), muted)
-                if (left == 2) {
-                    notifier.alert(getString(R.string.trip_noti_soon, left), getString(R.string.trip_noti_soon_body, leg.alight.name.displayName()))
-                    say(getString(R.string.trip_say_soon, left, leg.alight.name.displayName()), muted)
-                }
+                if (soon) say(getString(R.string.trip_say_soon, left, leg.alight.name.displayName()), muted)
             }
             is TripState.AlightNow -> {
                 if (!first) return
                 val leg = p.legs[s.leg]; val next = p.legs[s.leg + 1]
-                progress(title, getString(R.string.trip_noti_now))
-                notifier.alert(getString(R.string.trip_noti_now), leg.alight.name.displayName())
+                show(getString(R.string.trip_noti_now), leg.alight.name.displayName(), p, s.leg + 1, 0, urgent = true)
+                // 화면을 안 봐도 이어지게: 안내 말이 끝나면 환승 안내로 (일반·핸즈프리 모두)
                 say(getString(R.string.trip_say_now_transfer, leg.alight.name.displayName(), next.line), muted) {
-                    if (TripEngine.handsFree && TripEngine.state.value == s) TripEngine.showTransfer()
+                    if (TripEngine.state.value == s) TripEngine.showTransfer()
                 }
             }
             is TripState.Transfer -> {
                 if (!first) return
                 val next = p.legs[s.leg + 1]
                 val walk = ((p.walks[s.leg] + 59) / 60).coerceAtLeast(1)
-                progress(title, getString(R.string.trip_transfer_to, next.line))
+                show(title, getString(R.string.trip_transfer_to, next.line), p, s.leg + 1, 0)
                 say(getString(R.string.trip_say_transfer, next.line, next.toward.displayName(), walk), muted) {
-                    // 핸즈프리: 걷는 동안 기다렸다가 다음 열차로 (시연 6초)
-                    if (TripEngine.handsFree) main.postDelayed({
+                    // 걷는 동안 기다렸다가 가장 빠른 열차로 (시연 6초). 그 사이 화면에서 고르면 그 열차
+                    main.postDelayed({
                         if (TripEngine.state.value == s) TripEngine.boardNext(TripEngine.FIRST_TRAIN)
                     }, WALK_DEMO_MS)
                 }
@@ -113,20 +119,32 @@ class GuideService : Service() {
             is TripState.Passed, is TripState.WrongWay -> {
                 if (!first) return
                 val label = getString(if (s is TripState.Passed) R.string.trip_passed_label else R.string.trip_wrong_label)
-                notifier.alert(label, getString(R.string.trip_reroute_1))
+                show(label, getString(R.string.trip_reroute_1), p, 0, 0, urgent = true, keepBar = true)
                 say(label, muted)
             }
             is TripState.Arrived -> {
                 if (!first) return
-                say(getString(R.string.trip_say_arrived, p.destination.displayName()), muted) { stopSelf() }
+                val max = p.legs.sumOf { it.stops.lastIndex }
+                val g = Greeting.at(s.actual)
+                val arrived = getString(R.string.trip_say_arrived, p.destination.displayName())
+                shown = Shown(title, arrived, max, max)
+                notifier.show(title, arrived, max, max)
+                arrivedNote = arrived to getString(g.title) + " · " + getString(g.sub)
+                // "○○에 도착했어요. 오늘 하루도 수고했어요" → 다 말하면 진행 알림 정리하고 종료 (TTS 응답 없어도 8초 뒤)
+                say(arrived + ". " + getString(g.title), muted) { stopSelf() }
+                main.postDelayed({ stopSelf() }, 8_000)
             }
         }
     }
 
-    private fun progress(title: String, text: String) {
-        if (text == lastProgress) return
-        lastProgress = text
-        notifier.progress(title, text)
+    /** 알림 갱신: 전체 경로 기준 진행 바 (지난 역 수 / 전체 역 수). 같은 내용이면 건너뜀 */
+    private fun show(title: String, text: String, p: TripPlan, leg: Int, at: Int, urgent: Boolean = false, keepBar: Boolean = false) {
+        val max = p.legs.sumOf { it.stops.lastIndex }
+        val done = if (keepBar) shown?.done ?: 0 else p.legs.take(leg).sumOf { it.stops.lastIndex } + at
+        val next = Shown(title, text, done, max)
+        if (next == shown) return
+        shown = next
+        notifier.show(title, text, done, max, urgent)
     }
 
     /** 말하기. 소리 끔·읽어주기 끔이면 바로 다음으로 */
@@ -141,11 +159,13 @@ class GuideService : Service() {
         scope.cancel()
         tts?.shutdown(); tts = null
         notifier.clear()
+        arrivedNote?.let { (t, x) -> notifier.done(t, x) }     // 진행 알림 대신 도착 인사 한 장 (눌러 지우기 · 30분 뒤 자동으로 사라짐)
         super.onDestroy()
     }
 
     companion object {
         private const val WALK_DEMO_MS = 6_000L
+        const val ACTION_REPOST = "com.myway.app.trip.REPOST"
 
         fun start(ctx: Context) {
             ContextCompat.startForegroundService(ctx, Intent(ctx, GuideService::class.java))

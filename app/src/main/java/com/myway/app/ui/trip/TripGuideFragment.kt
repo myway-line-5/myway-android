@@ -24,7 +24,6 @@ import com.myway.app.ui.common.StationNames
 import com.myway.app.ui.common.displayName
 import com.myway.app.ui.result.Timeline
 import com.myway.app.voice.TtsManager
-import com.myway.app.data.local.SettingsStore
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.time.LocalTime
@@ -48,7 +47,7 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, back)
         tts = TtsManager(requireContext(), if (StationNames.english) java.util.Locale.ENGLISH else java.util.Locale.KOREAN)
         // 기능 28: 화면이 꺼져도 안내가 이어지게 포그라운드 서비스 시작 (음성·진동·알림은 서비스가 담당)
-        GuideService.start(requireContext())
+        if (vm.state.value !is TripState.Arrived) GuideService.start(requireContext())   // 도착 뒤 화면 재생성 시 안내 중복 방지
 
         b.routePill.text = getString(R.string.trip_route, plan.origin.displayName(), plan.destination.displayName())
         b.endButton.setOnClickListener { confirmEnd() }
@@ -64,10 +63,10 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
             askTrain(first)
         }
 
-        // 진행 막대: 열차 이동과 같은 시계(vm.hop)로 매 프레임 갱신 → 구간 길이만큼 빠르게·느리게, 끝까지 참
+        // 진행 막대: 열차 이동과 같은 시계(vm.pos)로 갱신 → 구간 길이만큼 빠르게·느리게, 끝까지 참. 사이 프레임은 막대가 스스로 부드럽게 보간
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                combine(vm.state, vm.hop, vm.waitLeft) { s, h, w -> Triple(s, h, w) }.collect { (s, h, w) ->
+                combine(vm.state, vm.pos, vm.waitLeft) { s, x, w -> Triple(s, x, w) }.collect { (s, x, w) ->
                     if (s is TripState.Waiting || s is TripState.BoardCheck) {   // 열차 기다리는 중: 큰 숫자 = 남은 시간
                         val left = if (s is TripState.BoardCheck) 0 else w
                         _b?.remainCount?.text = "%d:%02d".format(left / 60, left % 60)
@@ -76,7 +75,7 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
                     }
                     val r = s as? TripState.Riding ?: return@collect
                     val n = plan.legs[r.leg].stops.lastIndex
-                    _b?.progress?.fraction = (r.at + h) / n
+                    _b?.progress?.fraction = at(r, x) / n
                 }
             }
         }
@@ -158,7 +157,7 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
                 b.eta.setText(R.string.trip_wait_eta)
                 bindLeg(p, s.leg)
                 banner(feed, null)
-                buttons(sound, { vm.toggleMute() }, getString(R.string.trip_view_route), { openRouteMap() }, primary = false)
+                buttons(sound, { vm.toggleMute() }, getString(R.string.trip_view_route), { openRouteMap() }, primary = false, muted = muted)
             }
             is TripState.Riding -> {
                 b.untilLabel.setText(R.string.trip_until)
@@ -176,13 +175,13 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
                 b.eta.text = getString(if (estimated) R.string.trip_eta_estimate else R.string.trip_eta,
                     Timeline.minutes(sec), Timeline.clock(eta))
                 bindLeg(p, s.leg)
-                b.progress.fraction = (s.at + vm.hop.value) / leg.stops.lastIndex
+                b.progress.fraction = at(s, vm.pos.value) / leg.stops.lastIndex
                 banner(feed, if (left <= 2) getString(R.string.trip_soon_banner, left) else null)
                 // 대답 없이 '탄 것으로' 시작했으면 1분 동안 [못 탔어요]로 되돌릴 수 있게
                 if (vm.canUndo.value && s.at == 0)
                     buttons(getString(R.string.trip_missed), { vm.missed() }, getString(R.string.trip_view_route), { openRouteMap() }, primary = false)
                 else
-                    buttons(sound, { vm.toggleMute() }, getString(R.string.trip_view_route), { openRouteMap() }, primary = false)
+                    buttons(sound, { vm.toggleMute() }, getString(R.string.trip_view_route), { openRouteMap() }, primary = false, muted = muted)
 
             }
             is TripState.AlightNow -> {
@@ -208,7 +207,7 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
                     getString(R.string.trip_step3, next.line) to getString(R.string.trip_step3_sub, next.toward.displayName())
                 ), numbered = true)
                 banner(feed, null)
-                buttons(sound, { vm.toggleMute() }, getString(R.string.trip_pick_next, next.line), {
+                buttons(sound, { vm.toggleMute() }, getString(R.string.trip_pick_next, next.line), muted = muted, onRight = {
                     if (childFragmentManager.findFragmentByTag(TrainPickSheet.TAG) == null)
                         TrainPickSheet.newInstance(s.leg + 1).show(childFragmentManager, TrainPickSheet.TAG)
                 }, primary = true)
@@ -236,6 +235,11 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
             }
             is TripState.Arrived -> {
                 b.arrivedStation.text = p.destination.displayName()
+                Greeting.at(s.actual).let { g ->
+                    b.greetIcon.setImageResource(g.icon)
+                    b.greetTitle.setText(g.title)
+                    b.greetSub.setText(g.sub)
+                }
                 b.arrivedSub.text = getString(R.string.trip_arrived_sub, Timeline.minutes(p.totalSeconds), p.transferCount)
                 b.plannedTime.text = Timeline.clock(s.planned)
                 b.actualTime.text = Timeline.clock(s.actual)
@@ -289,16 +293,29 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
         b.banner.isVisible = soon != null || feed != Feed.LIVE
     }
 
-    private fun buttons(left: String, onLeft: () -> Unit, right: String, onRight: () -> Unit, primary: Boolean) {
+    /** muted 를 주면 왼쪽은 소리 버튼: 아이콘이 지금 상태(🔊 켜짐 / 🔇 꺼짐), 꺼졌을 땐 칠한 배경으로 눈에 띄게 */
+    private fun buttons(left: String, onLeft: () -> Unit, right: String, onRight: () -> Unit, primary: Boolean, muted: Boolean? = null) {
         val b = _b ?: return
         val ctx = requireContext()
         b.leftButton.isVisible = true
-        b.leftButton.text = left; b.leftButton.setOnClickListener { onLeft() }
-        b.leftButton.setBackgroundResource(R.drawable.bg_button_secondary)
+        b.leftButton.text = muted?.let { withIcon(left, if (it) R.drawable.ic_volume_off else R.drawable.ic_set_voice) } ?: left
+        b.leftButton.setOnClickListener { onLeft() }
+        b.leftButton.setBackgroundResource(if (muted == true) R.drawable.bg_button_muted else R.drawable.bg_button_secondary)
         b.leftButton.setTextColor(ctx.getColor(R.color.text_primary))
         b.rightButton.text = right; b.rightButton.setOnClickListener { onRight() }
         b.rightButton.setBackgroundResource(if (primary) R.drawable.bg_button_primary else R.drawable.bg_button_secondary)
         b.rightButton.setTextColor(ctx.getColor(if (primary) R.color.text_on_brand else R.color.text_primary))
+    }
+
+    /** 글자 앞에 아이콘 (아이콘과 글자가 한 덩어리로 가운데 정렬) */
+    private fun withIcon(text: String, icon: Int): CharSequence {
+        val d = androidx.core.content.ContextCompat.getDrawable(requireContext(), icon)?.mutate() ?: return text
+        d.setBounds(0, 0, dp(20), dp(20))
+        d.setTint(requireContext().getColor(R.color.text_primary))
+        return android.text.SpannableStringBuilder("  ").append(text).apply {
+            setSpan(android.text.style.ImageSpan(d, android.text.style.ImageSpan.ALIGN_CENTER.takeIf { android.os.Build.VERSION.SDK_INT >= 29 }
+                ?: android.text.style.ImageSpan.ALIGN_BOTTOM), 0, 1, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
     }
 
     /** 버튼 하나만 (3-4) */
@@ -378,11 +395,6 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
     private var askedCheck: Any? = null
 
 
-    private fun say(text: String, muted: Boolean) {
-        if (!muted && SettingsStore.bool(SettingsStore.Key.TTS)) tts?.speak(text)
-    }
-
-
     /** 핸즈프리: 탈 열차를 말로 알려 주고 '다음 열차'를 들음. 묻는 동안 가짜 열차는 멈춤 */
     private fun askTrain(leg: TripLeg) {
         val v = voice ?: return
@@ -429,6 +441,9 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
             menu.add(R.string.trip_demo_live).setOnMenuItemClickListener { vm.demoFeed(Feed.LIVE); true }
         }.show()
     }
+
+    /** 열차 위치를 지금 역 칸 안으로 (다른 구간의 지난 값이 한 프레임 섞여도 튀지 않게) */
+    private fun at(r: TripState.Riding, x: Float) = if (x >= r.at && x <= r.at + 1) x else r.at.toFloat()
 
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
 

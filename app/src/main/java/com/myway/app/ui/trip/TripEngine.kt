@@ -64,7 +64,7 @@ object TripEngine {
         hold = false
         val wait = TripSession.firstWaitSeconds
         _waitLeft.value = wait
-        _hop.value = 0f
+        _pos.value = 0f
         _feed.value = Feed.LIVE
         _canUndo.value = false
         _muted.value = false
@@ -94,14 +94,14 @@ object TripEngine {
     private var ticker: Job? = null
 
 
-    /** 지금 역 → 다음 역 사이를 얼마나 왔나 (0..1). 진행 막대가 이 값을 그대로 그림 */
     /** 대답 없이 '탄 것으로' 시작한 뒤 1분 동안 [못 탔어요]로 되돌릴 수 있음 */
     private val _canUndo = MutableStateFlow(false)
     val canUndo: StateFlow<Boolean> = _canUndo.asStateFlow()
     private var undoUntil = 0L
 
-    private val _hop = MutableStateFlow(0f)
-    val hop: StateFlow<Float> = _hop.asStateFlow()
+    /** 구간 안 열차 위치 = 지금 역 순번 + 다음 역까지 온 비율 (예: 2.4). 역이 바뀌어도 값이 끊기지 않아 막대가 되감기지 않음 */
+    private val _pos = MutableStateFlow(0f)
+    val pos: StateFlow<Float> = _pos.asStateFlow()
 
     /**
      * 역 사이 실제 소요시간을 [SPEEDUP]배 빠르게 재생: 긴 구간은 천천히, 짧은 구간은 빨리 (4~15초).
@@ -147,11 +147,11 @@ object TripEngine {
                 waiting = null
                 val s = _state.value as? TripState.Riding
                 if (s == null) { current = null; elapsed = 0; continue }
-                if (s != current) { current = s; elapsed = 0; _hop.value = 0f }
+                if (s != current) { current = s; elapsed = 0; _pos.value = s.at.toFloat() }
                 if (hold) continue                                   // 음성으로 묻는 동안 멈춤
                 elapsed += FRAME_MS
                 val d = hopMs(s)
-                _hop.value = (elapsed.toFloat() / d).coerceAtMost(1f)
+                _pos.value = s.at + (elapsed.toFloat() / d).coerceAtMost(1f)
                 if (elapsed >= d + ARRIVE_PAUSE_MS) tick()             // 막대가 다 찬 걸 잠깐 보여 준 뒤 다음 역
             }
         }

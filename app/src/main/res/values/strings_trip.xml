@@ -114,11 +114,23 @@
     <string name="trip_wait_sub">%1$s호선 · %2$s 방면 열차를 기다려요</string>
     <string name="trip_wait_eta">도착하면 자동으로 안내를 시작해요</string>
     <string name="trip_say_board">안내를 시작할게요</string>
-    <string name="trip_board_check_title">열차가 도착했어요 · 타셨어요?</string>
+    <string name="trip_board_check_title">열차가 도착했어요 · 타셨나요?</string>
     <string name="trip_board_check_sub">대답이 없으면 탄 것으로 보고 안내를 시작해요</string>
     <string name="trip_boarded">탔어요</string>
     <string name="trip_missed">못 탔어요</string>
-    <string name="trip_say_board_check">열차가 도착했어요. 타셨어요?</string>
+    <string name="trip_say_board_check">열차가 도착했어요. 타셨나요?</string>
     <string name="trip_say_missed">다음 열차를 기다릴게요. 약 %d분 뒤에 와요</string>
     <string name="voice_hint_boarded">\'응\' 또는 \'못 탔어\'</string>
+
+    <!-- 도착 인사 (시간대별) -->
+    <string name="greet_morning">좋은 아침이에요</string>
+    <string name="greet_morning_sub">오늘 하루도 가볍게 시작해요</string>
+    <string name="greet_lunch">점심 맛있게 드세요</string>
+    <string name="greet_lunch_sub">오후도 기분 좋게 이어가요</string>
+    <string name="greet_afternoon">남은 오후도 힘내세요</string>
+    <string name="greet_afternoon_sub">오늘도 잘하고 있어요</string>
+    <string name="greet_evening">오늘 하루도 수고했어요</string>
+    <string name="greet_evening_sub">편안한 저녁 보내세요</string>
+    <string name="greet_night">늦은 시간까지 고생했어요</string>
+    <string name="greet_night_sub">조심히 들어가세요</string>
 </resources>
