@@ -8,7 +8,7 @@
     <string name="trip_pick_note">선택하면 이 열차의 위치로 안내해요. 실시간 정보가 늦을 수 있어요</string>
     <string name="trip_pick_confirm">이 열차 탈게요</string>
     <string name="trip_train_name">%s 방면</string>
-    <string name="trip_train_no">열차 %s</string>
+    <string name="trip_train_arrive">%1$s %2$s 도착</string>
     <string name="trip_train_min_sec">%1$d분 %2$02d초</string>
     <string name="trip_train_until">도착까지</string>
     <string name="trip_train_soon">곧 도착 · %d초</string>
@@ -112,7 +112,7 @@
     <string name="trip_say_transfer">%1$s호선 %2$s 방면으로 갈아타요. 환승 통로로 걸어서 약 %3$d분이에요</string>
     <string name="trip_wait_until">열차 도착까지</string>
     <string name="trip_wait_sub">%1$s호선 · %2$s 방면 열차를 기다려요</string>
-    <string name="trip_wait_eta">도착하면 자동으로 안내를 시작해요</string>
+    <string name="trip_wait_eta">%1$s %2$s 도착 예정 · 타면 자동으로 안내해요</string>
     <string name="trip_say_board">안내를 시작할게요</string>
     <string name="trip_board_check_title">열차가 도착했어요 · 타셨나요?</string>
     <string name="trip_board_check_sub">대답이 없으면 탄 것으로 보고 안내를 시작해요</string>

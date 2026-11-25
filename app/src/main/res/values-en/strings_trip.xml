@@ -7,7 +7,7 @@
     <string name="trip_pick_note">We\'ll guide you using this train\'s position. Live info may lag</string>
     <string name="trip_pick_confirm">I\'ll take this train</string>
     <string name="trip_train_name">Toward %s</string>
-    <string name="trip_train_no">Train %s</string>
+    <string name="trip_train_arrive">Arrive at %1$s %2$s</string>
     <string name="trip_train_min_sec">%1$d min %2$02d s</string>
     <string name="trip_train_until">Arrives in</string>
     <string name="trip_train_soon">Soon · %d s</string>
@@ -102,7 +102,7 @@
     <string name="trip_say_transfer">Transfer to Line %1$s toward %2$s. About %3$d min walk through the transfer passage</string>
     <string name="trip_wait_until">Train arrives in</string>
     <string name="trip_wait_sub">Line %1$s · waiting for the train toward %2$s</string>
-    <string name="trip_wait_eta">Guidance starts when it arrives</string>
+    <string name="trip_wait_eta">Arrive at %1$s around %2$s · guidance starts when you board</string>
     <string name="trip_say_board">Starting guidance</string>
     <string name="trip_board_check_title">Your train is here · Did you board?</string>
     <string name="trip_board_check_sub">If you don\'t answer, we\'ll assume you did and start guidance</string>

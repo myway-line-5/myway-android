@@ -584,6 +584,7 @@
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/space_xl"
         android:paddingTop="@dimen/space_l"

@@ -21,6 +21,9 @@ data class TripPlan(
     val totalSeconds: Int,
     val transferCount: Int
 ) {
+    /** legs[fromLeg] 열차를 탄 순간부터 목적지까지 걸리는 시간(초): 남은 구간 + 그 사이 환승 도보 */
+    fun restSeconds(fromLeg: Int): Int = legs.drop(fromLeg).sumOf { it.hops.sum() } + walks.drop(fromLeg).sum()
+
     companion object {
         fun from(route: RouteResult): TripPlan? {
             val legs = mutableListOf<TripLeg>()

@@ -288,9 +288,13 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
             TimeSheet.newInstance(arrive, start, total).show(childFragmentManager, TimeSheet.TAG)
     }
 
-    /** 실제로 쓸 출발 시각: 도착 기준이면 거꾸로 계산 */
+    /**
+     * 실제로 쓸 출발 시각: 도착 기준이면 거꾸로 계산.
+     * 시각을 안 골랐으면(지금 출발) 가장 빨리 오는 열차 시각 = 지금 + 첫 열차 기다림 → 도착도 그만큼 뒤
+     */
     private fun departOf(s: RouteResultUiState.Success, total: Long): java.time.LocalTime =
-        picked?.let { if (it.arrive) it.time.minusSeconds(total) else it.time } ?: s.departAt
+        picked?.let { if (it.arrive) it.time.minusSeconds(total) else it.time }
+            ?: s.departAt.plusSeconds(com.myway.app.ui.trip.TrainPickSheet.TRAINS.first().toLong())
 
     private fun render(state: RouteResultUiState, selected: RouteType) {
         val b = _b ?: return

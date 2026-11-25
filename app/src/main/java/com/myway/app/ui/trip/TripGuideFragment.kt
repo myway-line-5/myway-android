@@ -154,7 +154,9 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
                 b.untilLabel.setText(R.string.trip_wait_until)
                 b.stopsUnit.isVisible = false
                 b.remainCount.setTextColor(ctx.getColor(R.color.text_primary))
-                b.eta.setText(R.string.trip_wait_eta)
+                // 고른 열차 기준 도착 예정: 지금 + 남은 기다림 + 탄 뒤 걸리는 시간
+                b.eta.text = getString(R.string.trip_wait_eta, p.destination.displayName(),
+                    Timeline.clock(LocalTime.now().plusSeconds((vm.waitLeft.value + p.restSeconds(s.leg)).toLong())))
                 bindLeg(p, s.leg)
                 banner(feed, null)
                 buttons(sound, { vm.toggleMute() }, getString(R.string.trip_view_route), { openRouteMap() }, primary = false, muted = muted)

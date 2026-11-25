@@ -33,13 +33,21 @@ class TrainPickSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val b = _b ?: return
-        val leg = TripSession.plan?.legs?.getOrNull(requireArguments().getInt(ARG_LEG)) ?: return dismiss()
+        val plan = TripSession.plan ?: return dismiss()
+        val legIdx = requireArguments().getInt(ARG_LEG)
+        val leg = plan.legs.getOrNull(legIdx) ?: return dismiss()
         b.pickSub.text = getString(R.string.trip_pick_sub, leg.board.name.displayName(), leg.line, leg.toward.displayName())
         b.closeButton.setOnClickListener { dismiss() }
 
         // 가짜 도착 예정 열차 (초): 가장 빠른 열차가 기본 선택. 1초마다 줄어듦
-        val trains = intArrayOf(193, 524, 720)
-        val rows = trains.mapIndexed { i, sec -> row(leg, i, sec) }
+        val trains = TRAINS.copyOf()
+        // 열차마다 목적지 도착 시각 = 지금 + 이 열차 기다림 + 타고 난 뒤 남은 시간 → 늦은 열차는 도착도 늦음을 고르기 전에 보여 줌
+        val now = java.time.LocalTime.now()
+        val rest = plan.restSeconds(legIdx).toLong()
+        val rows = trains.mapIndexed { i, sec ->
+            row(leg, i, sec, getString(R.string.trip_train_arrive, plan.destination.displayName(),
+                com.myway.app.ui.result.Timeline.clock(now.plusSeconds(sec + rest))))
+        }
         countdown = object : Runnable {
             override fun run() {
                 val bb = _b ?: return
@@ -65,7 +73,7 @@ class TrainPickSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun row(leg: TripLeg, i: Int, sec: Int): LinearLayout {
+    private fun row(leg: TripLeg, i: Int, sec: Int, arrive: String): LinearLayout {
         val ctx = requireContext()
         val d = resources.displayMetrics.density
         return LinearLayout(ctx).apply {
@@ -86,9 +94,10 @@ class TrainPickSheet : BottomSheetDialogFragment() {
                     text = getString(R.string.trip_train_name, leg.toward.displayName())
                 })
                 addView(TextView(ctx).apply {
-                    setTextAppearance(R.style.Text_MyWay_Caption12Medium)
+                    setTextAppearance(R.style.Text_MyWay_Label14Medium)
                     setTextColor(ctx.getColor(R.color.text_secondary))
-                    text = getString(R.string.trip_train_no, "${leg.line}${100 + i * 2 + 2}")
+                    fontFeatureSettings = "tnum"
+                    text = arrive                                       // "교대 16:45 도착"
                 })
             })
             // 오른쪽: "도착까지" + 남은 시간 (전광판처럼 읽히게). 폭 고정 + 오른쪽 정렬 → 숫자가 바뀌어도 글자 위치 그대로
@@ -155,6 +164,8 @@ class TrainPickSheet : BottomSheetDialogFragment() {
         const val RES_LEG = "leg"
         const val RES_WAIT = "wait"
         private const val TAG_ETA = "eta"
+        /** 곧 올 열차 3대 (초). 첫 열차 = 결과 화면 출발 시각·말로 시작할 때 타는 열차 */
+        val TRAINS = intArrayOf(TripEngine.FIRST_TRAIN, 524, 720)
         private const val ARG_LEG = "leg"
         fun newInstance(leg: Int) = TrainPickSheet().apply { arguments = bundleOf(ARG_LEG to leg) }
     }
