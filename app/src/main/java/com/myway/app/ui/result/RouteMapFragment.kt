@@ -15,6 +15,7 @@ import com.myway.app.domain.model.RouteResult
 import com.myway.app.ui.common.LineStyle
 import com.myway.app.ui.home.MapImage
 import com.myway.app.ui.home.MapStations
+import com.myway.app.ui.home.MapTracks
 import com.myway.app.ui.home.ZoomableMapView
 import com.myway.app.ui.home.ZoomableMapView.PinKind
 import kotlinx.coroutines.launch
@@ -55,11 +56,15 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
         val stops = names.indices.mapNotNull { i ->
             val s = find(names[i], lines.getOrNull(i).orEmpty()) ?: return@mapNotNull null
             val nextWalk = walk.getOrElse(i + 1) { false }
+            // 같은 노선 인접 역이면 노선도의 실제 선로 모양을 따라 그림
+            val via = if (i > 0 && !walk.getOrElse(i) { false })
+                MapTracks.between(LineStyle.key(lines.getOrNull(i).orEmpty()), names[i - 1], names[i]) else null
             ZoomableMapView.RouteStop(
                 s.x.toFloat(), s.y.toFloat(),
                 color = ctx.getColor(LineStyle.colorRes(lines.getOrNull(i).orEmpty())),
                 major = i == 0 || i == last || walk.getOrElse(i) { false } || nextWalk,
-                connector = walk.getOrElse(i) { false }
+                connector = walk.getOrElse(i) { false },
+                via = via
             )
         }
         if (stops.size < 2) { b.missing.isVisible = true; return }

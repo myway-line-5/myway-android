@@ -184,9 +184,9 @@ class SettingsFragment : DialogFragment() {
             c.alpha = 0f
             c.animate().translationX(0f).alpha(1f).setDuration(ENTER_MS).setInterpolator(ease).start()
         } else {
-            c.translationX = dp(24).toFloat()
-            c.alpha = 0.3f
-            c.animate().translationX(0f).alpha(1f).setDuration(SWITCH_MS).setInterpolator(ease).start()
+            // 메뉴끼리 바꿀 땐 움직임 없이 바로 (매번 밀려 나오면 거슬림)
+            c.translationX = 0f
+            c.alpha = 1f
         }
     }
 
@@ -205,7 +205,7 @@ class SettingsFragment : DialogFragment() {
                     Choice(RouteType.MIN_FARE.name, getString(R.string.result_tab_fare))
                 ))
             // 고르면 바로 적용 (화면이 다시 그려지며 설정 패널은 그대로 열려 있음)
-            Section.SCREEN -> bindChoice(R.string.set_screen_label, R.string.set_screen_help, Key.THEME,
+            Section.SCREEN -> bindChoice(R.string.set_screen_label, null, Key.THEME,
                 listOf(
                     Choice("light", getString(R.string.set_theme_light)),
                     Choice("dark", getString(R.string.set_theme_dark)),
@@ -323,12 +323,13 @@ class SettingsFragment : DialogFragment() {
 
     private data class Choice(val value: String, val label: String, val enabled: Boolean = true)
 
-    private fun bindChoice(@StringRes label: Int, @StringRes help: Int, key: Key, options: List<Choice>,
+    private fun bindChoice(@StringRes label: Int, @StringRes help: Int?, key: Key, options: List<Choice>,
                            onPicked: (String) -> Unit = {}) {
         val b = _b ?: return
         val ctx = requireContext()
         b.choiceLabel.setText(label)
-        b.choiceHelp.setText(help)
+        b.choiceHelp.isVisible = help != null
+        help?.let { b.choiceHelp.setText(it) }
         b.choiceList.removeAllViews()
         val current = SettingsStore.string(key)
 
@@ -405,7 +406,6 @@ class SettingsFragment : DialogFragment() {
         private const val KEY_SECTION = "section"
         private const val ENTER_MS = 280L
         private const val EXIT_MS = 200L
-        private const val SWITCH_MS = 180L
         private val BARS = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
 
         /** 설정 값 → 다크 모드 (MainActivity 시작 때도 같이 씀) */

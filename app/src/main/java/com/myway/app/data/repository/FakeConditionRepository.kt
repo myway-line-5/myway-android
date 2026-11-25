@@ -27,12 +27,14 @@ class FakeConditionRepository(
 
     override suspend fun interpret(userMessage: String, current: RouteCondition?): Resource<InterpretResult> {
         delay(1200)
-        val text = userMessage.trim()
+        var text = userMessage.trim()
         if ("연결실패" in text.replace(" ", "")) return Resource.Failure(AppError.AiUnavailable)
         if (UNSUPPORTED.any { it in text }) return Resource.Failure(AppError.UnsupportedCondition)
 
         val all = (stations.getStations() as? Resource.Success)?.data.orEmpty()
-        if (text.any { it in 'a'..'z' || it in 'A'..'Z' }) return english(text, current, all)
+        if (text.any { it in 'a'..'z' || it in 'A'..'Z' }) return english(userMessage.trim(), current, all)
+        // 음성 인식은 "을지로 3가"처럼 띄어 씀 → 역 이름 안의 빈칸을 붙여서 "3가"만 잘려 나가지 않게
+        text = joinStationNames(text, all)
         val m = Regex("(\\S+?)역?\\s*에서\\s*(\\S+?)역?(?:까지|(?:으로|로)\\s*가|\\s|$)").find(text)
         // "A에서 B까지"가 아니면 문장 속 역 이름을 찾는다: "강남 가고 싶어" → 도착, "강남에서 출발" → 출발
         var originRaw = m?.groupValues?.get(1)?.trim()?.takeIf { it.isNotEmpty() }
@@ -73,6 +75,16 @@ class FakeConditionRepository(
      * 영어 문장: "from Yeouido to Gangnam, fewer transfers", "Gangnam to City Hall within 40 min" 등.
      * 역은 한국어 이름으로 바꿔 넘겨서 뒤 흐름(역 확정·후보)은 한국어와 똑같이 탄다.
      */
+    /** "을지로 3가", "동대문 역사 문화 공원" → 역 이름 그대로 붙임 (긴 이름부터) */
+    private fun joinStationNames(text: String, all: List<Station>): String {
+        var t = text
+        all.map { it.name }.distinct().filter { it.length >= 3 }.sortedByDescending { it.length }.forEach { n ->
+            val spaced = n.toCharArray().joinToString("\\s*") { Regex.escape(it.toString()) }
+            t = Regex(spaced).replace(t, n)
+        }
+        return t
+    }
+
     private fun english(text: String, current: RouteCondition?, all: List<Station>): Resource<InterpretResult> {
         val t = text.lowercase()
         if (UNSUPPORTED_EN.any { it in t }) return Resource.Failure(AppError.UnsupportedCondition)

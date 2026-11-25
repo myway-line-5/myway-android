@@ -173,11 +173,15 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
         val ok = s as? StationDetailViewModel.UiState.Success
         listOf(b.firstLastCard, b.timetableCard, b.congestionCard, b.facilityCard).forEach { it.isVisible = ok != null }
         ok ?: return
+        // 서버에 데이터가 없는 카드는 숨김 (혼잡도는 아직 서버 데이터 미확보)
+        b.congestionCard.isVisible = ok.detail.congestion.isNotEmpty()
+        b.firstLastCard.isVisible = ok.detail.firstLast.isNotEmpty()
+        b.facilityCard.isVisible = ok.detail.facilities.isNotEmpty()
         bindFirstLast(ok.detail)
         bindTimetable(ok.detail)
-        bindCongestion(ok.detail)
+        if (ok.detail.congestion.isNotEmpty()) bindCongestion(ok.detail)
         bindFacilities(ok.detail)
-        Motion.stagger(listOf(b.firstLastCard, b.timetableCard, b.congestionCard, b.facilityCard))
+        Motion.stagger(listOf(b.firstLastCard, b.timetableCard, b.congestionCard, b.facilityCard).filter { it.isVisible })
     }
 
     // ---------- 첫차 · 막차 ----------
@@ -321,7 +325,17 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
     /** 편의시설 이름: 코드로 번역 (모르는 코드는 받은 이름 그대로) */
     private fun facilityName(f: com.myway.app.data.repository.Facility) = when (f.code) {
         "WC" -> getString(R.string.detail_fac_wc)
-        "EV" -> getString(R.string.detail_fac_ev)
+        "EV", "elevator" -> getString(R.string.detail_fac_ev)
+        // 서버 편의시설 코드 (myway-main-server load_detail_data.py)
+        "wheelchair_lift" -> getString(R.string.detail_fac_wheelchair_lift)
+        "nursing_room" -> getString(R.string.detail_fac_nursing_room)
+        "meeting_place" -> getString(R.string.detail_fac_meeting_place)
+        "cultural_space" -> getString(R.string.detail_fac_cultural_space)
+        "transfer_parking" -> getString(R.string.detail_fac_transfer_parking)
+        "bike_parking" -> getString(R.string.detail_fac_bike_parking)
+        "manned_luggage" -> getString(R.string.detail_fac_manned_luggage)
+        "unmanned_civil_service" -> getString(R.string.detail_fac_civil_kiosk)
+        "exchange_kiosk" -> getString(R.string.detail_fac_exchange_kiosk)
         else -> f.name
     }
 

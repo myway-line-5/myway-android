@@ -11,7 +11,6 @@
     <string name="home_service_desc">Lines 2, 5 and 9 in service</string>
     <string name="home_map_desc">%s. Pinch to zoom</string>
     <string name="home_map_missing">The subway map will appear here</string>
-    <string name="feature_pending">Coming soon</string>
     <string name="line_picker_title">Choose a map</string>
     <string name="line_picker_close">Close</string>
     <string name="map_all_label">Select full subway map</string>
@@ -29,4 +28,10 @@
     <string name="home_offline">Offline · Only favorites and recents are available</string>
     <string name="offline_title">You\'re offline</string>
     <string name="offline_body">Route search and station info will be back when you reconnect. Favorites and recents still work.</string>
+
+    <!-- 1-1 Service scope -->
+    <string name="scope_title">Only Lines 2, 5 and 9 for now</string>
+    <string name="scope_body">You can find routes between stations on Lines 2, 5 and 9. More lines are coming soon.</string>
+    <string name="scope_ok">OK</string>
+    <string name="scope_never">Don\'t show again</string>
 </resources>

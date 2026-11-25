@@ -19,6 +19,7 @@ import com.myway.app.databinding.ItemRouteTabBinding
 import com.myway.app.domain.model.AppError
 import com.myway.app.domain.model.Criterion
 import com.myway.app.domain.model.RouteType
+import com.myway.app.ui.common.VoiceCommand
 import com.myway.app.ui.common.Motion
 import com.myway.app.ui.route.RouteSelectionViewModel
 import com.myway.app.ui.route.RouteSelectionViewModel.Conditions
@@ -38,7 +39,7 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
     private val vm: RouteResultViewModel by viewModels()
     private val routeVm: RouteSelectionViewModel by activityViewModels()
     private var _b: FragmentRouteResultBinding? = null
-    private val adapter = TimelineAdapter()
+    private val adapter = TimelineAdapter(onPickTrain = { startTrip() })
     private var tts: TtsManager? = null
     private var cond = Conditions()
     private var lastKind: kotlin.reflect.KClass<*>? = null
@@ -79,13 +80,30 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
 
         // 경로 읽어주기 (TTS): 화면 언어로 읽음
         tts = TtsManager(requireContext(), if (StationNames.english) java.util.Locale.ENGLISH else java.util.Locale.KOREAN)
+        voice = com.myway.app.ui.common.VoiceAsk(requireActivity(), tts)
         b.speakButton.setOnClickListener { speakRoute() }
+        b.speakButton.isVisible = com.myway.app.data.local.SettingsStore.bool(com.myway.app.data.local.SettingsStore.Key.TTS)
 
-        // 31·34: 시각 선택은 시간표 탐색 확정 전까지 비활성 → 눌러도 이유를 알려 준다
-        listOf(b.departChip, b.arriveChip).forEach { chip ->
-            chip.setOnClickListener {
-                Snackbar.make(b.root, R.string.result_time_pending, Snackbar.LENGTH_SHORT).show()
-            }
+        // 31·34 (Figma 1-19·1-22): 시간 설정 시트. 시간표 탐색 전이라 소요시간으로 계산한 예상 시각
+        b.departChip.setOnClickListener { openTimeSheet(arrive = false) }
+        b.arriveChip.setOnClickListener { openTimeSheet(arrive = true) }
+        childFragmentManager.setFragmentResultListener(TimeSheet.KEY, viewLifecycleOwner) { _, r ->
+            picked = if (r.getBoolean(TimeSheet.RES_NOW)) null
+            else Picked(r.getBoolean(TimeSheet.RES_ARRIVE), java.time.LocalTime.ofSecondOfDay(r.getInt(TimeSheet.RES_TIME).toLong()))
+            render(vm.state.value, vm.selected.value)
+            if (picked != null) Snackbar.make(b.root, R.string.time_estimated_note, Snackbar.LENGTH_LONG).show()
+        }
+        // 시트에서 기준을 바꾸는 즉시, 뒤의 칩도 고른 쪽에 테두리
+        childFragmentManager.setFragmentResultListener(TimeSheet.KEY_MODE, viewLifecycleOwner) { _, r ->
+            markChip(r.getBoolean(TimeSheet.RES_ARRIVE))
+        }
+        childFragmentManager.setFragmentResultListener(TimeSheet.KEY_CLOSED, viewLifecycleOwner) { _, _ ->
+            markChip(picked?.arrive)
+        }
+        // 3-1에서 탑승 확인 → 이동 중 안내
+        childFragmentManager.setFragmentResultListener(com.myway.app.ui.trip.TrainPickSheet.KEY, viewLifecycleOwner) { _, r ->
+            com.myway.app.ui.trip.TripSession.firstWaitSeconds = r.getInt(com.myway.app.ui.trip.TrainPickSheet.RES_WAIT)
+            findNavController().navigate(R.id.to_trip)
         }
 
         // 결과 화면의 출발·도착 카드: ✕ 대신, 줄을 누르면 검색으로 돌아가 다시 고르기
@@ -142,12 +160,24 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
     }
 
     /** 선택된 기준의 경로 요약을 소리로 읽어준다 */
+    /** 요약(시간·환승) + 구간별 안내: 어디서 몇 호선 타고, 어디서 갈아타고, 어디서 내리는지 */
     private fun speakRoute() {
         val route = vm.currentRoute() ?: return
         val dest = routeVm.points.value.destination?.name?.displayName() ?: return
         val transfer = if (route.transferCount == 0) getString(R.string.result_speak_no_transfer)
         else getString(R.string.result_speak_transfers, route.transferCount)
-        tts?.speak(getString(R.string.result_speak_text, dest, Timeline.minutes(route.totalSeconds), transfer))
+        val parts = mutableListOf(getString(R.string.result_speak_text, dest, Timeline.minutes(route.totalSeconds), transfer))
+        com.myway.app.ui.trip.TripPlan.from(route)?.let { plan ->
+            plan.legs.forEachIndexed { i, leg ->
+                val stops = leg.stops.size - 1
+                parts += if (i == 0) getString(R.string.result_speak_board, leg.board.name.displayName(), leg.line, stops)
+                else getString(R.string.result_speak_ride, leg.line, stops)
+                parts += if (i == plan.legs.lastIndex) getString(R.string.result_speak_alight, leg.alight.name.displayName())
+                else getString(R.string.result_speak_transfer, leg.alight.name.displayName(), plan.legs[i + 1].line,
+                    Timeline.minutes(plan.walks[i]).coerceAtLeast(1))
+            }
+        }
+        tts?.speak(parts.joinToString(" "))
     }
 
     private fun openMap() {
@@ -186,6 +216,82 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
         if (!fromSearch) nav.navigate(R.id.to_search)
     }
 
+    /** 사용자가 고른 시각 (null = 지금 출발) */
+    private data class Picked(val arrive: Boolean, val time: java.time.LocalTime)
+    private var picked: Picked? = null
+
+    /** 1-18 [열차 선택] → 3-1 열차 선택 → 3-2 이동 중 안내 */
+    // ---- 핸즈프리: 결과를 읽고 "안내를 시작할까요?" ----
+    private var voice: com.myway.app.ui.common.VoiceAsk? = null
+    private var voiceAsked = false
+
+    private fun voiceResult() {
+        val v = voice ?: return
+        val route = vm.currentRoute() ?: return
+        val dest = routeVm.points.value.destination?.name?.displayName() ?: return
+        val transfer = if (route.transferCount == 0) getString(R.string.result_speak_no_transfer)
+            else getString(R.string.result_speak_transfers, route.transferCount)
+        v.ask(getString(R.string.voice_result, dest, Timeline.minutes(route.totalSeconds), transfer),
+            getString(R.string.voice_hint_start)) { heard ->
+            when (VoiceCommand.parse(heard)) {
+                VoiceCommand.Cmd.YES -> startTrip(voiceStart = true)
+                VoiceCommand.Cmd.FASTEST -> switchTab(RouteType.SHORTEST_TIME)
+                VoiceCommand.Cmd.FEWEST_TRANSFERS -> switchTab(RouteType.MIN_TRANSFERS)
+                VoiceCommand.Cmd.CHEAPEST -> switchTab(RouteType.MIN_FARE)
+                VoiceCommand.Cmd.AGAIN -> { speakRoute(); _b?.root?.postDelayed({ voiceResult() }, 200) }
+                else -> { com.myway.app.ui.common.VoiceSession.active = false; v.say(getString(R.string.voice_bye)) }
+            }
+        }
+    }
+
+    /** "최소환승" 같은 말로 탭 바꾸고 그 경로를 다시 읽어 줌 */
+    private fun switchTab(type: RouteType) {
+        vm.select(type)
+        _b?.root?.post { voiceResult() }
+    }
+
+    private fun startTrip(voiceStart: Boolean = false) {
+        val route = vm.currentRoute() ?: return
+        val plan = com.myway.app.ui.trip.TripPlan.from(route) ?: return
+        val pts = routeVm.points.value
+        com.myway.app.ui.trip.TripSession.plan = plan
+        com.myway.app.ui.trip.TripSession.route = route
+        com.myway.app.ui.trip.TripSession.isFavorite = {
+            val o = pts.origin?.name; val d = pts.destination?.name
+            o != null && d != null && com.myway.app.data.local.LocalStore.isFavoriteRoute(o, d)
+        }
+        com.myway.app.ui.trip.TripSession.saveFavorite = { vm.toggleFavorite(pts) }
+        // 말로 시작: 열차 선택 시트 없이 가장 먼저 오는 열차로 안내 (안내 화면에서 '다음 열차'로 바꿀 수 있음)
+        com.myway.app.ui.trip.TripSession.voiceStart = voiceStart
+        if (voiceStart) {
+            com.myway.app.ui.trip.TripSession.firstWaitSeconds = com.myway.app.ui.trip.TripViewModel.FIRST_TRAIN
+            findNavController().navigate(R.id.to_trip); return
+        }
+        if (childFragmentManager.findFragmentByTag(com.myway.app.ui.trip.TrainPickSheet.TAG) == null)
+            com.myway.app.ui.trip.TrainPickSheet.newInstance(0).show(childFragmentManager, com.myway.app.ui.trip.TrainPickSheet.TAG)
+    }
+
+    /** 테두리 칩: true=도착, false=출발, null=없음 */
+    private fun markChip(arrive: Boolean?) {
+        val b = _b ?: return
+        b.departChip.isSelected = arrive == false
+        b.arriveChip.isSelected = arrive == true
+    }
+
+    private fun openTimeSheet(arrive: Boolean) {
+        val route = vm.currentRoute() ?: return
+        val total = route.totalSeconds.toLong()
+        val s = vm.state.value as? RouteResultUiState.Success ?: return
+        val depart = departOf(s, total)
+        val start = if (arrive) depart.plusSeconds(total) else depart
+        if (childFragmentManager.findFragmentByTag(TimeSheet.TAG) == null)
+            TimeSheet.newInstance(arrive, start, total).show(childFragmentManager, TimeSheet.TAG)
+    }
+
+    /** 실제로 쓸 출발 시각: 도착 기준이면 거꾸로 계산 */
+    private fun departOf(s: RouteResultUiState.Success, total: Long): java.time.LocalTime =
+        picked?.let { if (it.arrive) it.time.minusSeconds(total) else it.time } ?: s.departAt
+
     private fun render(state: RouteResultUiState, selected: RouteType) {
         val b = _b ?: return
         val ctx = requireContext()
@@ -210,6 +316,12 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
 
         when (state) {
             is RouteResultUiState.Success -> {
+                // 핸즈프리 음성 대화는 AI 모드에서 말로 물었을 때만. 일반 모드 검색이면 대화 종료
+                if (routeVm.aiExtras.value == null) com.myway.app.ui.common.VoiceSession.active = false
+                if (!voiceAsked && com.myway.app.ui.common.VoiceSession.active) {
+                    voiceAsked = true
+                    b.root.post { voiceResult() }          // 화면이 그려진 뒤 읽기
+                }
                 saved?.let {
                     // 언어에 맞는 날짜 (11월 24일 / Nov 24)
                     val pattern = android.text.format.DateFormat.getBestDateTimePattern(resources.configuration.locales[0], "MMMd")
@@ -238,9 +350,11 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
                 // 서버가 요금을 아직 안 주면(0) '0원' 대신 확인 중으로
                 b.fare.text = if (route.totalFareKrw > 0) Timeline.fare(ctx, route.totalFareKrw)
                 else getString(R.string.result_fare_pending)
-                b.departTime.text = Timeline.clock(state.departAt)
-                b.arriveTime.text = Timeline.clock(state.departAt.plusSeconds(route.totalSeconds.toLong()))
-                adapter.submitList(Timeline.build(ctx, route, state.departAt))
+                val departAt = departOf(state, route.totalSeconds.toLong())
+                b.departTime.text = Timeline.clock(departAt)
+                b.arriveTime.text = Timeline.clock(departAt.plusSeconds(route.totalSeconds.toLong()))
+                if (childFragmentManager.findFragmentByTag(TimeSheet.TAG) == null) markChip(picked?.arrive)   // 확정된 기준 칩 강조
+                adapter.submitList(Timeline.build(ctx, route, departAt))
             }
             is RouteResultUiState.Error -> {
                 // 조건 때문에 경로가 없으면 '다시 찾기' 대신 '조건 바꾸기'로 바로 풀 수 있게
@@ -273,6 +387,7 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
     }
 
     override fun onDestroyView() {
+        voice?.close(); voice = null
         tts?.shutdown()
         tts = null
         _b = null

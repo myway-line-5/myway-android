@@ -174,6 +174,17 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- 경로 읽어주기 (TTS, 최지윤 PR #18) — 지도·즐겨찾기 옆 아이콘으로 -->
+                <ImageButton
+                    android:id="@+id/speakButton"
+                    android:layout_width="@dimen/touch_large"
+                    android:layout_height="@dimen/touch_large"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/result_speak"
+                    android:src="@drawable/ic_set_voice"
+                    app:tint="@color/icon_default"
+                    xmlns:app="http://schemas.android.com/apk/res-auto" />
+
                 <ImageButton
                     android:id="@+id/mapButton"
                     android:layout_width="@dimen/touch_large"
@@ -253,20 +264,6 @@
                         android:textAppearance="@style/Text.MyWay.Body16Bold" />
                 </LinearLayout>
             </LinearLayout>
-
-            <!-- 경로 읽어주기 (TTS, 최지윤 PR #18) -->
-            <TextView
-                android:id="@+id/speakButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/space_l"
-                android:layout_marginBottom="@dimen/space_s"
-                android:background="@drawable/bg_time_chip"
-                android:gravity="center"
-                android:minHeight="48dp"
-                android:text="@string/result_speak"
-                android:textAppearance="@style/Text.MyWay.Body16Bold"
-                android:textColor="@color/text_primary" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/timeline"

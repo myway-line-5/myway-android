@@ -8,7 +8,9 @@ import com.myway.app.domain.model.RouteType
 // ---- 요청 ----
 data class RouteSearchRequestDto(
     @SerializedName("origin_station_id") val originStationId: String,
-    @SerializedName("destination_station_id") val destinationStationId: String
+    @SerializedName("destination_station_id") val destinationStationId: String,
+    // 탐색 기준 (서버 11/24 추가): shortest_time / minimum_transfer / minimum_fare. null 이면 서버 기본
+    @SerializedName("optimization") val optimization: String? = null
 )
 
 // ---- 응답 ----
@@ -65,4 +67,4 @@ fun RouteResultDto.toDomain(): RouteResult? {
         transferCount = transferCount ?: segs.count { it.isTransfer },
         fareVersion = fareVersion.orEmpty()
     )
-}
+}

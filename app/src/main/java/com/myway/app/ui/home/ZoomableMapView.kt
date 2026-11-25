@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Path
+import kotlin.math.hypot
 import android.graphics.Typeface
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
@@ -107,7 +108,11 @@ class ZoomableMapView @JvmOverloads constructor(
      * 경로 강조(화면 59): 지도를 옅게 덮고 지나는 역을 노선색 선으로 잇는다. 그림 좌표.
      * major = 출발·환승·도착(큰 점). connector = 환승 걷는 구간(회색 점선)
      */
-    data class RouteStop(val x: Float, val y: Float, val color: Int, val major: Boolean, val connector: Boolean)
+    data class RouteStop(
+        val x: Float, val y: Float, val color: Int, val major: Boolean, val connector: Boolean,
+        /** 앞 역 → 이 역 사이 실제 선로 꺾임점 (MapTracks). null 이면 직선 */
+        val via: FloatArray? = null
+    )
     var route: List<RouteStop> = emptyList()
         set(value) {
             field = value
@@ -141,6 +146,8 @@ class ZoomableMapView @JvmOverloads constructor(
     private val stopStroke = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val ra = FloatArray(2)
     private val rb = FloatArray(2)
+    private val segPath = Path()
+    private var segPts = FloatArray(64)
     private var pendingRegion: RectF? = null
 
     private val matrix = Matrix()
@@ -263,13 +270,17 @@ class ZoomableMapView @JvmOverloads constructor(
             if (i - 1 >= reach) break
             val p = route[i - 1]; val q = route[i]
             val f = (reach - (i - 1)).coerceAtMost(1f)
-            ra[0] = p.x; ra[1] = p.y; rb[0] = p.x + (q.x - p.x) * f; rb[1] = p.y + (q.y - p.y) * f
-            matrix.mapPoints(ra); matrix.mapPoints(rb)
-            when {
-                q.connector -> if (pass == 1) canvas.drawLine(ra[0], ra[1], rb[0], rb[1], walkLine)
-                pass == 0 -> canvas.drawLine(ra[0], ra[1], rb[0], rb[1], routeCase)
-                else -> { routeLine.color = q.color; canvas.drawLine(ra[0], ra[1], rb[0], rb[1], routeLine) }
+            if (q.connector) {
+                if (pass == 1) {
+                    ra[0] = p.x; ra[1] = p.y; rb[0] = p.x + (q.x - p.x) * f; rb[1] = p.y + (q.y - p.y) * f
+                    matrix.mapPoints(ra); matrix.mapPoints(rb)
+                    canvas.drawLine(ra[0], ra[1], rb[0], rb[1], walkLine)
+                }
+                continue
             }
+            segmentPath(p, q, f)
+            if (pass == 0) canvas.drawPath(segPath, routeCase)
+            else { routeLine.color = q.color; canvas.drawPath(segPath, routeLine) }
         }
         route.forEachIndexed { i, s ->
             if (i > reach + 0.01f) return@forEachIndexed
@@ -279,6 +290,33 @@ class ZoomableMapView @JvmOverloads constructor(
             val r = (if (s.major) 6.5f else 3.5f) * dp
             canvas.drawCircle(ra[0], ra[1], r, ringFill.apply { alpha = 255 })
             canvas.drawCircle(ra[0], ra[1], r, stopStroke)
+        }
+    }
+
+    /** p → (선로 꺾임점) → q 를 화면 좌표 Path 로. f(0..1) 만큼만 (그려지며 나타나는 애니메이션) */
+    private fun segmentPath(p: RouteStop, q: RouteStop, f: Float) {
+        val via = q.via ?: FloatArray(0)
+        val n = via.size / 2 + 2
+        if (segPts.size < n * 2) segPts = FloatArray(n * 2)
+        segPts[0] = p.x; segPts[1] = p.y
+        System.arraycopy(via, 0, segPts, 2, via.size)
+        segPts[n * 2 - 2] = q.x; segPts[n * 2 - 1] = q.y
+        matrix.mapPoints(segPts, 0, segPts, 0, n)
+        var total = 0f
+        for (k in 1 until n) total += hypot(segPts[k * 2] - segPts[k * 2 - 2], segPts[k * 2 + 1] - segPts[k * 2 - 1])
+        var left = total * f
+        segPath.rewind()
+        segPath.moveTo(segPts[0], segPts[1])
+        for (k in 1 until n) {
+            val dx = segPts[k * 2] - segPts[k * 2 - 2]; val dy = segPts[k * 2 + 1] - segPts[k * 2 - 1]
+            val len = hypot(dx, dy)
+            if (len >= left) {
+                val t = if (len > 0f) left / len else 0f
+                segPath.lineTo(segPts[k * 2 - 2] + dx * t, segPts[k * 2 - 1] + dy * t)
+                break
+            }
+            segPath.lineTo(segPts[k * 2], segPts[k * 2 + 1])
+            left -= len
         }
     }
 

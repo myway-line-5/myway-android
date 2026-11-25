@@ -39,7 +39,6 @@
     <string name="set_theme_light">Light</string>
     <string name="set_theme_dark">Dark</string>
     <string name="set_theme_system">System default</string>
-    <string name="set_screen_help">Easier on the eyes in dark places</string>
     <string name="set_language_label">App language</string>
     <string name="set_language_help">Search works in both Korean and English. Station names follow the language you pick</string>
     <string name="set_pending">Coming soon</string>

@@ -17,14 +17,19 @@ object Motion {
     val ease = PathInterpolator(0.2f, 0f, 0f, 1f)
 
     /** 다음 레이아웃 변화(보이기·숨기기·자리 이동)를 부드럽게: 사라짐·이동·나타남을 동시에 */
-    fun change(root: ViewGroup, duration: Long = 240) {
-        TransitionManager.beginDelayedTransition(root, TransitionSet()
+    /** keep: 애니메이션 없이 바로 바뀔 영역(키보드와 붙어 있는 하단 입력부 등) — 중간에 끊겨 빈 자리가 남는 것 방지 */
+    fun change(root: ViewGroup, duration: Long = 240, vararg keep: View) {
+        val set = TransitionSet()
             .addTransition(Fade(Fade.OUT))
             .addTransition(ChangeBounds())
             .addTransition(Fade(Fade.IN))
             .setOrdering(TransitionSet.ORDERING_TOGETHER)
             .setDuration(duration)
-            .setInterpolator(ease))
+            .setInterpolator(ease)
+        for (i in 0 until set.transitionCount) keep.forEach { v ->
+            set.getTransitionAt(i).excludeTarget(v, true).excludeChildren(v, true)
+        }
+        TransitionManager.beginDelayedTransition(root, set)
     }
 
     /** 같은 자리 내용이 바뀔 때(탭 전환 등): 살짝 옅어졌다 옆에서 들어옴. dir = +1 오른쪽 탭으로, -1 왼쪽 */

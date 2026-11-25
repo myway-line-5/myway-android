@@ -17,7 +17,6 @@ import com.myway.app.domain.model.StationSlot
 import com.myway.app.data.remote.NetworkMonitor
 import com.myway.app.ui.route.RouteSelectionViewModel.Conditions
 import com.myway.app.ui.route.RouteSelectionViewModel.Points
-import com.myway.app.domain.model.Constraints
 import com.myway.app.ui.search.StationGroupItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

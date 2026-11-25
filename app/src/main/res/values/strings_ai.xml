@@ -3,7 +3,7 @@
     <!-- AI 모드 (2-1~2-10) -->
     <string name="ai_title">AI 모드</string>
     <string name="ai_idle_title">어디로 갈까요?</string>
-    <string name="ai_idle_sub">말하듯 입력하면 조건을 알아서 반영해요</string>
+    <string name="ai_idle_sub">말하거나 입력하면 조건까지 알아서 반영해요</string>
     <string name="ai_idle_status">웨이가 듣고 있어요</string>
     <string name="ai_input_hint">예: 여의도에서 왕십리까지</string>
     <string name="ai_send">보내기</string>
@@ -64,7 +64,20 @@
     <string name="ai_missing_destination">도착역을 알려 주세요</string>
     <string name="ai_back_desc">이전 단계로</string>
     <string name="ai_listen">음성으로 말하기</string>
-    <string name="ai_listen_prompt">어디로 갈까요? 말해 보세요</string>
     <string name="ai_listen_unavailable">이 기기에서는 음성 입력을 쓸 수 없어요. 글자로 입력해 주세요</string>
     <string name="ai_offline">오프라인에서는 AI가 말을 해석할 수 없어요</string>
+    <string name="ai_heard_hint">말씀해 주세요…</string>
+    <string name="ai_stop_listening">말하기 끝내기</string>
+    <string name="ai_type_instead">글자로 입력</string>
+    <string name="ai_nospeech_title">잘 듣지 못했어요</string>
+    <string name="ai_nospeech_sub">조용한 곳에서 다시 한 번 말씀해 주세요</string>
+    <string name="ai_nospeech_card_title">인식된 내용이 없어요</string>
+    <string name="ai_nospeech_card_body">주변이 시끄럽거나 마이크 권한이 꺼져 있을 수 있어요</string>
+    <string name="ai_mic_why_title">마이크를 쓸게요</string>
+    <string name="ai_mic_why_body">출발역과 도착역을 말로 알려 주려면 마이크가 필요해요</string>
+    <string name="ai_mic_allow">허용하기</string>
+    <string name="ai_mic_off_title">마이크 권한이 꺼져 있어요</string>
+    <string name="ai_mic_off_body">음성으로 말하려면 설정 › 권한에서 마이크를 허용해 주세요</string>
+    <string name="ai_mic_open_settings">설정 열기</string>
+    <string name="ai_same_station">출발역과 도착역이 둘 다 %s예요. [직접 수정]에서 한 역을 바꿔 주세요</string>
 </resources>

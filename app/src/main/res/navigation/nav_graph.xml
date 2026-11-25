@@ -23,6 +23,10 @@
         app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
         app:destination="@id/stationDetailFragment" />
 
+    <action android:id="@+id/to_trip"
+        app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
+        app:destination="@id/tripGuideFragment" />
+
     <action android:id="@+id/to_route_map"
         app:enterAnim="@anim/nav_enter" app:exitAnim="@anim/nav_exit" app:popEnterAnim="@anim/nav_pop_enter" app:popExitAnim="@anim/nav_pop_exit"
         app:destination="@id/routeMapFragment" />
@@ -79,4 +83,10 @@
         android:id="@+id/routeMapFragment"
         android:name="com.myway.app.ui.result.RouteMapFragment"
         android:label="route_map" />
+
+    <!-- Figma 3-2 ~ 3-12 이동 중 안내 (Phase 2) -->
+    <fragment
+        android:id="@+id/tripGuideFragment"
+        android:name="com.myway.app.ui.trip.TripGuideFragment"
+        android:label="trip" />
 </navigation>

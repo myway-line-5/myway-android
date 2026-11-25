@@ -22,6 +22,8 @@ import kotlinx.coroutines.launch
 /** AI 모드 화면 상태 (Figma 2-1~2-10) */
 sealed interface AiUiState {
     data object Idle : AiUiState                                                  // 2-1, 2-2
+    data class Listening(val heard: String) : AiUiState                           // 2-3 듣는 중 (들린 말 실시간)
+    data object NoSpeech : AiUiState                                              // 2-7 음성 인식 실패
     data class Interpreting(val said: String) : AiUiState                         // 2-4
     data class Confirm(val said: String, val draft: AiDraft) : AiUiState          // 2-5
     data class Candidates(val said: String, val draft: AiDraft, val slot: Slot,
@@ -37,7 +39,9 @@ data class AiDraft(
     val origin: StationGroupItem?,
     val destination: StationGroupItem?
 ) {
-    val ready get() = origin != null && destination != null
+    /** 출발·도착이 같은 역 (AI가 한 역만 두 번 잡았거나 후보를 같은 역으로 고름) */
+    val sameStation get() = origin != null && destination != null && origin.name == destination.name
+    val ready get() = origin != null && destination != null && !sameStation
 }
 
 class AiModeViewModel(
@@ -92,6 +96,11 @@ class AiModeViewModel(
     /** 2-9 '다시 말하기': 입력으로 돌아가되 확인된 조건은 유지 */
     fun backToInput() { job?.cancel(); _state.value = AiUiState.Idle }
 
+    // ---- 음성 입력 (앱 안에서 듣기, 2-3·2-7) ----
+    fun startListening() { job?.cancel(); _state.value = AiUiState.Listening("") }
+    fun heard(text: String) { if (_state.value is AiUiState.Listening) _state.value = AiUiState.Listening(text) }
+    fun noSpeech() { _state.value = AiUiState.NoSpeech }
+
     fun reset() { job?.cancel(); kept = null; lastSaid = ""; _state.value = AiUiState.Idle }
 
     /** 2-8 후보 선택 */
@@ -113,8 +122,11 @@ class AiModeViewModel(
     private fun resolve(raw: String?, matches: List<Station>): StationGroupItem? {
         if (raw == null) return null
         val groups = matches.groupBy { it.name }
-        val exact = groups[raw] ?: return groups.entries.singleOrNull()?.let { StationGroupItem(it.key, it.value) }
-        return StationGroupItem(raw, exact)
+        // "을지로 3가"처럼 띄어 써도 같은 역 (빈칸 무시)
+        val key = raw.replace(" ", "")
+        val exact = groups.entries.firstOrNull { it.key.replace(" ", "") == key }
+            ?: return groups.entries.singleOrNull()?.let { StationGroupItem(it.key, it.value) }
+        return StationGroupItem(exact.key, exact.value)
     }
 
     /** 확정 안 된 칸이 있으면 후보 선택, 아니면 해석 확인 */
@@ -122,7 +134,10 @@ class AiModeViewModel(
         for (slot in listOf(Slot.ORIGIN, Slot.DESTINATION)) {
             val picked = if (slot == Slot.ORIGIN) d.origin else d.destination
             val raw = (if (slot == Slot.ORIGIN) d.condition.origin else d.condition.destination)?.rawName
-            val options = pendingMatches[slot].orEmpty().groupBy { it.name }.map { (n, l) -> StationGroupItem(n, l) }
+            // 반대 칸에서 이미 고른 역은 후보에서 뺌 (같은 역 출발·도착 방지)
+            val other = (if (slot == Slot.ORIGIN) d.destination else d.origin)?.name
+            val options = pendingMatches[slot].orEmpty().groupBy { it.name }
+                .filterKeys { it != other }.map { (n, l) -> StationGroupItem(n, l) }
             if (picked == null && raw != null && options.size > 1) {
                 return AiUiState.Candidates(said, d, slot, raw, options)
             }

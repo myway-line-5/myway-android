@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -103,6 +102,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 resume != null -> startTutorial(resume)
                 !permissions.asked && childFragmentManager.findFragmentByTag(com.myway.app.ui.onboarding.PermissionSheet.TAG) == null -> permissions.start()
                 permissions.asked && !Tutorial.done -> startTutorial(0)
+                permissions.asked -> ScopeNotice.maybeShow(this@HomeFragment)   // 1-1: 튜토리얼 뒤, 실행마다 한 번
             }
         }
 
@@ -276,7 +276,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 findNavController().navigate(R.id.to_ai_mode)
             },
             toPrevScreen = null,
-            onFinished = {}
+            onFinished = { ScopeNotice.maybeShow(this) }
         ).also { tutorial = it }
         session.start(step)
     }

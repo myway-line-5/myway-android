@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_voice.xml 와 같음 -->
+<resources>
+    <string name="voice_listening">🎤 Listening · %s</string>
+    <string name="voice_hint_yes_no">\"Yes\" or \"No\"</string>
+    <string name="voice_hint_say">Go ahead</string>
+    <string name="voice_hint_start">\"Start\" · \"Fewest transfers\" · \"Again\"</string>
+    <string name="voice_hint_next">Wrong train? Say \"next train\"</string>
+    <string name="voice_confirm">From %1$s to %2$s%3$s. Shall I search?</string>
+    <string name="voice_pref_time">, fastest route</string>
+    <string name="voice_pref_transfers">, fewest transfers</string>
+    <string name="voice_pref_fare">, lowest fare</string>
+    <string name="voice_need_stations">Please say your origin and destination again</string>
+    <string name="voice_candidates">Which station: %s?</string>
+    <string name="voice_retry">Sorry, I didn\'t catch that. Where are you going from and to?</string>
+    <string name="voice_result">About %2$d min to %1$s, %3$s. Shall I start guidance?</string>
+    <string name="voice_trip_start">I\'ll guide you on the first train toward %s. If you took a different one, say next train</string>
+    <string name="voice_trip_next">Switched to the next train. Guidance continues</string>
+    <string name="voice_bye">Okay. You can continue on screen</string>
+</resources>

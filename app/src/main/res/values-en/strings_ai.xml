@@ -3,7 +3,7 @@
 <resources>
     <string name="ai_title">AI mode</string>
     <string name="ai_idle_title">Where to?</string>
-    <string name="ai_idle_sub">Type it like you\'d say it — we\'ll pick up the conditions</string>
+    <string name="ai_idle_sub">Say it or type it — Way picks up the conditions</string>
     <string name="ai_idle_status">Way is listening</string>
     <string name="ai_input_hint">e.g. Yeouido to Wangsimni</string>
     <string name="ai_send">Send</string>
@@ -55,7 +55,20 @@
     <string name="ai_missing_destination">Tell me where you\'re going</string>
     <string name="ai_back_desc">Previous step</string>
     <string name="ai_listen">Speak</string>
-    <string name="ai_listen_prompt">Where to? Just say it</string>
     <string name="ai_listen_unavailable">Voice input isn\'t available on this device. Please type instead</string>
     <string name="ai_offline">AI can\'t read requests while offline</string>
+    <string name="ai_heard_hint">Go ahead, I\'m listening…</string>
+    <string name="ai_stop_listening">Stop listening</string>
+    <string name="ai_type_instead">Type instead</string>
+    <string name="ai_nospeech_title">I didn\'t catch that</string>
+    <string name="ai_nospeech_sub">Please try again somewhere quieter</string>
+    <string name="ai_nospeech_card_title">Nothing was recognized</string>
+    <string name="ai_nospeech_card_body">It may be too noisy, or microphone access may be off</string>
+    <string name="ai_mic_why_title">Microphone needed</string>
+    <string name="ai_mic_why_body">To say your origin and destination out loud, Way needs the microphone</string>
+    <string name="ai_mic_allow">Allow</string>
+    <string name="ai_mic_off_title">Microphone access is off</string>
+    <string name="ai_mic_off_body">To use voice, allow the microphone in Settings › Permissions</string>
+    <string name="ai_mic_open_settings">Open settings</string>
+    <string name="ai_same_station">Origin and destination are both %s. Change one with [Edit myself]</string>
 </resources>

@@ -31,9 +31,13 @@
     <string name="result_error_generic">Couldn\'t load the route</string>
     <string name="result_error_generic_body">Please try again in a moment.</string>
     <string name="result_retry">Search again</string>
-    <string name="result_speak">🔊 Read route aloud</string>
-    <string name="result_speak_text">About %2$d min to %1$s, %3$s</string>
+    <string name="result_speak">Read route aloud</string>
+    <string name="result_speak_text">About %2$d min to %1$s, %3$s.</string>
     <string name="result_speak_no_transfer">no transfers needed</string>
     <string name="result_speak_transfers">%d transfer(s)</string>
+    <string name="result_speak_board">Board Line %2$s at %1$s and ride %3$d stops.</string>
+    <string name="result_speak_ride">Ride Line %1$s for %2$d stops.</string>
+    <string name="result_speak_transfer">Get off at %1$s and transfer to Line %2$s, about %3$d min on foot.</string>
+    <string name="result_speak_alight">Get off at %s, your destination.</string>
     <string name="result_fare_pending">Fare pending</string>
 </resources>

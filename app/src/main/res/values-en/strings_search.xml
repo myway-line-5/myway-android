@@ -12,7 +12,6 @@
     <string name="search_offline_body">Try again once you\'re connected. Favorites are still available.</string>
     <string name="search_error_body">Please try again in a moment.</string>
     <string name="line_format">Line %s</string>
-    <string name="line_separator">" · "</string>
     <string name="favorite_add">Add %s to favorites</string>
     <string name="favorite_remove">Remove %s from favorites</string>
     <string name="inactive_dialog_title">This station isn\'t searchable right now</string>
@@ -30,7 +29,6 @@
     <string name="point_clear_desc">Clear %s</string>
     <string name="route_swap">Swap departure and arrival</string>
     <string name="route_find">Find route</string>
-    <string name="route_find_pending">Route results come in the next step</string>
     <string name="same_station_title">Departure and arrival are the same</string>
     <string name="same_station_body">Please choose a different station.</string>
     <string name="recent_stations">Recent searches</string>

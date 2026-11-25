@@ -1,39 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- English. 이름은 values/strings_conditions.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
 <resources>
-    <string name="cond_title">Route conditions</string>
-    <string name="cond_sub">Routes over these limits won\'t be shown</string>
-    <string name="cond_time">Max travel time</string>
-    <string name="cond_transfers">Max transfers</string>
-    <string name="cond_fare">Max fare</string>
-    <string name="cond_priority">What matters most</string>
-    <string name="cond_priority_help">Routes compared by this come first in the Best match tab</string>
-    <string name="cond_none">No limit</string>
-    <string name="cond_minutes">%d min</string>
-    <string name="cond_transfer_zero">None</string>
-    <string name="cond_transfer_n">%d</string>
-    <string name="cond_fare_n">₩%s</string>
-    <string name="cond_pref_default">Default</string>
-    <string name="cond_pref_duration">Fastest</string>
-    <string name="cond_pref_transfers">Transfers</string>
-    <string name="cond_pref_fare">Fare</string>
-    <string name="cond_reset">Reset</string>
-    <string name="cond_apply">Search with these</string>
-    <string name="cond_close">Close conditions</string>
-    <string name="cond_add">Add conditions</string>
-    <string name="cond_edit">Conditions</string>
-    <string name="chip_minutes">Within %d min</string>
-    <string name="chip_transfer_zero">No transfers</string>
-    <string name="chip_transfer_n">Max transfers: %d</string>
-    <string name="chip_fare">Up to ₩%s</string>
-    <string name="chip_pref_duration">Fastest first</string>
-    <string name="chip_pref_transfers">Fewer transfers first</string>
-    <string name="chip_pref_fare">Lower fare first</string>
     <string name="result_tab_pref">Best match</string>
     <string name="result_pref_label">Best match · by %s</string>
     <string name="result_error_not_found_cond">Loosening your conditions may find a route.</string>
-    <string name="result_change_conditions">Change conditions</string>
-    <string name="result_time_pending">Choosing a time is coming soon · Departing now</string>
     <string name="result_saved_banner">Saved route · as of %s · Refreshes when you\'re online</string>
     <string name="result_map">View route map</string>
     <string name="route_map_title">%1$s → %2$s</string>

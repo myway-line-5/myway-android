@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 1-1 서비스 범위 안내 호선 배지 -->
+    <dimen name="scope_badge">32dp</dimen>
+</resources>

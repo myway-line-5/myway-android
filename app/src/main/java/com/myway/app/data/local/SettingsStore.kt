@@ -25,9 +25,11 @@ object SettingsStore {
         ALERT_BEFORE(true), ALERT_ARRIVAL(true), ALERT_TRANSFER(true), ALERT_MISSED(true), ALERT_WRONG_WAY(true),
         VIBRATE_STRENGTH(60),
         // 경로·화면·언어
-        DEFAULT_ROUTE(RouteType.SHORTEST_TIME.name), THEME("light"), LANGUAGE("ko"),
+        DEFAULT_ROUTE(RouteType.SHORTEST_TIME.name), THEME("system"), LANGUAGE("ko"),
         // 최초 실행 (권한 안내 6-1~6-4 → 튜토리얼 T-1~T-8)
-        PERMISSIONS_ASKED(false), TUTORIAL_DONE(false)
+        PERMISSIONS_ASKED(false), TUTORIAL_DONE(false),
+        // 1-1 서비스 범위 안내: true = '다시 보지 않기'
+        SCOPE_NOTICE_OFF(false)
     }
 
     fun bool(k: Key) = prefs?.getBoolean(k.name, k.default as Boolean) ?: k.default as Boolean

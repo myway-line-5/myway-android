@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 1-19 / 1-22 시간 설정 시트: 기준 전환(출발·도착) → 휠(오전오후·시·분) → 예상 시각 → [지금] [확인] -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/space_xxl"
+    android:paddingBottom="28dp">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_handle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/time_title"
+            android:textAppearance="@style/Text.MyWay.Heading18Bold"
+            android:textSize="20sp" />
+
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="@dimen/touch_large"
+            android:layout_height="@dimen/touch_large"
+            android:layout_marginEnd="-12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/time_close"
+            android:src="@drawable/ic_close" />
+    </LinearLayout>
+
+    <!-- 출발 기준 / 도착 기준 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:background="@drawable/bg_segment_track"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <TextView
+            android:id="@+id/modeDepart"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_time_mode_on"
+            android:gravity="center"
+            android:text="@string/time_mode_depart"
+            android:textAppearance="@style/Text.MyWay.Body16Bold"
+            android:textColor="@color/text_segment" />
+
+        <TextView
+            android:id="@+id/modeArrive"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_time_mode_on"
+            android:gravity="center"
+            android:text="@string/time_mode_arrive"
+            android:textAppearance="@style/Text.MyWay.Body16Bold"
+            android:textColor="@color/text_segment" />
+    </LinearLayout>
+
+    <!-- 휠: 가운데 줄 위에 세 열 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="@dimen/space_l">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/bg_wheel_band" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <NumberPicker
+                android:id="@+id/ampm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:descendantFocusability="blocksDescendants" />
+
+            <NumberPicker
+                android:id="@+id/hour"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:descendantFocusability="blocksDescendants" />
+
+            <NumberPicker
+                android:id="@+id/minute"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:descendantFocusability="blocksDescendants" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- 반대쪽 예상 시각 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/estimateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Text.MyWay.Label14Medium"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/estimateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_s"
+            android:textAppearance="@style/Text.MyWay.Body16Bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xl"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/nowButton"
+            android:layout_width="96dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_button_secondary"
+            android:gravity="center"
+            android:text="@string/time_now"
+            android:textAppearance="@style/Text.MyWay.Body16Bold" />
+
+        <TextView
+            android:id="@+id/okButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="@dimen/space_s"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_primary"
+            android:gravity="center"
+            android:text="@string/time_ok"
+            android:textAppearance="@style/Text.MyWay.Body16Bold"
+            android:textColor="@color/text_on_brand" />
+    </LinearLayout>
+</LinearLayout>

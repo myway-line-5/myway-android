@@ -40,6 +40,7 @@ object LineStyle {
         return TextView(context).apply {
             layoutParams = LinearLayout.LayoutParams(size, size).apply { marginStart = marginStartPx }
             gravity = Gravity.CENTER
+            includeFontPadding = false      // 작은 원 안 숫자가 아래로 밀리지 않게
             text = key(line)
             setTextAppearance(textStyle)
             setTextColor(context.getColor(textColorRes(line)))

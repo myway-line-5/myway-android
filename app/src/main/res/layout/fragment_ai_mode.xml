@@ -136,6 +136,47 @@
                 android:textAppearance="@style/Text.MyWay.Label14Medium"
                 android:textColor="@color/ai_text_secondary" />
 
+            <!-- 2-3 듣는 중: 들리는 말이 실시간으로 -->
+            <TextView
+                android:id="@+id/heardText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xxl"
+                android:accessibilityLiveRegion="polite"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/space_l"
+                android:textAppearance="@style/Text.MyWay.Heading18Bold"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_heading20"
+                android:visibility="gone" />
+
+            <!-- 2-7 음성 인식 실패 카드 -->
+            <LinearLayout
+                android:id="@+id/noSpeechCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xxl"
+                android:background="@drawable/bg_ai_card"
+                android:orientation="vertical"
+                android:padding="@dimen/space_l"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ai_nospeech_card_title"
+                    android:textAppearance="@style/Text.MyWay.Body16Bold"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/ai_nospeech_card_body"
+                    android:textAppearance="@style/Text.MyWay.Label14Medium"
+                    android:textColor="@color/ai_text_secondary" />
+            </LinearLayout>
+
             <!-- 2-4 내가 한 말 + … -->
             <LinearLayout
                 android:id="@+id/busyBlock"
@@ -315,6 +356,72 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- 2-3 듣는 중: 파형 + (■ 말하기 끝내기) [글자로 입력]. 취소는 좌상단 ←·뒤로가기가 맡음 (같은 동작 버튼 중복 제거) -->
+        <LinearLayout
+            android:id="@+id/listenBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.myway.app.ui.aimode.VoiceWaveView
+                android:id="@+id/wave"
+                android:layout_width="120dp"
+                android:layout_height="48dp"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- 빈 자리: ■ 버튼을 가운데에 두기 위한 균형용 -->
+                <View
+                    android:id="@+id/listenCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:visibility="invisible" />
+
+                <FrameLayout
+                    android:id="@+id/stopButton"
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:background="@drawable/bg_ai_listen_ring"
+                    android:clickable="true"
+                    android:contentDescription="@string/ai_stop_listening"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                    <View
+                        android:layout_width="66dp"
+                        android:layout_height="66dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_ai_listen_core" />
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_ai_stop" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/listenType"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="@string/ai_type_instead"
+                    android:textAppearance="@style/Text.MyWay.Label14Medium"
+                    android:textColor="@color/ai_text_secondary" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/inputBar"

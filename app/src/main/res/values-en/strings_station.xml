@@ -22,7 +22,6 @@
     <string name="detail_bar_desc">%1$d:00 %2$s</string>
     <string name="detail_facilities">Facilities</string>
     <string name="detail_time_next">Next train %s</string>
-    <string name="map_station_desc">%s Station</string>
     <string name="map_pin_origin">From %s  ✕</string>
     <string name="map_pin_destination">To %s  ✕</string>
     <string name="map_pin_removed_origin">From pin removed: %s</string>
@@ -38,4 +37,13 @@
     <string name="detail_pm">PM</string>
     <string name="detail_fac_wc">Restroom</string>
     <string name="detail_fac_ev">Elevator</string>
+    <string name="detail_fac_wheelchair_lift">Wheelchair lift</string>
+    <string name="detail_fac_nursing_room">Nursing room</string>
+    <string name="detail_fac_meeting_place">Meeting point</string>
+    <string name="detail_fac_cultural_space">Cultural space</string>
+    <string name="detail_fac_transfer_parking">Park &amp; ride</string>
+    <string name="detail_fac_bike_parking">Bike parking</string>
+    <string name="detail_fac_manned_luggage">Staffed luggage storage</string>
+    <string name="detail_fac_civil_kiosk">Civil document kiosk</string>
+    <string name="detail_fac_exchange_kiosk">Currency exchange kiosk</string>
 </resources>

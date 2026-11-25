@@ -24,7 +24,6 @@
     <string name="detail_facilities">편의시설</string>
     <string name="detail_time_next">다음 열차 %s</string>
     <!-- 노선도 탭 -->
-    <string name="map_station_desc">%s역</string>
     <string name="map_pin_origin">출발 %s  ✕</string>
     <string name="map_pin_destination">도착 %s  ✕</string>
     <string name="map_pin_removed_origin">출발 %s 핀을 지웠어요</string>
@@ -41,4 +40,13 @@
     <string name="detail_pm">오후</string>
     <string name="detail_fac_wc">화장실</string>
     <string name="detail_fac_ev">엘리베이터</string>
+    <string name="detail_fac_wheelchair_lift">휠체어 리프트</string>
+    <string name="detail_fac_nursing_room">수유실</string>
+    <string name="detail_fac_meeting_place">만남의 장소</string>
+    <string name="detail_fac_cultural_space">문화공간</string>
+    <string name="detail_fac_transfer_parking">환승 주차장</string>
+    <string name="detail_fac_bike_parking">자전거 보관소</string>
+    <string name="detail_fac_manned_luggage">유인 보관소</string>
+    <string name="detail_fac_civil_kiosk">무인 민원발급기</string>
+    <string name="detail_fac_exchange_kiosk">환전 키오스크</string>
 </resources>

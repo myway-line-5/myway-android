@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <!-- 3-3·3-4 하차·환승 진동 알림 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- 기능 28: 화면이 꺼져도 이동 중 안내 (포그라운드 서비스) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <queries>
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
@@ -46,6 +51,15 @@
             <meta-data
                 android:name="autoStoreLocales"
                 android:value="true" />
+        </service>
+        <!-- 이동 중 안내 (3-11 잠금화면 알림 · 하차·환승 음성) -->
+        <service
+            android:name=".ui.trip.GuideService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Subway ride guidance: announces upcoming stops and transfers while the screen is off" />
         </service>
         <meta-data
             android:name="preloaded_fonts"
