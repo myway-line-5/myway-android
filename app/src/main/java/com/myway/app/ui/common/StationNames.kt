@@ -12,9 +12,6 @@ object StationNames {
     /** 화면에 보일 역 이름 */
     fun of(ko: String): String = if (english) EN[ko] ?: ko else ko
 
-    /** 영어 이름 → 한국어 이름 (영어 검색·AI 영어 문장용). 대소문자·띄어쓰기·마침표 무시 */
-    fun fromEnglish(text: String): String? = BY_KEY[key(text)]
-
     /**
      * 영어 문장 속 역 이름들 → (한국어 이름, 위치) 앞에서부터 순서대로.
      * 긴 이름부터 찾고 겹치는 짧은 이름은 버림 ("Jamsilsaenae" 안의 "Jamsil" 등)
@@ -85,8 +82,6 @@ object StationNames {
         "합정" to "Hapjeong", "행당" to "Haengdang", "홍대입구" to "Hongik Univ.", "화곡" to "Hwagok", "흑석" to "Heukseok",
         "시험용비활성역" to "Test (inactive)"
     )
-
-    private val BY_KEY: Map<String, String> = EN.entries.associate { key(it.value) to it.key }
 }
 
 /** "강남".displayName() → 영어 화면이면 "Gangnam" */
