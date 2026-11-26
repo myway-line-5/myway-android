@@ -131,6 +131,13 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
                         }
                 }
                 launch { combine(vm.state, vm.selected) { s, t -> s to t }.collect { (s, t) -> render(s, t) } }
+                // '지금 출발' 기준이면 화면을 켜 둔 동안 시간이 흐른 만큼 출발·도착 시각도 따라감 (30초마다)
+                launch {
+                    while (true) {
+                        kotlinx.coroutines.delay(30_000)
+                        if (picked == null) render(vm.state.value, vm.selected.value)
+                    }
+                }
                 launch {
                     combine(LocalStore.favoriteRoutes, routeVm.points) { _, p ->
                         val o = p.origin?.name; val d = p.destination?.name
@@ -294,7 +301,8 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
      */
     private fun departOf(s: RouteResultUiState.Success, total: Long): java.time.LocalTime =
         picked?.let { if (it.arrive) it.time.minusSeconds(total) else it.time }
-            ?: s.departAt.plusSeconds(com.myway.app.ui.trip.TrainPickSheet.TRAINS.first().toLong())
+            ?: java.time.LocalTime.now().withSecond(0).withNano(0)
+                .plusSeconds(com.myway.app.ui.trip.TrainPickSheet.TRAINS.first().toLong())
 
     private fun render(state: RouteResultUiState, selected: RouteType) {
         val b = _b ?: return
@@ -337,8 +345,9 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
                     val r = state.routes[type]
                     tab.root.isVisible = r != null
                     r?.let {
-                        tab.tabSub.text = getString(R.string.result_tab_sub,
-                            Timeline.duration(ctx, it.totalSeconds), it.transferCount)
+                        // 최소환승·최소비용이 최단시간과 같은 경로면 숫자 반복 대신 '최단과 같음' (고를 필요 없음을 바로 알림)
+                        tab.tabSub.text = if (sameAsFastest(state, type)) getString(R.string.result_tab_same)
+                        else getString(R.string.result_tab_sub, Timeline.duration(ctx, it.totalSeconds), it.transferCount)
                     }
                     styleTab(tab, type == selected)
                 }
@@ -348,6 +357,7 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
                 val pr = cond.preference?.priority.orEmpty()
                 b.durationLabel.text = if (type == RouteType.PREFERENCE && pr.isNotEmpty())
                     getString(R.string.result_pref_label, pr.joinToString(" → ") { label(it) })
+                else if (sameAsFastest(state, type)) getString(R.string.result_same_label)
                 else getString(R.string.result_duration_label)
                 b.totalTime.text = Timeline.duration(ctx, route.totalSeconds)
                 b.transfers.text = getString(R.string.result_transfers, route.transferCount)
@@ -380,6 +390,16 @@ class RouteResultFragment : Fragment(R.layout.fragment_route_result) {
     }
 
     /** 선택 탭: 굵게 + 남색 밑줄 / 나머지: 보통 + 회색 */
+    /** 이 탭 경로가 최단시간 경로와 같은 역 순서인지 (최단시간·맞춤 탭은 비교 안 함) */
+    private fun sameAsFastest(s: RouteResultUiState.Success, type: RouteType): Boolean {
+        if (type == RouteType.SHORTEST_TIME || type == RouteType.PREFERENCE) return false
+        val a = s.routes[type] ?: return false
+        val f = s.routes[RouteType.SHORTEST_TIME] ?: return false
+        val mine: List<Pair<String, String>> = a.segments.map { seg -> seg.fromStation.stationId to seg.toStation.stationId }
+        val fastest: List<Pair<String, String>> = f.segments.map { seg -> seg.fromStation.stationId to seg.toStation.stationId }
+        return mine == fastest
+    }
+
     private fun styleTab(tab: ItemRouteTabBinding, selected: Boolean) {
         val ctx = requireContext()
         tab.tabTitle.setTextAppearance(if (selected) R.style.Text_MyWay_Body16Bold else R.style.Text_MyWay_Body16Medium)

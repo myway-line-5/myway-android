@@ -59,6 +59,7 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 import com.myway.app.ui.common.displayName
+import com.myway.app.ui.common.FacilityNames
 import com.myway.app.ui.common.bilingualKeyboard
 
 /** Figma 2-1~2-10 AI 모드 */
@@ -323,6 +324,17 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
                 }
             }
             is AiUiState.Failed -> { v.say(getString(R.string.ai_failed_title)); endVoice(quiet = true) }
+            is AiUiState.FacilityAnswer -> {
+                val f = s.items.first()
+                v.say(if (s.found) getString(R.string.ai_fac_voice, s.item.name.displayName(), FacilityNames.name(requireContext(), f), f.where.replace(" · ", ", "))
+                    else getString(R.string.ai_fac_none, getString(s.label)))
+                endVoice(quiet = true)
+            }
+            is AiUiState.NextTrain -> {
+                v.say(getString(R.string.ai_next_voice, s.station.displayName(),
+                    s.trains.joinToString(", ") { getString(R.string.ai_next_voice_item, it.line, it.toward.displayName(), (it.seconds + 59) / 60) }))
+                endVoice(quiet = true)
+            }
             else -> {}
         }
     }
@@ -440,7 +452,7 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
         b.busyBlock.isVisible = s is AiUiState.Interpreting
         b.confirmCard.isVisible = s is AiUiState.Confirm
         b.confirmHelp.isVisible = s is AiUiState.Confirm && s.draft.condition.preference != null
-        b.options.isVisible = s is AiUiState.Candidates || s is AiUiState.Unsupported || s is AiUiState.NotUnderstood
+        b.options.isVisible = s is AiUiState.Candidates || s is AiUiState.Unsupported || s is AiUiState.NotUnderstood || s is AiUiState.NextTrain || s is AiUiState.FacilityAnswer
         b.optionsLabel.isVisible = s is AiUiState.Unsupported || s is AiUiState.NotUnderstood
         b.errorBox.isVisible = s is AiUiState.Failed
         b.inputBar.isVisible = s is AiUiState.Idle
@@ -526,6 +538,22 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
                 bindExamples()
                 buttons(R.string.ai_edit_again to { vm.editAgain() },
                     R.string.ai_pick_search to { routeVm.startFresh(); findNavController().navigate(R.id.to_search) })
+            }
+            is AiUiState.NextTrain -> {                         // 45 정형 '다음 열차' (AI 안 거치고 바로)
+                layout(titleFirst = false, mascotDp = 80)
+                b.title.text = getString(R.string.ai_next_title, s.station.displayName())
+                b.subtitle.setText(R.string.ai_next_sub)
+                bindTrains(s)
+                buttons(null, R.string.ai_say_again to { vm.backToInput() })
+            }
+            is AiUiState.FacilityAnswer -> {                    // 편의시설 위치 (역 상세·길찾기로 이어짐)
+                layout(titleFirst = false, mascotDp = 80)
+                val what = getString(s.label)
+                b.title.text = getString(R.string.ai_fac_title, s.item.name.displayName(), what)
+                b.subtitle.text = if (s.found) getString(R.string.ai_fac_found, s.items.size) else getString(R.string.ai_fac_none, what)
+                b.options.removeAllViews()
+                s.items.forEach { f -> b.options.addView(option(FacilityNames.name(requireContext(), f), f.where, onClick = null)) }
+                buttons(R.string.ai_fac_detail to { openStation(s.item) }, R.string.ai_fac_go to { routeTo(s.item) })
             }
             is AiUiState.Failed -> {
                 layout(titleFirst = true, mascotDp = 120)
@@ -655,6 +683,29 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
         }
     }
 
+    /** 편의시설 답 → 역 상세(5-2): 검색의 '역 정보'와 같은 화면 */
+    private fun openStation(item: StationGroupItem) {
+        routeVm.focus(item)
+        findNavController().navigate(R.id.to_station_detail)
+    }
+
+    /** 편의시설 답 → 이 역을 도착으로 두고 출발만 고르게 (일반 검색으로) */
+    private fun routeTo(item: StationGroupItem) {
+        routeVm.startFresh()
+        routeVm.set(Slot.DESTINATION, item)
+        findNavController().navigate(R.id.to_search)
+    }
+
+    /** 방향마다 한 줄: "2호선 · 상왕십리 방면" / "약 3분 후 · 다음 열차 9분 후" (누를 곳 아님 → 화살표 없음) */
+    private fun bindTrains(s: AiUiState.NextTrain) {
+        val b = _b ?: return
+        b.options.removeAllViews()
+        s.trains.forEach { t ->
+            b.options.addView(option(getString(R.string.ai_next_row, t.line, t.toward.displayName()),
+                getString(R.string.ai_next_eta, (t.seconds + 59) / 60, (t.nextSeconds + 59) / 60), onClick = null))
+        }
+    }
+
     private fun bindExamples() {
         val b = _b ?: return
         b.options.removeAllViews()
@@ -681,7 +732,7 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
         }
     }
 
-    private fun option(title: String, sub: String?, centered: Boolean = false, onClick: () -> Unit) =
+    private fun option(title: String, sub: String?, centered: Boolean = false, onClick: (() -> Unit)?) =
         LinearLayout(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .apply { bottomMargin = dp(10) }
@@ -691,7 +742,7 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
             setPadding(dp(16), dp(10), dp(8), dp(10))
             setBackgroundResource(R.drawable.bg_ai_option)
             contentDescription = listOfNotNull(title, sub).joinToString(", ")
-            setOnClickListener { onClick() }
+            onClick?.let { c -> setOnClickListener { c() } }
 
             addView(LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
@@ -710,7 +761,7 @@ class AiModeFragment : Fragment(R.layout.fragment_ai_mode) {
                     })
                 }
             })
-            if (!centered) addView(android.widget.ImageView(context).apply {
+            if (!centered && onClick != null) addView(android.widget.ImageView(context).apply {
                 layoutParams = LinearLayout.LayoutParams(dp(24), dp(24))
                 setImageResource(R.drawable.ic_chevron_right)
                 imageTintList = android.content.res.ColorStateList.valueOf(context.getColor(R.color.ai_text_secondary))

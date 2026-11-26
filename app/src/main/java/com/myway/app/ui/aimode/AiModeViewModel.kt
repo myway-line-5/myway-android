@@ -13,6 +13,11 @@ import com.myway.app.domain.model.RouteType
 import com.myway.app.domain.model.Station
 import com.myway.app.ui.route.RouteSelectionViewModel.Slot
 import com.myway.app.ui.search.StationGroupItem
+import com.myway.app.data.repository.Facility
+import com.myway.app.ui.common.FacilityNames
+import com.myway.app.ui.common.LineStyle
+import com.myway.app.ui.common.StationNames
+import com.myway.app.ui.home.MapTracks
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +36,14 @@ sealed interface AiUiState {
     data class Unsupported(val said: String) : AiUiState                          // 2-9
     data class NotUnderstood(val said: String) : AiUiState                        // 역을 하나도 못 찾음
     data class Failed(val said: String) : AiUiState                               // 2-10
+    data class NextTrain(val said: String, val station: String, val trains: List<TrainEta>) : AiUiState   // 45 정형 '다음 열차'
+    /** 편의시설 질문 답: label = 물어본 시설 이름(문자열 리소스), found = 그 시설이 있음(없으면 역의 다른 시설을 보여 줌) */
+    data class FacilityAnswer(val said: String, val item: StationGroupItem, val label: Int,
+                              val items: List<Facility>, val found: Boolean) : AiUiState
 }
+
+/** 한 방향의 곧 올 열차: 노선, 방면(다음 역), 첫 열차·그다음 열차까지 남은 초 */
+data class TrainEta(val line: String, val toward: String, val seconds: Int, val nextSeconds: Int)
 
 /** 확인 중인 조건 + 앱이 고른(확정한) 역 묶음 */
 data class AiDraft(
@@ -45,7 +57,9 @@ data class AiDraft(
 }
 
 class AiModeViewModel(
-    private val repo: ConditionRepository = RepositoryProvider.conditionRepository()
+    private val repo: ConditionRepository = RepositoryProvider.conditionRepository(),
+    private val stations: com.myway.app.data.repository.StationRepository = RepositoryProvider.stationRepository(),
+    private val details: com.myway.app.data.repository.StationDetailRepository = RepositoryProvider.stationDetailRepository()
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<AiUiState>(AiUiState.Idle)
@@ -61,6 +75,15 @@ class AiModeViewModel(
         if (said.isEmpty()) return
         lastSaid = said
         job?.cancel()                                  // 늦게 온 이전 응답은 버림
+        // '다음 열차 언제 와?' 같은 정형 질문은 AI를 부르지 않고 앱이 바로 답함 (설계서 기능 29·화면 45)
+        if (NEXT_TRAIN.containsMatchIn(said)) { job = viewModelScope.launch { _state.value = nextTrain(said) }; return }
+        // "왕십리 화장실 어디야?" 같은 편의시설 위치 질문도 AI 없이 역 정보(편의시설)로 바로 답함
+        // ("엘리베이터만 타고 가고 싶어"처럼 위치를 묻지 않으면 기존대로 경로 조건 → 미지원 안내)
+        FacilityNames.kindOf(said)?.takeIf { FacilityNames.asksWhere.containsMatchIn(said) }?.let { kind ->
+            _state.value = AiUiState.Interpreting(said)
+            job = viewModelScope.launch { _state.value = facility(said, kind) }
+            return
+        }
         _state.value = AiUiState.Interpreting(said)
         job = viewModelScope.launch {
             _state.value = when (val r = repo.interpret(said, kept?.condition)) {
@@ -110,6 +133,43 @@ class AiModeViewModel(
         _state.value = next(s.said, d)
     }
 
+    /**
+     * 역의 방향별 곧 올 열차. 역 이름이 없으면 방금 확인한 출발역 기준.
+     * 실시간 도착 API(서버) 전이라 역·방향마다 고정된 추정값을 쓴다 → 서버 연결 시 이 부분만 바꾸면 됨
+     */
+    private suspend fun nextTrain(said: String): AiUiState {
+        val name = stationIn(said, allStations()) ?: return AiUiState.NotUnderstood(said)
+        val trains = MapTracks.links.filter { it.a == name || it.b == name }.map { l ->
+            val toward = if (l.a == name) l.b else l.a
+            val seed = (name + l.line + toward).hashCode().let { if (it == Int.MIN_VALUE) 0 else kotlin.math.abs(it) }
+            val first = 40 + seed % 260
+            TrainEta(l.line, toward, first, first + 300 + seed % 180)
+        }.sortedWith(compareBy({ it.line }, { it.seconds }))
+        return if (trains.isEmpty()) AiUiState.NotUnderstood(said) else AiUiState.NextTrain(said, name, trains)
+    }
+
+    /** 편의시설 답: 역 상세(편의시설)를 받아 물어본 종류만 추림. 없으면 그 역의 다른 시설을 대신 보여 줌 */
+    private suspend fun facility(said: String, kind: FacilityNames.Kind): AiUiState {
+        val all = allStations()
+        val name = stationIn(said, all) ?: return AiUiState.NotUnderstood(said)
+        val group = all.filter { it.name == name }
+        val st = group.firstOrNull { LineStyle.isSupported(it.line) } ?: group.firstOrNull() ?: return AiUiState.NotUnderstood(said)
+        val detail = (details.getDetail(st) as? Resource.Success)?.data ?: return AiUiState.Failed(said)
+        val hit = detail.facilities.filter { it.code in kind.codes }
+        return AiUiState.FacilityAnswer(said, StationGroupItem(name, group), kind.label,
+            hit.ifEmpty { detail.facilities }, hit.isNotEmpty())
+    }
+
+    private suspend fun allStations(): List<Station> = (stations.getStations() as? Resource.Success)?.data.orEmpty()
+
+    /** 문장 속 역 이름 (긴 이름 먼저, 빈칸 무시). 없으면 방금 확인한 출발역 */
+    private fun stationIn(said: String, all: List<Station>): String? {
+        val key = said.replace(" ", "")
+        return (if (said.any { it in 'a'..'z' || it in 'A'..'Z' }) StationNames.findIn(said).firstOrNull()?.first
+            else all.map { it.name }.distinct().sortedByDescending { it.length }.firstOrNull { key.contains(it.replace(" ", "")) })
+            ?: kept?.origin?.name
+    }
+
     private fun toDraft(r: InterpretResult) = AiDraft(
         condition = r.condition,
         origin = resolve(r.condition.origin?.rawName, r.originMatches),
@@ -147,6 +207,9 @@ class AiModeViewModel(
     }
 
     companion object {
+        /** 정형 '다음 열차' 질문 */
+        private val NEXT_TRAIN = Regex("다음\\s*(열차|차|지하철)|열차\\s*(언제|몇\\s*분)|언제\\s*와|next train|when.*train", RegexOption.IGNORE_CASE)
+
         /** 첫 우선순위 → 결과 화면에서 먼저 보여 줄 탭 */
         fun preferredType(c: RouteCondition): RouteType? = when (c.preference?.priority?.firstOrNull()) {
             Criterion.TRANSFERS -> RouteType.MIN_TRANSFERS

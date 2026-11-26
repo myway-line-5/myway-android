@@ -303,8 +303,11 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
                 minimumHeight = dp(44)
                 setPadding(0, dp(10), 0, 0)
                 contentDescription = "${facilityName(f)}, ${f.where}"
-                addView(text(f.code, R.style.Text_MyWay_Caption12Bold, R.color.text_primary).apply {
+                addView(text(com.myway.app.ui.common.FacilityNames.badge(f), R.style.Text_MyWay_Caption12Bold, R.color.text_primary).apply {
                     gravity = Gravity.CENTER; setBackgroundResource(R.drawable.bg_detail_code)
+                    maxLines = 1                                    // 긴 약칭(자전거·BIKE)은 칸에 맞게 글자만 작아짐
+                    androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                        this, 8, 12, 1, android.util.TypedValue.COMPLEX_UNIT_SP)
                     importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                 }, LinearLayout.LayoutParams(dp(36), dp(36)))
                 addView(LinearLayout(ctx).apply {
@@ -322,22 +325,8 @@ class StationDetailFragment : Fragment(R.layout.fragment_station_detail) {
         setTextColor(requireContext().getColor(color))
     }
 
-    /** 편의시설 이름: 코드로 번역 (모르는 코드는 받은 이름 그대로) */
-    private fun facilityName(f: com.myway.app.data.repository.Facility) = when (f.code) {
-        "WC" -> getString(R.string.detail_fac_wc)
-        "EV", "elevator" -> getString(R.string.detail_fac_ev)
-        // 서버 편의시설 코드 (myway-main-server load_detail_data.py)
-        "wheelchair_lift" -> getString(R.string.detail_fac_wheelchair_lift)
-        "nursing_room" -> getString(R.string.detail_fac_nursing_room)
-        "meeting_place" -> getString(R.string.detail_fac_meeting_place)
-        "cultural_space" -> getString(R.string.detail_fac_cultural_space)
-        "transfer_parking" -> getString(R.string.detail_fac_transfer_parking)
-        "bike_parking" -> getString(R.string.detail_fac_bike_parking)
-        "manned_luggage" -> getString(R.string.detail_fac_manned_luggage)
-        "unmanned_civil_service" -> getString(R.string.detail_fac_civil_kiosk)
-        "exchange_kiosk" -> getString(R.string.detail_fac_exchange_kiosk)
-        else -> f.name
-    }
+    /** 편의시설 이름: 코드로 번역 (AI 모드 편의시설 답변과 같은 규칙) */
+    private fun facilityName(f: com.myway.app.data.repository.Facility) = com.myway.app.ui.common.FacilityNames.name(requireContext(), f)
 
     override fun onDestroyView() {
         _b = null

@@ -81,6 +81,7 @@
     <string name="trip_planned">예정 도착</string>
     <string name="trip_actual">실제 도착</string>
     <string name="trip_late">%d분 늦음</string>
+    <string name="trip_on_time">정시 도착</string>
     <string name="trip_early">%d분 빠름</string>
     <string name="trip_save">☆ 경로 저장</string>
     <string name="trip_saved">★ 저장됨</string>
@@ -133,4 +134,9 @@
     <string name="greet_evening_sub">편안한 저녁 보내세요</string>
     <string name="greet_night">늦은 시간까지 고생했어요</string>
     <string name="greet_night_sub">조심히 들어가세요</string>
+
+    <!-- 접근성(TalkBack) -->
+    <string name="trip_a11y_remain">%1$s 하차까지 %2$d개 역</string>
+    <string name="trip_a11y_sound_on">소리 켜짐</string>
+    <string name="trip_a11y_sound_off">소리 꺼짐</string>
 </resources>

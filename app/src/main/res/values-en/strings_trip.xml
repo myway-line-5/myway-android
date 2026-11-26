@@ -74,6 +74,7 @@
     <string name="trip_planned">Planned</string>
     <string name="trip_actual">Actual</string>
     <string name="trip_late">%d min late</string>
+    <string name="trip_on_time">On time</string>
     <string name="trip_early">%d min early</string>
     <string name="trip_save">☆ Save route</string>
     <string name="trip_saved">★ Saved</string>
@@ -123,4 +124,9 @@
     <string name="greet_evening_sub">Have a relaxing evening</string>
     <string name="greet_night">It\'s been a long day</string>
     <string name="greet_night_sub">Get home safely</string>
+
+    <!-- 접근성(TalkBack) -->
+    <string name="trip_a11y_remain">%2$d stops to %1$s</string>
+    <string name="trip_a11y_sound_on">Sound on</string>
+    <string name="trip_a11y_sound_off">Sound off</string>
 </resources>

@@ -54,6 +54,7 @@ object TripEngine {
     @Volatile var hold = false
     var running = false; private set
     private var startedAt: LocalTime = LocalTime.now()
+    private var firstWait = 0
 
     /** TripSession(결과 화면에서 넘긴 값)으로 새 안내 시작 */
     fun start() {
@@ -63,6 +64,7 @@ object TripEngine {
         startedAt = LocalTime.now()
         hold = false
         val wait = TripSession.firstWaitSeconds
+        firstWait = wait
         _waitLeft.value = wait
         _pos.value = 0f
         _feed.value = Feed.LIVE
@@ -171,9 +173,9 @@ object TripEngine {
     }
 
     private fun arrived(p: TripPlan): TripState.Arrived {
-        val planned = startedAt.plusSeconds(p.totalSeconds.toLong())
-        val diff = listOf(-3L, -2L, 2L, 3L).random()            // 실제 도착 시각 흉내 (늦게·일찍)
-        return TripState.Arrived(planned, planned.plusMinutes(diff))
+        // 예정 = 안내 시작 + 첫 열차 기다림 + 이동 시간. 실제 도착은 열차 위치 API가 붙기 전까지 예정과 같게(정시)
+        val planned = startedAt.plusSeconds((firstWait + p.totalSeconds).toLong())
+        return TripState.Arrived(planned, planned)
     }
 
     fun showTransfer() { (_state.value as? TripState.AlightNow)?.let { _state.value = TripState.Transfer(it.leg) } }

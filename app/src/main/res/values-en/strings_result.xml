@@ -40,4 +40,6 @@
     <string name="result_speak_transfer">Get off at %1$s and transfer to Line %2$s, about %3$d min on foot.</string>
     <string name="result_speak_alight">Get off at %s, your destination.</string>
     <string name="result_fare_pending">Fare pending</string>
+    <string name="result_tab_same">Same as fastest</string>
+    <string name="result_same_label">Duration · same as the fastest route</string>
 </resources>

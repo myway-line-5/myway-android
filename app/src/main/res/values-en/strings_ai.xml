@@ -71,4 +71,20 @@
     <string name="ai_mic_off_body">To use voice, allow the microphone in Settings › Permissions</string>
     <string name="ai_mic_open_settings">Open settings</string>
     <string name="ai_same_station">Origin and destination are both %s. Change one with [Edit myself]</string>
+
+    <!-- 45 정형 다음 열차 -->
+    <string name="ai_next_title">Next trains at %s</string>
+    <string name="ai_next_sub">Trains arriving soon (scheduled)</string>
+    <string name="ai_next_row">Line %1$s · toward %2$s</string>
+    <string name="ai_next_eta">First train in %1$d min · following in %2$d min</string>
+    <string name="ai_next_voice">%1$s: %2$s.</string>
+    <string name="ai_next_voice_item">Line %1$s toward %2$s in %3$d min</string>
+
+    <!-- 편의시설 질문 답 -->
+    <string name="ai_fac_title">%2$s at %1$s</string>
+    <string name="ai_fac_found">%d found</string>
+    <string name="ai_fac_none">No %s info · other facilities at this station</string>
+    <string name="ai_fac_detail">Station info</string>
+    <string name="ai_fac_go">Route here</string>
+    <string name="ai_fac_voice">%2$s at %1$s: %3$s.</string>
 </resources>

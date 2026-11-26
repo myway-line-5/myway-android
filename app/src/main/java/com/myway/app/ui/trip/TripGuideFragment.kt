@@ -45,6 +45,9 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
         val b = FragmentTripGuideBinding.bind(view).also { _b = it }
         val plan = vm.plan ?: run { findNavController().popBackStack(); return }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, back)
+        // 접근성: 남은 역 수가 바뀌면 TalkBack이 알아서 읽어 줌 ("당산 하차까지 3개 역"). 단위 글자는 따로 안 읽음
+        androidx.core.view.ViewCompat.setAccessibilityLiveRegion(b.remainCount, androidx.core.view.ViewCompat.ACCESSIBILITY_LIVE_REGION_POLITE)
+        b.stopsUnit.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         tts = TtsManager(requireContext(), if (StationNames.english) java.util.Locale.ENGLISH else java.util.Locale.KOREAN)
         // 기능 28: 화면이 꺼져도 안내가 이어지게 포그라운드 서비스 시작 (음성·진동·알림은 서비스가 담당)
         if (vm.state.value !is TripState.Arrived) GuideService.start(requireContext())   // 도착 뒤 화면 재생성 시 안내 중복 방지
@@ -173,6 +176,7 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
                 b.stationNowSub.text = getString(R.string.trip_now_sub, leg.line, leg.toward.displayName(),
                     leg.stops[s.at + 1].name.displayName())
                 b.remainCount.text = left.toString()
+                b.remainCount.contentDescription = getString(R.string.trip_a11y_remain, leg.alight.name.displayName(), left)
                 b.remainCount.setTextColor(ctx.getColor(if (left <= 2) R.color.status_error else R.color.text_primary))  // 3-3 곧 내림
                 b.eta.text = getString(if (estimated) R.string.trip_eta_estimate else R.string.trip_eta,
                     Timeline.minutes(sec), Timeline.clock(eta))
@@ -246,7 +250,11 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
                 b.plannedTime.text = Timeline.clock(s.planned)
                 b.actualTime.text = Timeline.clock(s.actual)
                 val diff = java.time.Duration.between(s.planned, s.actual).toMinutes().toInt()
-                b.diffBadge.text = getString(if (diff > 0) R.string.trip_late else R.string.trip_early, kotlin.math.abs(diff))
+                b.diffBadge.text = when {
+                    diff > 0 -> getString(R.string.trip_late, diff)
+                    diff < 0 -> getString(R.string.trip_early, -diff)
+                    else -> getString(R.string.trip_on_time)
+                }
                 b.diffBadge.backgroundTintList = ColorStateList.valueOf(ctx.getColor(if (diff > 0) R.color.status_error else R.color.brand_navy))
                 banner(Feed.LIVE, null)
                 val saved = TripSession.isFavorite?.invoke() == true
@@ -303,6 +311,9 @@ class TripGuideFragment : Fragment(R.layout.fragment_trip_guide) {
         b.leftButton.text = muted?.let { withIcon(left, if (it) R.drawable.ic_volume_off else R.drawable.ic_set_voice) } ?: left
         b.leftButton.setOnClickListener { onLeft() }
         b.leftButton.setBackgroundResource(if (muted == true) R.drawable.bg_button_muted else R.drawable.bg_button_secondary)
+        // 접근성: 소리 버튼은 지금 상태를 함께 읽음 ("소리 꺼짐, 소리 켜기 버튼")
+        androidx.core.view.ViewCompat.setStateDescription(b.leftButton,
+            muted?.let { getString(if (it) R.string.trip_a11y_sound_off else R.string.trip_a11y_sound_on) })
         b.leftButton.setTextColor(ctx.getColor(R.color.text_primary))
         b.rightButton.text = right; b.rightButton.setOnClickListener { onRight() }
         b.rightButton.setBackgroundResource(if (primary) R.drawable.bg_button_primary else R.drawable.bg_button_secondary)

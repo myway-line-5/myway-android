@@ -42,4 +42,6 @@
     <string name="result_speak_transfer">%1$s에서 내려 %2$s호선으로 갈아타요. 걸어서 약 %3$d분이에요.</string>
     <string name="result_speak_alight">%s에서 내리면 도착이에요.</string>
     <string name="result_fare_pending">요금 확인 중</string>
+    <string name="result_tab_same">최단과 같음</string>
+    <string name="result_same_label">소요시간 · 최단시간 경로와 같아요</string>
 </resources>

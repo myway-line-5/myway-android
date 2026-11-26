@@ -37,6 +37,7 @@
     <string name="detail_pm">PM</string>
     <string name="detail_fac_wc">Restroom</string>
     <string name="detail_fac_ev">Elevator</string>
+    <string name="detail_fac_es">Escalator</string>
     <string name="detail_fac_wheelchair_lift">Wheelchair lift</string>
     <string name="detail_fac_nursing_room">Nursing room</string>
     <string name="detail_fac_meeting_place">Meeting point</string>
