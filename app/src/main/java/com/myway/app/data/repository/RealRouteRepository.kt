@@ -8,6 +8,7 @@ import com.myway.app.data.remote.safeApiCall
 import com.myway.app.domain.model.AppError
 import com.myway.app.domain.model.RouteCondition
 import com.myway.app.domain.model.RouteResult
+import com.myway.app.domain.model.RouteType
 import com.myway.app.domain.model.Station
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -16,6 +17,13 @@ import kotlinx.coroutines.coroutineScope
 class RealRouteRepository(
     private val api: MyWayApi
 ) : RouteRepository {
+
+    // 탭 3개 = 서버 optimization 값 3개
+    private enum class Pick(val optimization: String, val type: RouteType) {
+        TIME("shortest_time", RouteType.SHORTEST_TIME),
+        TRANSFER("minimum_transfer", RouteType.MIN_TRANSFERS),
+        FARE("minimum_fare", RouteType.MIN_FARE)
+    }
 
     override suspend fun findRoutes(condition: RouteCondition): Resource<List<RouteResult>> {
         val rawOrigin = condition.origin?.station
@@ -38,33 +46,56 @@ class RealRouteRepository(
             return Resource.Failure(AppError.UnsupportedCondition)
         }
 
-        // TODO: condition.constraints / preference 는 서버 요청에 실을 자리가 생기면 추가
-        // 조합마다 서버에 물어본다
+        // 기준 3개 x 역 조합마다 서버에 물어본다 (제한 조건은 서버 세션에 이미 있다)
         val results = coroutineScope {
-            pairs.map { (o, d) ->
-                async<Resource<List<RouteResult>>> {
-                    when (val res = safeApiCall {
-                        api.searchRoute(RouteSearchRequestDto(o.stationId, d.stationId))
-                    }) {
-                        is Resource.Failure -> res
-                        is Resource.Success -> res.data.toResource(o, d)
+            Pick.values().flatMap { pick ->
+                pairs.map { (o, d) ->
+                    async {
+                        val res = safeApiCall {
+                            api.searchRoute(
+                                RouteSearchRequestDto(o.stationId, d.stationId, pick.optimization)
+                            )
+                        }
+                        val mapped: Resource<List<RouteResult>> = when (res) {
+                            is Resource.Failure -> res
+                            is Resource.Success -> res.data.toResource(o, d)
+                        }
+                        pick to mapped
                     }
                 }
             }.awaitAll()
         }
 
-        // 성공한 것 중 가장 빠른 경로를 고른다. 전부 실패하면 첫 실패를 돌려준다
-        val routes = mutableListOf<RouteResult>()
+        // 기준마다 성공한 것 중 가장 좋은 경로 1개를 고른다
+        val picked = mutableListOf<RouteResult>()
         var firstFailure: Resource.Failure? = null
-        for (r in results) {
-            when (r) {
-                is Resource.Success -> routes += r.data
-                is Resource.Failure -> if (firstFailure == null) firstFailure = r
+        for (pick in Pick.values()) {
+            val routes = mutableListOf<RouteResult>()
+            for ((p, r) in results) {
+                if (p != pick) continue
+                when (r) {
+                    is Resource.Success -> routes += r.data
+                    is Resource.Failure -> if (firstFailure == null) firstFailure = r
+                }
+            }
+            routes.minWithOrNull(comparatorOf(pick))?.let {
+                // 탭 키가 겹치지 않게 요청한 기준의 종류로 맞춘다
+                picked += it.copy(type = pick.type)
             }
         }
-        val best = routes.minWithOrNull(compareBy({ it.totalSeconds }, { it.transferCount }))
-        if (best != null) return Resource.Success(listOf(best))
+        android.util.Log.d(
+            "MyWayRoute",
+            "탭 결과: " + picked.joinToString { "${it.type}=${it.totalSeconds}s/${it.transferCount}회/${it.totalFareKrw}원" }
+        )
+        if (picked.isNotEmpty()) return Resource.Success(picked)
         return firstFailure ?: Resource.Failure(AppError.Server)
+    }
+
+    // 기준별 비교: 최단시간=시간 -> 환승, 최소환승=환승 -> 시간, 최소비용=요금 -> 시간
+    private fun comparatorOf(pick: Pick): Comparator<RouteResult> = when (pick) {
+        Pick.TIME -> compareBy<RouteResult>({ it.totalSeconds }, { it.transferCount })
+        Pick.TRANSFER -> compareBy<RouteResult>({ it.transferCount }, { it.totalSeconds })
+        Pick.FARE -> compareBy<RouteResult>({ it.totalFareKrw }, { it.totalSeconds })
     }
 
     // 역 하나 -> 같은 이름의 서버 역 목록 (노선도 임시 역 "map:{호선}:{이름}"도 같은 방식)
