@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 핸즈프리 음성 대화: 마이크로 물으면 확인·결과·안내 시작까지 말로 이어 감 -->
+<resources>
+    <string name="voice_listening">🎤 듣는 중 · %s</string>
+    <string name="voice_hint_yes_no">\'응\' 또는 \'아니\'</string>
+    <string name="voice_hint_say">말해 주세요</string>
+    <string name="voice_hint_start">\'시작\' · \'최소환승\' · \'다시\'</string>
+    <string name="voice_hint_next">다른 열차면 \'다음 열차\'</string>
+    <string name="voice_confirm">%1$s에서 %2$s까지%3$s 찾을까요?</string>
+    <string name="voice_pref_time"> 빠른 경로로</string>
+    <string name="voice_pref_transfers"> 환승 적은 경로로</string>
+    <string name="voice_pref_fare"> 요금 적은 경로로</string>
+    <string name="voice_need_stations">출발역과 도착역을 다시 말해 주세요</string>
+    <string name="voice_candidates">%s 중 어느 역인가요?</string>
+    <string name="voice_retry">잘 못 알아들었어요. 어디서 어디까지 가는지 다시 말해 주세요</string>
+    <string name="voice_result">%1$s까지 약 %2$d분, %3$s. 안내를 시작할까요?</string>
+    <string name="voice_trip_start">가장 먼저 오는 %s 방면 열차로 안내할게요. 다른 열차를 탔다면 다음 열차라고 말해 주세요</string>
+    <string name="voice_trip_next">다음 열차로 바꿨어요. 계속 안내할게요</string>
+    <string name="voice_bye">알겠어요. 화면에서 이어서 할 수 있어요</string>
+</resources>

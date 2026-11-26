@@ -26,7 +26,22 @@
     <string name="result_error_not_found">조건에 맞는 경로가 없어요</string>
     <string name="result_error_not_found_body">출발·도착역을 바꿔 다시 찾아 주세요.</string>
     <string name="result_error_network">인터넷 연결을 확인해 주세요</string>
+    <string name="result_error_network_body">연결되면 다시 찾기를 눌러 주세요.</string>
+    <string name="result_error_unsupported">아직 이 구간은 안내하지 않아요</string>
+    <string name="result_error_unsupported_body">2·5·9호선 역끼리만 찾을 수 있어요. 다른 역으로 바꿔 주세요.</string>
+    <string name="result_error_server">서버가 잠시 응답하지 않아요</string>
     <string name="result_error_generic">경로를 불러오지 못했어요</string>
     <string name="result_error_generic_body">잠시 후 다시 찾아 주세요.</string>
     <string name="result_retry">다시 찾기</string>
+    <string name="result_speak">경로 읽어주기</string>
+    <string name="result_speak_text">%1$s까지 약 %2$d분 걸리고, %3$s.</string>
+    <string name="result_speak_no_transfer">환승 없이 갈 수 있어요</string>
+    <string name="result_speak_transfers">환승은 %d회예요</string>
+    <string name="result_speak_board">%1$s에서 %2$s호선을 타고 %3$d개 역 가요.</string>
+    <string name="result_speak_ride">%1$s호선을 타고 %2$d개 역 가요.</string>
+    <string name="result_speak_transfer">%1$s에서 내려 %2$s호선으로 갈아타요. 걸어서 약 %3$d분이에요.</string>
+    <string name="result_speak_alight">%s에서 내리면 도착이에요.</string>
+    <string name="result_fare_pending">요금 확인 중</string>
+    <string name="result_tab_same">최단과 같음</string>
+    <string name="result_same_label">소요시간 · 최단시간 경로와 같아요</string>
 </resources>

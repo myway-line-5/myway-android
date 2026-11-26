@@ -1,49 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Figma 텍스트 스타일. 글꼴: Noto Sans KR (안드로이드 기본 한글 글꼴과 동일 계열) -->
+<!-- Figma 텍스트 스타일. 글꼴: Noto Sans KR (res/font, 구글 다운로드 글꼴) → 어느 폰에서나 같은 모양 -->
 <resources>
     <style name="Text.MyWay" parent="android:TextAppearance">
         <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">@font/noto_sans_kr</item>
         <item name="android:includeFontPadding">false</item>
     </style>
 
     <style name="Text.MyWay.Display32Bold">
-        <item name="android:textSize">32sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_display</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_bold</item>
         <item name="android:letterSpacing">-0.025</item>
     </style>
     <style name="Text.MyWay.Heading18Bold">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_heading</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_bold</item>
         <item name="android:letterSpacing">-0.015</item>
     </style>
     <style name="Text.MyWay.Body16Bold">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_bold</item>
         <item name="android:letterSpacing">-0.015</item>
     </style>
     <style name="Text.MyWay.Body16Medium">
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_medium</item>
         <item name="android:letterSpacing">-0.015</item>
     </style>
     <style name="Text.MyWay.Label14Bold">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_label</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_bold</item>
         <item name="android:letterSpacing">-0.01</item>
     </style>
     <style name="Text.MyWay.Label14Medium">
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/text_label</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_medium</item>
         <item name="android:letterSpacing">-0.01</item>
     </style>
     <style name="Text.MyWay.Caption12Medium">
-        <item name="android:textSize">12sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_medium</item>
         <item name="android:letterSpacing">-0.005</item>
     </style>
     <style name="Text.MyWay.Caption12Bold">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:fontFamily">@font/noto_sans_kr_bold</item>
         <item name="android:letterSpacing">-0.005</item>
     </style>
 </resources>

@@ -38,33 +38,46 @@ class RealRouteRepository(
             return Resource.Failure(AppError.UnsupportedCondition)
         }
 
-        // TODO: condition.constraints / preference 는 서버 요청에 실을 자리가 생기면 추가
-        // 조합마다 서버에 물어본다
+        // 제한 조건은 서버가 세션(AI 확인 조건)에서 읽는다. 앱은 기준 3개를 각각 요청해 탭 3개를 채운다
+        // (기준 × 출발·도착 후보 조합) 을 한꺼번에 물어보고, 기준마다 그 기준에서 가장 좋은 경로를 고른다
         val results = coroutineScope {
-            pairs.map { (o, d) ->
-                async<Resource<List<RouteResult>>> {
-                    when (val res = safeApiCall {
-                        api.searchRoute(RouteSearchRequestDto(o.stationId, d.stationId))
-                    }) {
-                        is Resource.Failure -> res
-                        is Resource.Success -> res.data.toResource(o, d)
+            CRITERIA.map { (opt, _) ->
+                opt to pairs.map { (o, d) ->
+                    async<Resource<List<RouteResult>>> {
+                        when (val res = safeApiCall {
+                            api.searchRoute(RouteSearchRequestDto(o.stationId, d.stationId, opt))
+                        }) {
+                            is Resource.Failure -> res
+                            is Resource.Success -> res.data.toResource(o, d)
+                        }
                     }
                 }
-            }.awaitAll()
+            }.map { (opt, jobs) -> opt to jobs.awaitAll() }
         }
 
-        // 성공한 것 중 가장 빠른 경로를 고른다. 전부 실패하면 첫 실패를 돌려준다
         val routes = mutableListOf<RouteResult>()
         var firstFailure: Resource.Failure? = null
-        for (r in results) {
-            when (r) {
-                is Resource.Success -> routes += r.data
+        for ((opt, list) in results) {
+            val ok = mutableListOf<RouteResult>()
+            for (r in list) when (r) {
+                is Resource.Success -> ok += r.data
                 is Resource.Failure -> if (firstFailure == null) firstFailure = r
             }
+            ok.minWithOrNull(CRITERIA.getValue(opt))?.let { routes += it }
         }
-        val best = routes.minWithOrNull(compareBy({ it.totalSeconds }, { it.transferCount }))
-        if (best != null) return Resource.Success(listOf(best))
+        // 같은 기준(type)이 겹치면 하나만. 전부 실패하면 첫 실패를 돌려준다
+        val distinct = routes.distinctBy { it.type }
+        if (distinct.isNotEmpty()) return Resource.Success(distinct)
         return firstFailure ?: Resource.Failure(AppError.Server)
+    }
+
+    private companion object {
+        /** 서버 탐색 기준 → 후보 조합 중 고르는 순서 */
+        val CRITERIA: Map<String, Comparator<RouteResult>> = linkedMapOf(
+            "shortest_time" to compareBy({ it.totalSeconds }, { it.transferCount }),
+            "minimum_transfer" to compareBy({ it.transferCount }, { it.totalSeconds }),
+            "minimum_fare" to compareBy({ it.totalFareKrw }, { it.totalSeconds })
+        )
     }
 
     // 역 하나 -> 같은 이름의 서버 역 목록 (노선도 임시 역 "map:{호선}:{이름}"도 같은 방식)
@@ -108,4 +121,4 @@ class RealRouteRepository(
         }
         else -> Resource.Failure(AppError.Server)
     }
-}
+}

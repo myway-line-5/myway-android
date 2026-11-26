@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 일반 모드 경로 조건(UC-05) · 결과 보강 · 경로 지도(59) -->
+<resources>
+    <!-- 결과 보강 -->
+    <string name="result_tab_pref">맞춤</string>
+    <string name="result_pref_label">맞춤 · %s 순</string>
+    <string name="result_error_not_found_cond">정한 조건을 조금 풀면 경로가 나올 수 있어요.</string>
+    <string name="result_saved_banner">저장된 경로 · %s 기준 · 연결되면 새로 찾아요</string>
+    <string name="result_map">경로 지도 보기</string>
+
+    <!-- 경로 지도 (59) -->
+    <string name="route_map_title">%1$s → %2$s</string>
+    <string name="route_map_summary">%1$s · 환승 %2$d회 · %3$s</string>
+    <string name="route_map_back">뒤로</string>
+    <string name="route_map_missing">노선도에서 이 경로의 위치를 찾지 못했어요</string>
+</resources>

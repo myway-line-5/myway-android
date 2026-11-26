@@ -49,6 +49,27 @@ class RouteSelectionViewModel : ViewModel() {
     private val _aiExtras = MutableStateFlow<AiExtras?>(null)
     val aiExtras: StateFlow<AiExtras?> = _aiExtras.asStateFlow()
 
+    /** 일반 모드에서 직접 정한 제한·선호 (UC-05 경로 조건 설정). 바꾸기 전까지 다음 검색에도 유지 */
+    data class Conditions(
+        val constraints: Constraints = Constraints(),
+        val preference: Preference? = null
+    ) {
+        val isEmpty get() = constraints == Constraints() && preference == null
+    }
+
+    private val _conditions = MutableStateFlow(Conditions())
+    val conditions: StateFlow<Conditions> = _conditions.asStateFlow()
+
+    /** 탐색에 실제로 쓰는 조건: AI에서 확인한 조건이 있으면 그것, 없으면 직접 정한 것 */
+    fun effectiveConditions(x: AiExtras? = _aiExtras.value, c: Conditions = _conditions.value): Conditions =
+        x?.let { Conditions(it.constraints, it.preference) } ?: c
+
+    /** 직접 고친 조건이 AI 조건을 대신한다 (AI 표시는 사라짐) */
+    fun setConditions(c: Conditions) {
+        _aiExtras.value = null
+        _conditions.value = c
+    }
+
     /** 2-9에서 고른 기준: 다음 결과 화면이 이 탭부터 (한 번 쓰면 사라짐) */
     private var pendingType: RouteType? = null
     fun setPreferredType(type: RouteType) { pendingType = type }

@@ -15,14 +15,26 @@
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/space_s">
 
-        <include android:id="@+id/tabTime" layout="@layout/item_route_tab" />
-        <include android:id="@+id/tabTransfer" layout="@layout/item_route_tab" />
-        <include android:id="@+id/tabFare" layout="@layout/item_route_tab" />
-
-        <View
+        <!-- 맞춤(선호 반영) 탭이 붙으면 4칸 → 좁은 화면에서는 옆으로 밀어 보기 -->
+        <HorizontalScrollView
+            android:id="@+id/tabScroll"
             android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <include android:id="@+id/tabPref" layout="@layout/item_route_tab" android:visibility="gone" />
+                <include android:id="@+id/tabTime" layout="@layout/item_route_tab" />
+                <include android:id="@+id/tabTransfer" layout="@layout/item_route_tab" />
+                <include android:id="@+id/tabFare" layout="@layout/item_route_tab" />
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <ImageButton
             android:id="@+id/closeButton"
@@ -51,6 +63,21 @@
         android:paddingVertical="10dp"
         android:textAppearance="@style/Text.MyWay.Label14Bold"
         android:textColor="@color/ai_banner_text"
+        android:visibility="gone" />
+
+    <!-- 오프라인: 즐겨찾기에 저장해 둔 경로를 보여 주는 중 -->
+    <TextView
+        android:id="@+id/savedBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_l"
+        android:layout_marginTop="@dimen/space_m"
+        android:accessibilityLiveRegion="polite"
+        android:background="@drawable/bg_pinch_hint"
+        android:paddingHorizontal="@dimen/space_m"
+        android:paddingVertical="10dp"
+        android:textAppearance="@style/Text.MyWay.Label14Bold"
+        android:textColor="@color/text_on_brand"
         android:visibility="gone" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -101,6 +128,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/durationLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/result_duration_label"
@@ -146,6 +174,27 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- 경로 읽어주기 (TTS, 최지윤 PR #18) — 지도·즐겨찾기 옆 아이콘으로 -->
+                <ImageButton
+                    android:id="@+id/speakButton"
+                    android:layout_width="@dimen/touch_large"
+                    android:layout_height="@dimen/touch_large"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/result_speak"
+                    android:src="@drawable/ic_set_voice"
+                    app:tint="@color/icon_default"
+                    xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+                <ImageButton
+                    android:id="@+id/mapButton"
+                    android:layout_width="@dimen/touch_large"
+                    android:layout_height="@dimen/touch_large"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/result_map"
+                    android:src="@drawable/ic_map"
+                    app:tint="@color/icon_default"
+                    xmlns:app="http://schemas.android.com/apk/res-auto" />
+
                 <ImageButton
                     android:id="@+id/favoriteButton"
                     android:layout_width="@dimen/touch_large"
@@ -165,6 +214,7 @@
                 android:paddingBottom="@dimen/space_s">
 
                 <LinearLayout
+                    android:id="@+id/departChip"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -189,6 +239,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/arriveChip"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/space_s"
@@ -213,18 +264,6 @@
                         android:textAppearance="@style/Text.MyWay.Body16Bold" />
                 </LinearLayout>
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/speakButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/space_l"
-                android:layout_marginBottom="@dimen/space_s"
-                android:background="@drawable/bg_time_chip"
-                android:gravity="center"
-                android:minHeight="48dp"
-                android:text="🔊 경로 읽어주기"
-                android:textAppearance="@style/Text.MyWay.Body16Bold" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/timeline"

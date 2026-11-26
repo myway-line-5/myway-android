@@ -23,7 +23,7 @@
     <!-- 오른쪽 메뉴 -->
     <LinearLayout
         android:id="@+id/navPanel"
-        android:layout_width="128dp"
+        android:layout_width="@dimen/settings_nav_width"
         android:layout_height="0dp"
         android:background="@color/bg_surface"
         android:clickable="true"
@@ -47,8 +47,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:accessibilityHeading="true"
+                android:maxLines="1"
                 android:text="@string/set_title"
-                android:textAppearance="@style/Text.MyWay.Heading18Bold" />
+                android:textAppearance="@style/Text.MyWay.Heading18Bold"
+                app:autoSizeMaxTextSize="@dimen/text_heading"
+                app:autoSizeMinTextSize="13sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform" />
 
             <ImageButton
                 android:id="@+id/backButton"
@@ -95,7 +100,7 @@
                 android:accessibilityHeading="true"
                 android:gravity="center_vertical"
                 android:textAppearance="@style/Text.MyWay.Heading18Bold"
-                android:textSize="22sp" />
+                android:textSize="@dimen/text_title" />
 
             <!-- ===== 음성 (4-3) ===== -->
             <LinearLayout

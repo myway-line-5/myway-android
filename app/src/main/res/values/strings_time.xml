@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 1-19 · 1-22 시간 설정 시트 -->
+<resources>
+    <string name="time_title">시간 설정</string>
+    <string name="time_close">닫기</string>
+    <string name="time_mode_depart">출발 기준</string>
+    <string name="time_mode_arrive">도착 기준</string>
+    <string name="time_estimate_arrive">도착 예상</string>
+    <string name="time_estimate_depart">출발 예상</string>
+    <string name="time_now">지금</string>
+    <string name="time_ok">확인</string>
+    <string name="time_estimated_note">열차 시간표 반영 전이라 소요시간으로 계산한 예상 시각이에요</string>
+</resources>

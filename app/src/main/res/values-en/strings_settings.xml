@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_settings.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
+<resources>
+    <string name="set_title">Settings</string>
+    <string name="set_close">Close settings</string>
+    <string name="set_back_menu">Back to settings menu</string>
+    <string name="set_voice">Voice</string>
+    <string name="set_alert">Alerts</string>
+    <string name="set_route">Route</string>
+    <string name="set_screen">Display</string>
+    <string name="set_language">Language</string>
+    <string name="set_info">About</string>
+    <string name="set_voice_guide">Voice guidance</string>
+    <string name="set_tts">Voice guidance (TTS)</string>
+    <string name="set_tts_help">With earphones connected, you\'ll hear guidance through TTS</string>
+    <string name="set_voice_input">Voice input</string>
+    <string name="set_stt">Voice input (STT)</string>
+    <string name="set_stt_help">Use the speak button to say where you\'re going. If it fails, say it again or type</string>
+    <string name="set_voice_sound">Guidance voice</string>
+    <string name="set_voice_gender">Voice</string>
+    <string name="set_voice_female">Female</string>
+    <string name="set_voice_male">Male</string>
+    <string name="set_voice_volume">Voice volume</string>
+    <string name="set_percent">%d%%</string>
+    <string name="set_alert_way">Alert style</string>
+    <string name="set_vibrate">Vibration</string>
+    <string name="set_notify">Show notifications</string>
+    <string name="set_alert_way_help">Voice is set in the Voice menu. You can turn on several styles together</string>
+    <string name="set_alert_items">Spoken alerts (TTS)</string>
+    <string name="set_alert_before">Heads-up before your stop</string>
+    <string name="set_alert_arrival">Arrival alert</string>
+    <string name="set_alert_transfer">Transfer guidance</string>
+    <string name="set_alert_missed">Missed-stop warning</string>
+    <string name="set_alert_wrong_way">Wrong-direction warning</string>
+    <string name="set_vibrate_strength">Vibration strength</string>
+    <string name="set_route_label">Default route criterion</string>
+    <string name="set_route_help">Results open with this criterion unless you pick another</string>
+    <string name="set_screen_label">Theme</string>
+    <string name="set_theme_light">Light</string>
+    <string name="set_theme_dark">Dark</string>
+    <string name="set_theme_system">System default</string>
+    <string name="set_language_label">App language</string>
+    <string name="set_language_help">Search works in both Korean and English. Station names follow the language you pick</string>
+    <string name="set_pending">Coming soon</string>
+    <string name="set_info_app">App info</string>
+    <string name="set_version">Version</string>
+    <string name="set_map_source">Map source</string>
+    <string name="set_licenses">Open-source licenses</string>
+    <string name="set_map_source_body">Seoul subway map © Seoul Metropolitan Government\n\nUsed under KOGL Type 4 (attribution, non-commercial, no derivatives).</string>
+    <string name="set_licenses_body">AndroidX · Material Components for Android · Kotlin Coroutines · Retrofit · OkHttp · Gson\n\nApache License 2.0\nhttps://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="set_ok">OK</string>
+</resources>

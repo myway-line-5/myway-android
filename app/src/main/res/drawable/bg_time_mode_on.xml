@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 기준 전환에서 고른 쪽 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/brand_navy" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+    <item><color android:color="@android:color/transparent" /></item>
+</selector>

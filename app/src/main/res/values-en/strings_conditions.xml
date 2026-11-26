@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_conditions.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
+<resources>
+    <string name="result_tab_pref">Best match</string>
+    <string name="result_pref_label">Best match · by %s</string>
+    <string name="result_error_not_found_cond">Loosening your conditions may find a route.</string>
+    <string name="result_saved_banner">Saved route · as of %s · Refreshes when you\'re online</string>
+    <string name="result_map">View route map</string>
+    <string name="route_map_title">%1$s → %2$s</string>
+    <string name="route_map_summary">%1$s · Transfers %2$d · %3$s</string>
+    <string name="route_map_back">Back</string>
+    <string name="route_map_missing">Couldn\'t place this route on the map</string>
+</resources>

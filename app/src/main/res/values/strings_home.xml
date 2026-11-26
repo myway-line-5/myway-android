@@ -10,7 +10,6 @@
     <string name="home_service_desc">2·5·9호선 서비스 중</string>
     <string name="home_map_desc">%s. 두 손가락으로 확대·축소</string>
     <string name="home_map_missing">노선도 이미지를 넣으면 여기에 표시돼요</string>
-    <string name="feature_pending">준비 중인 기능이에요</string>
 
     <!-- 노선도 선택 (1-6~1-9) -->
     <string name="line_picker_title">노선도 선택</string>
@@ -27,4 +26,13 @@
     <string name="map_line2_desc">순환선 · 성수·신정 지선</string>
     <string name="map_line5_desc">방화 ~ 하남검단산 · 마천 지선</string>
     <string name="map_line9_desc">개화 ~ 중앙보훈병원 · 급행 운행</string>
+    <string name="home_offline">오프라인 · 즐겨찾기와 최근 기록만 볼 수 있어요</string>
+    <string name="offline_title">인터넷에 연결되어 있지 않아요</string>
+    <string name="offline_body">경로 찾기와 역 정보는 연결되면 볼 수 있어요. 즐겨찾기·최근 목록은 지금도 볼 수 있어요.</string>
+
+    <!-- 1-1 서비스 범위 안내 -->
+    <string name="scope_title">아직 2·5·9호선만 서비스해요</string>
+    <string name="scope_body">지금은 2·5·9호선 역끼리만 길을 찾을 수 있어요. 다른 노선도 곧 지원할 예정이에요.</string>
+    <string name="scope_ok">확인</string>
+    <string name="scope_never">다시 보지 않기</string>
 </resources>

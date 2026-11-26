@@ -35,4 +35,6 @@
     <color name="alpha_surface_94">#F0FFFFFF</color>
     <color name="ai_gradient_start">#8B5CFF</color>
     <color name="ai_gradient_end">#3D7BFF</color>
+    <!-- 9호선 금색 배지 위 글자 (라이트·다크 같은 색) -->
+    <color name="on_line9">#1C2659</color>
 </resources>

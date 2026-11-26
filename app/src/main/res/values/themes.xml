@@ -6,7 +6,16 @@
         <item name="colorPrimary">@color/brand_navy</item>
         <item name="colorOnPrimary">@color/text_on_brand</item>
         <item name="colorPrimaryContainer">@color/bg_muted</item>
+        <!-- 앱 전체 기본 글꼴: 폰마다 다른 기본 글꼴(갤럭시 One UI 등) 대신 피그마와 같은 Noto Sans KR -->
+        <item name="android:fontFamily">@font/noto_sans_kr</item>
+        <item name="fontFamily">@font/noto_sans_kr</item>
+        <!-- Noto Sans KR 은 위아래 여백(font padding)이 커서 작은 원·칩 안 글자가 아래로 밀리거나 잘림 → 끔 -->
+        <item name="android:textViewStyle">@style/Widget.MyWay.TextView</item>
+    </style>
+
+    <style name="Widget.MyWay.TextView" parent="Widget.AppCompat.TextView">
+        <item name="android:includeFontPadding">false</item>
     </style>
 
     <style name="Theme.MyWay" parent="Base.Theme.MyWay" />
-</resources>
+</resources>

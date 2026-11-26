@@ -11,8 +11,10 @@ import com.myway.app.R
 import com.myway.app.databinding.ItemTimelineLegBinding
 import com.myway.app.databinding.ItemTimelineStopBinding
 import com.myway.app.ui.common.LineStyle
+import com.myway.app.ui.common.displayName
 
-class TimelineAdapter : ListAdapter<TimelineRow, RecyclerView.ViewHolder>(Diff) {
+/** onPickTrain: 첫 승차역 줄의 [열차 선택] (Figma 1-18 → 3-1). null 이면 버튼 숨김 */
+class TimelineAdapter(private val onPickTrain: (() -> Unit)? = null) : ListAdapter<TimelineRow, RecyclerView.ViewHolder>(Diff) {
 
     class StopVH(val b: ItemTimelineStopBinding) : RecyclerView.ViewHolder(b.root)
     class LegVH(val b: ItemTimelineLegBinding) : RecyclerView.ViewHolder(b.root)
@@ -29,14 +31,16 @@ class TimelineAdapter : ListAdapter<TimelineRow, RecyclerView.ViewHolder>(Diff) 
         val ctx = holder.itemView.context
         when (val row = getItem(position)) {
             is TimelineRow.Stop -> with((holder as StopVH).b) {
+                pickTrain.isVisible = position == 0 && onPickTrain != null
+                pickTrain.setOnClickListener { onPickTrain?.invoke() }
                 time.text = row.time
                 badge.text = row.badge
                 badge.backgroundTintList = ColorStateList.valueOf(ctx.getColor(LineStyle.colorRes(row.line)))
                 badge.setTextColor(ctx.getColor(LineStyle.textColorRes(row.line)))
-                name.text = row.name
+                name.text = row.name.displayName()
                 sub.text = row.sub
                 sub.isVisible = !row.sub.isNullOrEmpty()
-                root.contentDescription = listOfNotNull(row.time, row.name, row.sub).joinToString(", ")
+                root.contentDescription = listOfNotNull(row.time, row.name.displayName(), row.sub).joinToString(", ")
             }
             is TimelineRow.Leg -> with((holder as LegVH).b) {
                 rail.setBackgroundColor(

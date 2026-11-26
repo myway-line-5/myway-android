@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -24,13 +23,19 @@ import com.myway.app.domain.model.Station
 import com.myway.app.ui.common.LineStyle
 import com.myway.app.ui.common.NoticeDialog
 import com.myway.app.ui.route.RouteSelectionViewModel
+import com.myway.app.ui.search.SearchFragment
 import com.myway.app.ui.search.StationActionSheet
 import com.myway.app.ui.search.StationGroupItem
 import com.myway.app.ui.onboarding.PermissionFlow
 import com.myway.app.ui.onboarding.Tutorial
 import com.myway.app.ui.onboarding.TutorialOverlay
 import com.myway.app.ui.onboarding.TutorialSession
+import com.myway.app.data.remote.NetworkMonitor
+import com.myway.app.ui.common.Motion
+import com.myway.app.ui.common.blockedOffline
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import com.myway.app.ui.common.displayName
 
 /** Figma 1-2~1-5 홈 */
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -55,7 +60,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         b.searchBar.setOnClickListener {
             routeVm.startFresh()                  // 지난 경로 카드 대신 빈 검색창부터
-            findNavController().navigate(R.id.action_home_to_search)
+            // 2·5·9호선 노선도를 보고 있으면 그 호선 역만 검색
+            findNavController().navigate(R.id.action_home_to_search, searchArgs())
         }
         b.linePicker.setOnClickListener {
             LinePickerSheet().show(childFragmentManager, LinePickerSheet.TAG)
@@ -70,15 +76,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         b.mapView.onMapTap = { x, y ->
             if (isDebuggable()) Log.d(TAG_COORD, "${vm.map.value.name} x=${x.toInt()} y=${y.toInt()}")
             // 1-12: 노선도의 역을 누르면 출발·도착·역 정보 시트 (손가락 크기 28dp 안의 가장 가까운 역)
-            if (vm.map.value == MapType.ALL) {
-                val tolerance = 28 * resources.displayMetrics.density / b.mapView.currentScale()
-                MapStations.nearest(x, y, tolerance)?.let { s ->
-                    focused = s
-                    renderPins()
-                    b.mapView.focusOn(s.x.toFloat(), s.y.toFloat())        // 아래 시트에 가리지 않게 위로
-                    b.mapView.announceForAccessibility(getString(R.string.map_pin_selected, s.name))
-                    onMapStation(s.name)
-                }
+            // 지금 노선도의 역만 누를 수 있음 (2호선 노선도면 2호선 역만)
+            val tolerance = 28 * resources.displayMetrics.density / b.mapView.currentScale()
+            MapStations.nearestIn(stationsOf(vm.map.value), x, y, tolerance)?.let { s ->
+                focused = s
+                renderPins()
+                b.mapView.focusOn(s.x.toFloat(), s.y.toFloat())        // 아래 시트에 가리지 않게 위로
+                b.mapView.announceForAccessibility(getString(R.string.map_pin_selected, s.name.displayName()))
+                onMapStation(s.name, vm.map.value.line)
             }
         }
 
@@ -97,6 +102,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 resume != null -> startTutorial(resume)
                 !permissions.asked && childFragmentManager.findFragmentByTag(com.myway.app.ui.onboarding.PermissionSheet.TAG) == null -> permissions.start()
                 permissions.asked && !Tutorial.done -> startTutorial(0)
+                permissions.asked -> ScopeNotice.maybeShow(this@HomeFragment)   // 1-1: 튜토리얼 뒤, 실행마다 한 번
             }
         }
 
@@ -104,17 +110,52 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { vm.map.collect { renderMap(it); renderPins() } }
                 launch { routeVm.points.collect { renderPins() } }
-                launch { vm.hintVisible.collect { b.pinchHint.isVisible = it } }
+                launch {
+                    // 오프라인 배너가 핀치 힌트보다 우선 (같은 자리 경쟁 방지)
+                    vm.hintVisible.combine(NetworkMonitor.online) { hint, online -> hint to online }.collect { (hint, online) ->
+                        if (b.offlineBanner.isVisible == !online && b.pinchHint.isVisible == (hint && online)) return@collect
+                        Motion.change(b.mapCard)
+                        b.offlineBanner.isVisible = !online
+                        b.pinchHint.isVisible = hint && online
+                    }
+                }
             }
         }
     }
 
     /** 역 이름 → 노선별 역 묶음. 서버 역 목록에 없으면 노선도 기준으로 채움 (Fake 단계) */
-    private fun onMapStation(name: String) {
+    /**
+     * 노선도 시트에서 출발·도착을 골랐을 때 (시트가 호출).
+     * 둘 다 정해지면 바로 결과, 하나면 노선도에 머물며 다음 역을 누르라고 안내. 검색은 [검색] 버튼으로 선택.
+     */
+    fun onMapPicked() {
+        val b = _b ?: return
+        val p = routeVm.points.value
+        if (p.isComplete) { if (!blockedOffline()) findNavController().navigate(R.id.to_result); return }
+        val picked = p.origin ?: p.destination ?: return
+        val msg = getString(if (p.origin != null) R.string.map_next_destination else R.string.map_next_origin, picked.name.displayName())
+        com.google.android.material.snackbar.Snackbar.make(b.root, msg, com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+            .setAnchorView(b.bottomBar)
+            .setAction(R.string.map_next_search) {
+                findNavController().navigate(R.id.action_home_to_search, searchArgs())
+            }
+            .show()
+    }
+
+    /** 노선도별 역 좌표표 */
+    private fun stationsOf(type: MapType): List<MapStations.S> =
+        type.line?.let { LineMapStations.byLine[it] } ?: MapStations.all
+
+    /** 검색으로 넘길 값: 노선별 노선도면 그 호선 */
+    fun searchArgs() = androidx.core.os.bundleOf(SearchFragment.ARG_LINE to vm.map.value.line)
+
+    /** onlyLine: 노선별 노선도에서 누르면 그 호선 역으로만 (환승역이라도) */
+    private fun onMapStation(name: String, onlyLine: String?) {
         viewLifecycleOwner.lifecycleScope.launch {
             val known = (RepositoryProvider.stationRepository().searchStations(name) as? Resource.Success)
                 ?.data.orEmpty().filter { it.name == name && LineStyle.isSupported(it.line) }
-            val extra = MapStations.linesOf(name)
+                .filter { onlyLine == null || LineStyle.key(it.line) == onlyLine }
+            val extra = (onlyLine?.let { listOf(it) } ?: MapStations.linesOf(name))
                 .filter { line -> known.none { LineStyle.key(it.line) == line } }
                 .map { line -> Station("map:$line:$name", name, "${line}호선", true) }
             val item = StationGroupItem(name, (known + extra).sortedBy { LineStyle.key(it.line) },
@@ -142,7 +183,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val item = (if (slot == RouteSelectionViewModel.Slot.ORIGIN) p.origin else p.destination) ?: return
         routeVm.clear(slot)
         val msg = getString(if (slot == RouteSelectionViewModel.Slot.ORIGIN) R.string.map_pin_removed_origin
-            else R.string.map_pin_removed_destination, item.name)
+            else R.string.map_pin_removed_destination, item.name.displayName())
         com.google.android.material.snackbar.Snackbar.make(b.root, msg, com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
             .setAnchorView(b.bottomBar)
             .setAction(R.string.map_pin_undo) { routeVm.set(slot, item) }
@@ -152,16 +193,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     /** 노선도 핀: 출발(초록)·도착(빨강)은 계속, 지금 누른 역(남색)은 시트가 떠 있는 동안 */
     private fun renderPins() {
         val b = _b ?: return
-        if (vm.map.value != MapType.ALL) { b.mapView.pins = emptyList(); return }
-        fun at(name: String) = MapStations.all.firstOrNull { it.name == name }
+        // 지금 노선도에 있는 역만 핀 (2호선 노선도에서 9호선 역 핀은 안 보임)
+        val here = stationsOf(vm.map.value)
+        fun at(name: String) = here.firstOrNull { it.name == name }
         val p = routeVm.points.value
         val pins = mutableListOf<ZoomableMapView.Pin>()
         p.origin?.let { o -> at(o.name)?.let {
-            pins += ZoomableMapView.Pin(it.x.toFloat(), it.y.toFloat(), ZoomableMapView.PinKind.ORIGIN, getString(R.string.map_pin_origin, o.name)) } }
+            pins += ZoomableMapView.Pin(it.x.toFloat(), it.y.toFloat(), ZoomableMapView.PinKind.ORIGIN, getString(R.string.map_pin_origin, o.name.displayName())) } }
         p.destination?.let { d -> at(d.name)?.let {
-            pins += ZoomableMapView.Pin(it.x.toFloat(), it.y.toFloat(), ZoomableMapView.PinKind.DESTINATION, getString(R.string.map_pin_destination, d.name)) } }
+            pins += ZoomableMapView.Pin(it.x.toFloat(), it.y.toFloat(), ZoomableMapView.PinKind.DESTINATION, getString(R.string.map_pin_destination, d.name.displayName())) } }
         focused?.takeIf { f -> f.name != p.origin?.name && f.name != p.destination?.name }?.let {
-            pins += ZoomableMapView.Pin(it.x.toFloat(), it.y.toFloat(), ZoomableMapView.PinKind.FOCUS, it.name)
+            pins += ZoomableMapView.Pin(it.x.toFloat(), it.y.toFloat(), ZoomableMapView.PinKind.FOCUS, it.name.displayName())
         }
         b.mapView.pins = pins
     }
@@ -170,6 +212,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val b = _b ?: return
         val ctx = requireContext()
         val color = if (type.line == null) R.color.brand_navy else LineStyle.colorRes(type.line)
+        b.searchHint.text = type.line?.let { getString(R.string.search_hint_line, it) } ?: getString(R.string.search_hint)
+        if (focused != null && stationsOf(type).none { it == focused }) focused = null
         b.lineDot.backgroundTintList = ColorStateList.valueOf(ctx.getColor(color))
         b.linePickerLabel.setText(type.labelRes)
 
@@ -185,8 +229,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    private var shownMap: MapType? = null
+
     private fun showMap(bmp: android.graphics.Bitmap?) {
         val b = _b ?: return
+        // 노선을 바꿨을 때만 새 노선도가 스르륵 나타남 (처음 열 때·돌아올 때는 그대로)
+        val type = vm.map.value
+        if (shownMap != null && shownMap != type) {
+            b.mapView.alpha = 0f
+            b.mapView.animate().alpha(1f).setDuration(220).setInterpolator(com.myway.app.ui.common.Motion.ease).start()
+        }
+        shownMap = type
         b.mapView.placeholderText = getString(R.string.home_map_missing)
         b.mapView.drawable = bmp?.let { android.graphics.drawable.BitmapDrawable(resources, it) }
         renderPins()
@@ -223,7 +276,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 findNavController().navigate(R.id.to_ai_mode)
             },
             toPrevScreen = null,
-            onFinished = {}
+            onFinished = { ScopeNotice.maybeShow(this) }
         ).also { tutorial = it }
         session.start(step)
     }

@@ -42,9 +42,8 @@
     <string name="set_theme_light">라이트</string>
     <string name="set_theme_dark">다크</string>
     <string name="set_theme_system">시스템 기본값</string>
-    <string name="set_screen_help">다크 테마는 준비 중이에요</string>
     <string name="set_language_label">앱 언어</string>
-    <string name="set_language_help">다른 언어는 준비 중이에요. 역명은 한국어와 함께 표시돼요</string>
+    <string name="set_language_help">검색은 한국어·영어 모두 돼요. 역 이름은 고른 언어로 보여요</string>
     <string name="set_pending">준비 중</string>
 
     <string name="set_info_app">앱 정보</string>

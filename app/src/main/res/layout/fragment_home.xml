@@ -115,6 +115,25 @@
             android:textAppearance="@style/Text.MyWay.Caption12Medium"
             android:textColor="@color/text_on_brand" />
 
+        <!-- 오프라인 -->
+        <TextView
+            android:id="@+id/offlineBanner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_margin="@dimen/space_m"
+            android:accessibilityLiveRegion="polite"
+            android:background="@drawable/bg_pinch_hint"
+            android:drawablePadding="6dp"
+            android:elevation="3dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/space_l"
+            android:paddingVertical="@dimen/space_s"
+            android:text="@string/home_offline"
+            android:textAppearance="@style/Text.MyWay.Caption12Medium"
+            android:textColor="@color/text_on_brand"
+            android:visibility="gone" />
+
         <!-- 서비스 중 2 5 9 -->
         <LinearLayout
             android:id="@+id/serviceChip"
@@ -204,6 +223,7 @@
                 android:src="@drawable/ic_search" />
 
             <TextView
+                android:id="@+id/searchHint"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/space_m"

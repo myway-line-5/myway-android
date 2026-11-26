@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_ai.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
+<resources>
+    <string name="ai_title">AI mode</string>
+    <string name="ai_idle_title">Where to?</string>
+    <string name="ai_idle_sub">Say it or type it — Way picks up the conditions</string>
+    <string name="ai_idle_status">Way is listening</string>
+    <string name="ai_input_hint">e.g. Yeouido to Wangsimni</string>
+    <string name="ai_send">Send</string>
+    <string name="ai_normal">Basic</string>
+    <string name="ai_normal_desc">Back to basic mode</string>
+    <string name="ai_busy_status">Way is reading your request</string>
+    <string name="ai_you_said">You said</string>
+    <string name="ai_quote">“%s”</string>
+    <string name="ai_busy_hint">Usually takes 1–2 seconds</string>
+    <string name="ai_cancel">Cancel</string>
+    <string name="ai_confirm_title">Here\'s what I understood</string>
+    <string name="ai_confirm_sub">Tap anything that\'s wrong to fix it</string>
+    <string name="ai_not_found">Station not found · Tap to choose</string>
+    <string name="ai_edit_desc">Change %s</string>
+    <string name="ai_priority">Priority</string>
+    <string name="ai_limits">Conditions</string>
+    <string name="ai_limit_time">Within %d min</string>
+    <string name="ai_limit_transfer_none">No transfers</string>
+    <string name="ai_limit_transfer">Max transfers: %d</string>
+    <string name="ai_limit_fare">Up to ₩%s</string>
+    <string name="ai_crit_duration">Fastest</string>
+    <string name="ai_crit_transfers">Fewer transfers</string>
+    <string name="ai_crit_fare">Lower fare</string>
+    <string name="ai_priority_help">If the first is tied, the next one decides</string>
+    <string name="ai_go">Find this route</string>
+    <string name="ai_edit_manually">Edit myself</string>
+    <string name="ai_pick_title">Which station?</string>
+    <string name="ai_pick_sub">“%s” matches several stations</string>
+    <string name="ai_pick_search">Search stations</string>
+    <string name="ai_unsupported_title">I can\'t handle that condition yet</string>
+    <string name="ai_unsupported_ask">Want to try with a supported condition?</string>
+    <string name="ai_say_again">Say it again</string>
+    <string name="ai_failed_title">AI connection is unstable</string>
+    <string name="ai_failed_sub">You can still pick stations yourself</string>
+    <string name="ai_failed_body">Your previous conditions are kept. Try again or choose stations yourself</string>
+    <string name="ai_pick_manually">Choose stations</string>
+    <string name="ai_retry">Try AI again</string>
+    <string name="ai_banner">AI: “%1$s” first · compared by %2$s</string>
+    <string name="ai_banner_simple">AI: applied “%s”</string>
+    <string name="ai_unknown_title">I\'m not sure what you meant</string>
+    <string name="ai_unknown_tip">Saying both departure and arrival works best</string>
+    <string name="ai_unknown_examples">Try saying</string>
+    <string name="ai_example_tap">Tap to search</string>
+    <string name="ai_edit_again">Type again</string>
+    <string name="ai_ex_1">Gangnam to Jamsil</string>
+    <string name="ai_ex_2">Yeouido to Euljiro 3-ga, fewer transfers</string>
+    <string name="ai_ex_3">Wangsimni to City Hall within 40 min</string>
+    <string name="ai_missing_origin">Tell me where you\'re leaving from</string>
+    <string name="ai_missing_destination">Tell me where you\'re going</string>
+    <string name="ai_back_desc">Previous step</string>
+    <string name="ai_listen">Speak</string>
+    <string name="ai_listen_unavailable">Voice input isn\'t available on this device. Please type instead</string>
+    <string name="ai_offline">AI can\'t read requests while offline</string>
+    <string name="ai_heard_hint">Go ahead, I\'m listening…</string>
+    <string name="ai_stop_listening">Stop listening</string>
+    <string name="ai_type_instead">Type instead</string>
+    <string name="ai_nospeech_title">I didn\'t catch that</string>
+    <string name="ai_nospeech_sub">Please try again somewhere quieter</string>
+    <string name="ai_nospeech_card_title">Nothing was recognized</string>
+    <string name="ai_nospeech_card_body">It may be too noisy, or microphone access may be off</string>
+    <string name="ai_mic_why_title">Microphone needed</string>
+    <string name="ai_mic_why_body">To say your origin and destination out loud, Way needs the microphone</string>
+    <string name="ai_mic_allow">Allow</string>
+    <string name="ai_mic_off_title">Microphone access is off</string>
+    <string name="ai_mic_off_body">To use voice, allow the microphone in Settings › Permissions</string>
+    <string name="ai_mic_open_settings">Open settings</string>
+    <string name="ai_same_station">Origin and destination are both %s. Change one with [Edit myself]</string>
+
+    <!-- 45 정형 다음 열차 -->
+    <string name="ai_next_title">Next trains at %s</string>
+    <string name="ai_next_sub">Trains arriving soon (scheduled)</string>
+    <string name="ai_next_row">Line %1$s · toward %2$s</string>
+    <string name="ai_next_eta">First train in %1$d min · following in %2$d min</string>
+    <string name="ai_next_voice">%1$s: %2$s.</string>
+    <string name="ai_next_voice_item">Line %1$s toward %2$s in %3$d min</string>
+
+    <!-- 편의시설 질문 답 -->
+    <string name="ai_fac_title">%2$s at %1$s</string>
+    <string name="ai_fac_found">%d found</string>
+    <string name="ai_fac_none">No %s info · other facilities at this station</string>
+    <string name="ai_fac_detail">Station info</string>
+    <string name="ai_fac_go">Route here</string>
+    <string name="ai_fac_voice">%2$s at %1$s: %3$s.</string>
+</resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
+<resources>
+    <string name="app_name">MyWay</string>
+</resources>

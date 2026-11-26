@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 실시간·추정·오프라인 칩: 글자색과 같은 테두리 (코드에서 tint) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+    <stroke android:width="1dp" android:color="@color/text_secondary" />
+    <corners android:radius="8dp" />
+</shape>

@@ -2,6 +2,8 @@ package com.myway.app.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.myway.app.domain.model.RouteResult
+import com.myway.app.domain.model.RouteSegment
 import com.myway.app.domain.model.RouteType
 import com.myway.app.domain.model.Station
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,9 @@ data class SavedRoute(
     val destination: SavedStation,
     val type: RouteType = RouteType.SHORTEST_TIME,
     val minutes: Int? = null,
-    val label: String? = null          // "출근길" 같은 이름 (선택)
+    val label: String? = null,         // "출근길" 같은 이름 (선택)
+    val snapshot: RouteResult? = null, // 즐겨찾기할 때의 경로 전체 → 오프라인에서도 다시 보기 (UC-09)
+    val savedAt: Long? = null          // 스냅샷 저장 시각(ms)
 ) {
     fun samePair(o: String, d: String) = origin.name == o && destination.name == d
 }
@@ -85,6 +89,10 @@ object LocalStore {
 
     fun isFavoriteRoute(o: String, d: String) = _favoriteRoutes.value.any { it.samePair(o, d) }
 
+    /** 오프라인에서 보여 줄 저장 경로 (즐겨찾기에 경로째 저장된 것만) */
+    fun savedSnapshot(o: String, d: String): SavedRoute? =
+        _favoriteRoutes.value.firstOrNull { it.samePair(o, d) && it.snapshot != null }
+
     fun toggleFavoriteRoute(r: SavedRoute) = setRoutes(K_FAV_ROUTES, _favoriteRoutes,
         if (isFavoriteRoute(r.origin.name, r.destination.name))
             _favoriteRoutes.value.filterNot { it.samePair(r.origin.name, r.destination.name) }
@@ -124,6 +132,35 @@ object LocalStore {
     private fun routeJson(r: SavedRoute) = JSONObject()
         .put("o", stationJson(r.origin)).put("d", stationJson(r.destination))
         .put("type", r.type.name).put("min", r.minutes ?: -1).put("label", r.label ?: "")
+        .apply { r.snapshot?.let { put("snap", snapshotJson(it)); put("at", r.savedAt ?: 0L) } }
+
+    private fun stationObj(s: Station) =
+        JSONObject().put("id", s.stationId).put("name", s.name).put("line", s.line).put("active", s.isActive)
+
+    private fun parseStationObj(s: JSONObject) =
+        Station(s.getString("id"), s.getString("name"), s.getString("line"), s.getBoolean("active"))
+
+    private fun snapshotJson(r: RouteResult) = JSONObject()
+        .put("type", r.type.name).put("sec", r.totalSeconds).put("m", r.totalMeters)
+        .put("fare", r.totalFareKrw).put("tr", r.transferCount).put("fv", r.fareVersion)
+        .put("seg", JSONArray(r.segments.map {
+            JSONObject().put("f", stationObj(it.fromStation)).put("t", stationObj(it.toStation))
+                .put("line", it.lineName).put("sec", it.seconds).put("m", it.meters).put("x", it.isTransfer)
+        }))
+
+    private fun parseSnapshot(o: JSONObject): RouteResult {
+        val arr = o.getJSONArray("seg")
+        return RouteResult(
+            type = runCatching { RouteType.valueOf(o.getString("type")) }.getOrDefault(RouteType.SHORTEST_TIME),
+            segments = (0 until arr.length()).map {
+                val s = arr.getJSONObject(it)
+                RouteSegment(parseStationObj(s.getJSONObject("f")), parseStationObj(s.getJSONObject("t")),
+                    s.getString("line"), s.getInt("sec"), s.getInt("m"), s.getBoolean("x"))
+            },
+            totalSeconds = o.getInt("sec"), totalMeters = o.getInt("m"),
+            totalFareKrw = o.getInt("fare"), transferCount = o.getInt("tr"), fareVersion = o.optString("fv")
+        )
+    }
 
     private fun parseStation(o: JSONObject): SavedStation {
         val arr = o.getJSONArray("stations")
@@ -147,7 +184,9 @@ object LocalStore {
                 destination = parseStation(o.getJSONObject("d")),
                 type = runCatching { RouteType.valueOf(o.getString("type")) }.getOrDefault(RouteType.SHORTEST_TIME),
                 minutes = o.optInt("min", -1).takeIf { m -> m >= 0 },
-                label = o.optString("label").ifBlank { null }
+                label = o.optString("label").ifBlank { null },
+                snapshot = o.optJSONObject("snap")?.let { s -> runCatching { parseSnapshot(s) }.getOrNull() },
+                savedAt = o.optLong("at", 0L).takeIf { t -> t > 0 }
             )
         }
     }.getOrDefault(emptyList())

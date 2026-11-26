@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_search.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
+<resources>
+    <string name="search_hint">Search stations</string>
+    <string name="search_back">Back</string>
+    <string name="search_open_favorites">Open favorites</string>
+    <string name="search_result_label">Results</string>
+    <string name="search_empty_title">Couldn\'t find \'%s\'</string>
+    <string name="search_empty_body">Only Lines 2, 5 and 9 can be searched for now.\nKorean initials work too (e.g. ㅇㅇㄷ)</string>
+    <string name="search_error_title">Couldn\'t load stations</string>
+    <string name="search_offline_title">You\'re offline</string>
+    <string name="search_offline_body">Try again once you\'re connected. Favorites are still available.</string>
+    <string name="search_error_body">Please try again in a moment.</string>
+    <string name="line_format">Line %s</string>
+    <string name="favorite_add">Add %s to favorites</string>
+    <string name="favorite_remove">Remove %s from favorites</string>
+    <string name="inactive_dialog_title">This station isn\'t searchable right now</string>
+    <string name="inactive_dialog_body">This station can\'t be used for routes at the moment.\nPlease choose another one.</string>
+    <string name="inactive_caption">%s · Not searchable</string>
+    <string name="inactive_dialog_action">OK</string>
+    <string name="unsupported_line_caption">Line %s isn\'t supported yet</string>
+    <string name="unsupported_dialog_title">This line isn\'t supported yet</string>
+    <string name="unsupported_dialog_body">Only Lines 2, 5 and 9 can be searched for now.\nPlease search for another station.</string>
+    <string name="point_origin">From</string>
+    <string name="point_destination">To</string>
+    <string name="hint_origin">Search departure station</string>
+    <string name="hint_destination">Search arrival station</string>
+    <string name="point_chip_desc">%1$s %2$s, tap to choose again</string>
+    <string name="point_clear_desc">Clear %s</string>
+    <string name="route_swap">Swap departure and arrival</string>
+    <string name="route_find">Find route</string>
+    <string name="same_station_title">Departure and arrival are the same</string>
+    <string name="same_station_body">Please choose a different station.</string>
+    <string name="recent_stations">Recent searches</string>
+    <string name="recent_routes">Recent routes</string>
+    <string name="recent_clear_all">Clear all</string>
+    <string name="recent_remove">Remove %s from recents</string>
+    <string name="recent_route_name">%1$s → %2$s</string>
+    <string name="search_hint_line">Search Line %s stations</string>
+    <string name="search_line_filter">Line %s stations only</string>
+    <string name="search_line_filter_desc">Clear Line %s filter</string>
+</resources>

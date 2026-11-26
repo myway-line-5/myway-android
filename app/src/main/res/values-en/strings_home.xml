@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_home.xml 와 같음. 역명은 번역하지 않음 (데이터) -->
+<resources>
+    <string name="home_title">MYWAY</string>
+    <string name="home_help">Help</string>
+    <string name="home_settings">Settings</string>
+    <string name="home_ai">AI</string>
+    <string name="home_ai_desc">Switch to AI mode</string>
+    <string name="home_pinch_hint">Pinch to zoom</string>
+    <string name="home_service">In service</string>
+    <string name="home_service_desc">Lines 2, 5 and 9 in service</string>
+    <string name="home_map_desc">%s. Pinch to zoom</string>
+    <string name="home_map_missing">The subway map will appear here</string>
+    <string name="line_picker_title">Choose a map</string>
+    <string name="line_picker_close">Close</string>
+    <string name="map_all_label">Select full subway map</string>
+    <string name="map_line2_label">Select Line 2 map</string>
+    <string name="map_line5_label">Select Line 5 map</string>
+    <string name="map_line9_label">Select Line 9 map</string>
+    <string name="map_all_title">Full map</string>
+    <string name="map_line2_title">Line 2</string>
+    <string name="map_line5_title">Line 5</string>
+    <string name="map_line9_title">Line 9</string>
+    <string name="map_all_desc">Only Lines 2, 5 and 9 are supported</string>
+    <string name="map_line2_desc">Circle line · Seongsu &amp; Sinjeong branches</string>
+    <string name="map_line5_desc">Banghwa – Hanam Geomdansan · Macheon branch</string>
+    <string name="map_line9_desc">Gaehwa – VHS Medical Center · Express service</string>
+    <string name="home_offline">Offline · Only favorites and recents are available</string>
+    <string name="offline_title">You\'re offline</string>
+    <string name="offline_body">Route search and station info will be back when you reconnect. Favorites and recents still work.</string>
+
+    <!-- 1-1 Service scope -->
+    <string name="scope_title">Only Lines 2, 5 and 9 for now</string>
+    <string name="scope_body">You can find routes between stations on Lines 2, 5 and 9. More lines are coming soon.</string>
+    <string name="scope_ok">OK</string>
+    <string name="scope_never">Don\'t show again</string>
+</resources>

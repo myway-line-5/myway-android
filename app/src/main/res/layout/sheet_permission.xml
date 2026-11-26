@@ -38,8 +38,8 @@
         android:accessibilityHeading="true"
         android:letterSpacing="-0.02"
         android:textColor="@color/text_primary"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textSize="@dimen/text_title"
+        android:fontFamily="@font/noto_sans_kr_bold" />
 
     <TextView
         android:id="@+id/body"

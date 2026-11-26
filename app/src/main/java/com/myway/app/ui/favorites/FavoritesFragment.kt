@@ -19,11 +19,14 @@ import com.myway.app.R
 import com.myway.app.data.local.LocalStore
 import com.myway.app.databinding.DialogConfirmBinding
 import com.myway.app.databinding.FragmentFavoritesBinding
+import com.myway.app.ui.common.Motion
+import com.myway.app.ui.common.blockedOffline
 import com.myway.app.ui.common.toItem
 import com.myway.app.ui.route.RouteSelectionViewModel
 import com.myway.app.ui.search.StationActionSheet
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import com.myway.app.ui.common.displayName
 
 /** Figma 5-3~5-7 즐겨찾기 */
 class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
@@ -44,7 +47,17 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
     private val touchHelper: ItemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
     ) {
-        override fun isLongPressDragEnabled() = false   // 손잡이(≡)로만 끌기
+        // 편집의 손잡이(≡) + 평소에도 길게 눌러 끌기 (경로·역 같은 방식)
+        override fun isLongPressDragEnabled() = true
+
+        override fun onSelectedChanged(vh: RecyclerView.ViewHolder?, state: Int) {
+            super.onSelectedChanged(vh, state)
+            if (state != ItemTouchHelper.ACTION_STATE_DRAG || vh == null) return
+            // 집어 든 카드: 살짝 커지고 떠오름 + 진동
+            vh.itemView.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
+            vh.itemView.animate().scaleX(1.03f).scaleY(1.03f)
+                .translationZ(8 * resources.displayMetrics.density).setDuration(150).start()
+        }
         override fun onMove(rv: RecyclerView, from: RecyclerView.ViewHolder, to: RecyclerView.ViewHolder): Boolean {
             if (dragFrom < 0) dragFrom = from.bindingAdapterPosition
             adapter.move(from.bindingAdapterPosition, to.bindingAdapterPosition)
@@ -53,6 +66,7 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
         override fun onSwiped(vh: RecyclerView.ViewHolder, direction: Int) = Unit
         override fun clearView(rv: RecyclerView, vh: RecyclerView.ViewHolder) {
             super.clearView(rv, vh)
+            vh.itemView.animate().scaleX(1f).scaleY(1f).translationZ(0f).setDuration(150).start()
             val to = vh.bindingAdapterPosition
             if (dragFrom >= 0 && to >= 0 && dragFrom != to) {
                 if (showRoutes) LocalStore.moveFavoriteRoute(dragFrom, to)
@@ -87,11 +101,15 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
     }
 
     private fun selectTab(routes: Boolean) {
+        if (routes == showRoutes) return
         showRoutes = routes
+        val b = _b
+        if (b != null) Motion.refresh(b.list, if (routes) -1 else 1)   // 경로 ← | → 역 방향으로
         setEditing(false)
     }
 
     private fun setEditing(on: Boolean) {
+        if (on != editing) _b?.let { b -> Motion.swap(b.editButton) {} }
         editing = on
         adapter.editing = on
         render()
@@ -128,7 +146,9 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
 
     private fun onItemClick(item: FavoriteItem) {
         when (item) {
-            is FavoriteItem.Route -> {       // 바로 길찾기
+            is FavoriteItem.Route -> {       // 바로 길찾기 (출발·도착 쌍만 저장 → 새 탐색이라 온라인 필요)
+                // 경로째 저장돼 있으면 오프라인에서도 저장본을 보여 줌 (UC-09)
+                if (item.route.snapshot == null && blockedOffline()) return
                 routeVm.setRoute(item.route.origin.toItem(), item.route.destination.toItem())
                 findNavController().navigate(R.id.to_result)
             }
@@ -143,10 +163,10 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
     private fun confirmRemove(item: FavoriteItem) {
         val name = when (item) {
             is FavoriteItem.Route -> {
-                val path = getString(R.string.recent_route_name, item.route.origin.name, item.route.destination.name)
+                val path = getString(R.string.recent_route_name, item.route.origin.name.displayName(), item.route.destination.name.displayName())
                 item.route.label?.let { getString(R.string.fav_route_label, it, path) } ?: path
             }
-            is FavoriteItem.Station -> item.station.name
+            is FavoriteItem.Station -> item.station.name.displayName()
         }
         val db = DialogConfirmBinding.inflate(layoutInflater)
         val dialog = Dialog(requireContext()).apply {

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_time.xml 와 같음 -->
+<resources>
+    <string name="time_title">Set time</string>
+    <string name="time_close">Close</string>
+    <string name="time_mode_depart">Depart at</string>
+    <string name="time_mode_arrive">Arrive by</string>
+    <string name="time_estimate_arrive">Est. arrival</string>
+    <string name="time_estimate_depart">Est. departure</string>
+    <string name="time_now">Now</string>
+    <string name="time_ok">Done</string>
+    <string name="time_estimated_note">Timetables aren\'t applied yet, so times are estimated from travel time</string>
+</resources>

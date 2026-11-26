@@ -1,7 +1,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- 다크에서도 낮과 같은 구성 (색은 values-night/colors_* 가 바꿈) -->
     <style name="Base.Theme.MyWay" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Customize your light theme here. -->
+        <!-- 스위치·슬라이더·진행 막대 등 기본 강조색 = 브랜드 남색 -->
+        <item name="colorPrimary">@color/brand_navy</item>
+        <item name="colorOnPrimary">@color/text_on_brand</item>
+        <item name="colorPrimaryContainer">@color/bg_muted</item>
+        <!-- 앱 전체 기본 글꼴: 폰마다 다른 기본 글꼴(갤럭시 One UI 등) 대신 피그마와 같은 Noto Sans KR -->
+        <item name="android:fontFamily">@font/noto_sans_kr</item>
+        <item name="fontFamily">@font/noto_sans_kr</item>
+        <item name="android:textViewStyle">@style/Widget.MyWay.TextView</item>
     </style>
-</resources>
+
+    <style name="Theme.MyWay" parent="Base.Theme.MyWay" />
+</resources>

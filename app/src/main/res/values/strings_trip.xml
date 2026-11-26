@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Figma 3-1 ~ 3-12 이동 중 안내 (Phase 2 · 실시간 API 전 껍데기) -->
+<resources>
+    <!-- 결과 화면 → 3-1 -->
+    <string name="trip_pick_train">열차 선택</string>
+    <string name="trip_pick_title">탑승할 열차를 선택하세요</string>
+    <string name="trip_pick_sub">%1$s역 · %2$s호선 · %3$s 방면</string>
+    <string name="trip_pick_note">선택하면 이 열차의 위치로 안내해요. 실시간 정보가 늦을 수 있어요</string>
+    <string name="trip_pick_confirm">이 열차 탈게요</string>
+    <string name="trip_train_name">%s 방면</string>
+    <string name="trip_train_arrive">%1$s %2$s 도착</string>
+    <string name="trip_train_min_sec">%1$d분 %2$02d초</string>
+    <string name="trip_train_until">도착까지</string>
+    <string name="trip_train_soon">곧 도착 · %d초</string>
+    <string name="trip_train_arriving_now">진입 중</string>
+
+    <!-- 상단 -->
+    <string name="trip_route">%1$s → %2$s</string>
+    <string name="trip_feed_live">실시간</string>
+    <string name="trip_feed_estimate">추정</string>
+    <string name="trip_feed_offline">오프라인</string>
+    <string name="trip_end">안내 종료</string>
+
+    <!-- 3-2 · 3-3 -->
+    <string name="trip_now">지금</string>
+    <string name="trip_now_sub">%1$s호선 · %2$s 방면 · 다음 역 %3$s</string>
+    <string name="trip_until">하차까지</string>
+    <string name="trip_stops_unit">개 역</string>
+    <string name="trip_eta">약 %1$d분 · %2$s 도착</string>
+    <string name="trip_eta_estimate">약 %1$d분 (추정) · %2$s쯤 도착</string>
+    <string name="trip_board_label">%s 탑승</string>
+    <string name="trip_alight_label">%s 하차</string>
+    <string name="trip_next_action">다음 행동</string>
+    <string name="trip_next_transfer">%1$s에서 내려 %2$s호선으로 환승</string>
+    <string name="trip_next_transfer_sub">%1$s 방면 · 도보 %2$d분</string>
+    <string name="trip_next_alight">%s에서 내려요</string>
+    <string name="trip_next_alight_sub">도착역이에요</string>
+    <string name="trip_soon_banner">%d역 남았어요 · 내릴 준비를 하세요</string>
+    <string name="trip_mute">소리 끄기</string>
+    <string name="trip_unmute">소리 켜기</string>
+    <string name="trip_view_route">경로 보기</string>
+
+    <!-- 3-4 · 3-5 -->
+    <string name="trip_arrive_label">도착</string>
+    <string name="trip_get_off_now">지금 내리세요</string>
+    <string name="trip_transfer_to">%s호선으로 환승</string>
+    <string name="trip_transfer_guide">환승 안내 보기</string>
+    <string name="trip_transfer">환승</string>
+    <string name="trip_transfer_title">%s 방면</string>
+    <string name="trip_transfer_sub">%1$s호선 · %2$s역</string>
+    <string name="trip_step1">열차에서 내려요</string>
+    <string name="trip_step1_sub">%s역</string>
+    <string name="trip_step2">%s호선 환승 통로로 이동</string>
+    <string name="trip_step2_sub">도보 약 %d분</string>
+    <string name="trip_step3">%s호선 승강장에서 탑승</string>
+    <string name="trip_step3_sub">%s 방면</string>
+    <string name="trip_pick_next">%s호선 열차 선택</string>
+
+    <!-- 3-6 · 3-7 -->
+    <string name="trip_passed_label">내릴 역을 지나쳤어요</string>
+    <string name="trip_passed_sub">열차가 이미 지나갔어요</string>
+    <string name="trip_wrong_label">방향을 확인하세요</string>
+    <string name="trip_wrong_title">반대 방향 열차예요</string>
+    <string name="trip_wrong_sub">%s 방면으로 가야 해요</string>
+    <string name="trip_reroute">수정된 경로</string>
+    <string name="trip_reroute_1">다음 역에서 내려요</string>
+    <string name="trip_reroute_2">반대편 승강장에서 %s 방면으로 갈아타요</string>
+    <string name="trip_reroute_3">%s까지 다시 안내해요</string>
+    <string name="trip_keep_going">그대로 가기</string>
+    <string name="trip_accept_reroute">수정 경로 안내</string>
+
+    <!-- 3-8 · 3-9 -->
+    <string name="trip_delay_title">실시간 정보가 늦어지고 있어요</string>
+    <string name="trip_delay_sub">마지막으로 확인한 위치와 역간 시간으로 추정해요</string>
+    <string name="trip_offline_title">인터넷 연결이 끊겼어요</string>
+    <string name="trip_offline_sub">역간 소요시간으로 안내 중이에요. 연결되면 자동으로 보정해요</string>
+
+    <!-- 3-10 -->
+    <string name="trip_arrived">도착했어요</string>
+    <string name="trip_arrived_sub">%1$d분 이동 · 환승 %2$d회</string>
+    <string name="trip_planned">예정 도착</string>
+    <string name="trip_actual">실제 도착</string>
+    <string name="trip_late">%d분 늦음</string>
+    <string name="trip_on_time">정시 도착</string>
+    <string name="trip_early">%d분 빠름</string>
+    <string name="trip_save">☆ 경로 저장</string>
+    <string name="trip_saved">★ 저장됨</string>
+    <string name="trip_done">완료</string>
+
+    <!-- 3-12 -->
+    <string name="trip_end_title">안내를 종료할까요?</string>
+    <string name="trip_end_body">종료하면 하차·환승 알림을 더 이상 받지 않아요</string>
+    <string name="trip_end_keep">계속 안내</string>
+    <string name="trip_end_confirm">종료</string>
+
+    <!-- 3-11 알림 · 음성 -->
+    <string name="trip_ch_progress">이동 중 안내</string>
+    <string name="trip_ch_alert">하차·환승 알림</string>
+    <string name="trip_noti_progress">다음 하차 %1$s · %2$d개 역 남음</string>
+    <string name="trip_noti_soon">곧 내려요 · %d역 남았어요</string>
+    <string name="trip_noti_soon_body">%s에서 내리세요</string>
+    <string name="trip_noti_now">지금 내리세요</string>
+    <string name="trip_say_soon">%1$d역 남았어요. %2$s에서 내릴 준비를 하세요</string>
+    <string name="trip_say_arrived">%s에 도착했어요</string>
+
+    <!-- 시연 메뉴 -->
+    <string name="trip_demo_passed">시연 · 역 지나침</string>
+    <string name="trip_demo_wrong">시연 · 반대 방향</string>
+    <string name="trip_demo_delay">시연 · 실시간 지연</string>
+    <string name="trip_demo_offline">시연 · 오프라인</string>
+    <string name="trip_demo_live">시연 · 정상</string>
+    <string name="trip_say_now_transfer">%1$s입니다. 지금 내려서 %2$s호선으로 갈아타세요</string>
+    <string name="trip_say_transfer">%1$s호선 %2$s 방면으로 갈아타요. 환승 통로로 걸어서 약 %3$d분이에요</string>
+    <string name="trip_wait_until">열차 도착까지</string>
+    <string name="trip_wait_sub">%1$s호선 · %2$s 방면 열차를 기다려요</string>
+    <string name="trip_wait_eta">%1$s %2$s 도착 예정 · 타면 자동으로 안내해요</string>
+    <string name="trip_say_board">안내를 시작할게요</string>
+    <string name="trip_board_check_title">열차가 도착했어요 · 타셨나요?</string>
+    <string name="trip_board_check_sub">대답이 없으면 탄 것으로 보고 안내를 시작해요</string>
+    <string name="trip_boarded">탔어요</string>
+    <string name="trip_missed">못 탔어요</string>
+    <string name="trip_say_board_check">열차가 도착했어요. 타셨나요?</string>
+    <string name="trip_say_missed">다음 열차를 기다릴게요. 약 %d분 뒤에 와요</string>
+    <string name="voice_hint_boarded">\'응\' 또는 \'못 탔어\'</string>
+
+    <!-- 도착 인사 (시간대별) -->
+    <string name="greet_morning">좋은 아침이에요</string>
+    <string name="greet_morning_sub">오늘 하루도 가볍게 시작해요</string>
+    <string name="greet_lunch">점심 맛있게 드세요</string>
+    <string name="greet_lunch_sub">오후도 기분 좋게 이어가요</string>
+    <string name="greet_afternoon">남은 오후도 힘내세요</string>
+    <string name="greet_afternoon_sub">오늘도 잘하고 있어요</string>
+    <string name="greet_evening">오늘 하루도 수고했어요</string>
+    <string name="greet_evening_sub">편안한 저녁 보내세요</string>
+    <string name="greet_night">늦은 시간까지 고생했어요</string>
+    <string name="greet_night_sub">조심히 들어가세요</string>
+
+    <!-- 접근성(TalkBack) -->
+    <string name="trip_a11y_remain">%1$s 하차까지 %2$d개 역</string>
+    <string name="trip_a11y_sound_on">소리 켜짐</string>
+    <string name="trip_a11y_sound_off">소리 꺼짐</string>
+</resources>

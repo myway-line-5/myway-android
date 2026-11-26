@@ -159,9 +159,9 @@ object MapStations {
         S("중앙보훈병원", "9", 3290, 2320)
     )
 
-    /** 탭한 곳에서 가장 가까운 역 (maxDist: 그림 픽셀). 환승역이면 같은 이름 모두가 한 역 */
-    fun nearest(x: Float, y: Float, maxDist: Float): S? =
-        all.minByOrNull { hypot(it.x - x, it.y - y) }
+    /** 노선별 노선도처럼 다른 목록에서 찾을 때 */
+    fun nearestIn(list: List<S>, x: Float, y: Float, maxDist: Float): S? =
+        list.minByOrNull { hypot(it.x - x, it.y - y) }
             ?.takeIf { hypot(it.x - x, it.y - y) <= maxDist }
 
     /** 이 이름이 노선도에 있는 노선들 ("2","5") */

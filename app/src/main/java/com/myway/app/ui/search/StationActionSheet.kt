@@ -21,9 +21,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.myway.app.R
 import com.myway.app.databinding.SheetStationActionBinding
 import com.myway.app.ui.common.LineStyle
+import com.myway.app.ui.common.blockedOffline
 import com.myway.app.ui.route.RouteSelectionViewModel
 import com.myway.app.ui.route.RouteSelectionViewModel.Slot
 import kotlinx.coroutines.launch
+import com.myway.app.ui.common.displayName
 
 /**
  * Figma 1-12 역 선택: [노선 탭 · ☆] / [노선색 띠 + 역명] / [출발 | 도착]
@@ -44,7 +46,7 @@ class StationActionSheet : BottomSheetDialogFragment() {
         val item = routeVm.focused.value ?: run { dismiss(); return }
         selectedIndex = savedInstanceState?.getInt(KEY_TAB) ?: 0
 
-        b.stationName.text = item.name
+        b.stationName.text = item.name.displayName()
         renderTabs(item)
 
         b.departButton.setOnClickListener { pick(Slot.ORIGIN, item) }
@@ -53,6 +55,7 @@ class StationActionSheet : BottomSheetDialogFragment() {
         b.detailButton.setOnClickListener {
             val parent = requireParentFragment()
             dismiss()
+            if (parent.blockedOffline()) return@setOnClickListener
             parent.findNavController().navigate(R.id.to_station_detail,
                 bundleOf(StationDetailFragment.ARG_LINE to selectedIndex))
         }
@@ -63,7 +66,7 @@ class StationActionSheet : BottomSheetDialogFragment() {
                     val on = item.name in favs
                     b.favoriteButton.setImageResource(if (on) R.drawable.ic_star else R.drawable.ic_star_outline)
                     b.favoriteButton.contentDescription = getString(
-                        if (on) R.string.favorite_remove else R.string.favorite_add, item.name
+                        if (on) R.string.favorite_remove else R.string.favorite_add, item.name.displayName()
                     )
                 }
             }
@@ -118,8 +121,10 @@ class StationActionSheet : BottomSheetDialogFragment() {
             parent is SearchFragment -> if (!ok) parent.showSameStationNotice()
             parent == null -> Unit
             !ok -> NoticeDialog.show(parent, R.string.same_station_title, R.string.same_station_body)
-            // 노선도·즐겨찾기에서 골랐을 때: 둘 다 정해졌으면 바로 결과, 아니면 남은 칸을 검색에서
-            routeVm.points.value.isComplete -> parent.findNavController().navigate(R.id.to_result)
+            // 노선도: 화면에 머물며 핀으로 보여 주고, 둘 다 정해지면 결과 (검색은 선택)
+            parent is com.myway.app.ui.home.HomeFragment -> parent.onMapPicked()
+            // 즐겨찾기: 둘 다 정해졌으면 결과, 아니면 남은 칸을 검색에서
+            routeVm.points.value.isComplete -> if (!parent.blockedOffline()) parent.findNavController().navigate(R.id.to_result)
             else -> parent.findNavController().navigate(R.id.to_search)
         }
     }

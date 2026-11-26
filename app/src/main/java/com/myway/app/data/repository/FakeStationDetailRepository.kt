@@ -3,6 +3,7 @@ package com.myway.app.data.repository
 import com.myway.app.domain.model.Station
 import com.myway.app.ui.common.LineStyle
 import kotlinx.coroutines.delay
+import com.myway.app.ui.common.StationNames
 
 /**
  * 가짜 역 상세. 서버(역 정보 API)가 생기면 RepositoryProvider에서 교체.
@@ -26,13 +27,27 @@ class FakeStationDetailRepository : StationDetailRepository {
                 firstLast = firstLast,
                 timetable = timetable,
                 congestion = CURVE.map { (it + seed * 2).coerceAtMost(100) },
-                facilities = listOf(
-                    Facility("WC", "화장실", "개찰구 안쪽 · 승강장 ${seed + 2}-1 부근"),
-                    Facility("EV", "엘리베이터", "${seed + 1}번 출구 ↔ 대합실 ↔ 승강장")
-                )
+                facilities = facilities(seed)
             )
         )
     }
+
+    /** 가짜 편의시설: 역마다 출구 번호·칸 위치만 조금씩 다르게. 진짜는 서버가 서울교통공사 편의시설 API로 채움 */
+    private fun facilities(seed: Int): List<Facility> = if (StationNames.english) listOf(
+        Facility("WC", "Restroom", "Inside the gates · near platform ${seed + 2}-1"),
+        Facility("EV", "Elevator", "Exit ${seed + 1} ↔ concourse ↔ platform"),
+        Facility("ES", "Escalator", "Concourse ↔ platform · near car ${seed + 4}"),
+        Facility("nursing_room", "Nursing room", "Concourse B1 · next to customer service"),
+        Facility("manned_luggage", "Lockers", "Outside the gates · toward exit ${seed + 3}"),
+        Facility("unmanned_civil_service", "Civil document kiosk", "Concourse B1 · near exit ${seed + 2}")
+    ) else listOf(
+        Facility("WC", "화장실", "개찰구 안쪽 · 승강장 ${seed + 2}-1 부근"),
+        Facility("EV", "엘리베이터", "${seed + 1}번 출구 ↔ 대합실 ↔ 승강장"),
+        Facility("ES", "에스컬레이터", "대합실 ↔ 승강장 · ${seed + 4}번 칸 부근"),
+        Facility("nursing_room", "수유실", "지하 1층 대합실 · 고객안전실 옆"),
+        Facility("manned_luggage", "물품보관함", "개찰구 바깥 · ${seed + 3}번 출구 방향"),
+        Facility("unmanned_civil_service", "무인 민원발급기", "지하 1층 대합실 · ${seed + 2}번 출구 쪽")
+    )
 
     private fun directions(s: Station): List<String> = when (LineStyle.key(s.line)) {
         "2" -> when (s.name) {

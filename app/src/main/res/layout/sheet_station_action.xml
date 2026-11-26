@@ -52,7 +52,7 @@
             android:gravity="center"
             android:paddingHorizontal="36dp"
             android:textAppearance="@style/Text.MyWay.Heading18Bold"
-            android:textSize="20sp" />
+            android:textSize="@dimen/text_heading20" />
     </FrameLayout>
 
     <!-- 출발 | 도착 (남색 주 버튼 묶음) -->

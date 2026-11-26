@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English. 이름은 values/strings_trip.xml 와 같음 -->
+<resources>
+    <string name="trip_pick_train">Pick train</string>
+    <string name="trip_pick_title">Pick the train you\'re boarding</string>
+    <string name="trip_pick_sub">%1$s · Line %2$s · toward %3$s</string>
+    <string name="trip_pick_note">We\'ll guide you using this train\'s position. Live info may lag</string>
+    <string name="trip_pick_confirm">I\'ll take this train</string>
+    <string name="trip_train_name">Toward %s</string>
+    <string name="trip_train_arrive">Arrive at %1$s %2$s</string>
+    <string name="trip_train_min_sec">%1$d min %2$02d s</string>
+    <string name="trip_train_until">Arrives in</string>
+    <string name="trip_train_soon">Soon · %d s</string>
+    <string name="trip_train_arriving_now">Arriving</string>
+
+    <string name="trip_route">%1$s → %2$s</string>
+    <string name="trip_feed_live">Live</string>
+    <string name="trip_feed_estimate">Estimated</string>
+    <string name="trip_feed_offline">Offline</string>
+    <string name="trip_end">End guidance</string>
+
+    <string name="trip_now">Now</string>
+    <string name="trip_now_sub">Line %1$s · toward %2$s · next %3$s</string>
+    <string name="trip_until">Until you get off</string>
+    <string name="trip_stops_unit">stops</string>
+    <string name="trip_eta">About %1$d min · arrive %2$s</string>
+    <string name="trip_eta_estimate">About %1$d min (est.) · arrive around %2$s</string>
+    <string name="trip_board_label">Board at %s</string>
+    <string name="trip_alight_label">Get off at %s</string>
+    <string name="trip_next_action">Next</string>
+    <string name="trip_next_transfer">Get off at %1$s, transfer to Line %2$s</string>
+    <string name="trip_next_transfer_sub">Toward %1$s · %2$d min walk</string>
+    <string name="trip_next_alight">Get off at %s</string>
+    <string name="trip_next_alight_sub">Your destination</string>
+    <string name="trip_soon_banner">%d stops left · get ready to get off</string>
+    <string name="trip_mute">Mute</string>
+    <string name="trip_unmute">Unmute</string>
+    <string name="trip_view_route">View route</string>
+
+    <string name="trip_arrive_label">Arriving</string>
+    <string name="trip_get_off_now">Get off now</string>
+    <string name="trip_transfer_to">Transfer to Line %s</string>
+    <string name="trip_transfer_guide">Transfer guide</string>
+    <string name="trip_transfer">Transfer</string>
+    <string name="trip_transfer_title">Toward %s</string>
+    <string name="trip_transfer_sub">Line %1$s · %2$s</string>
+    <string name="trip_step1">Get off the train</string>
+    <string name="trip_step1_sub">%s</string>
+    <string name="trip_step2">Walk to the Line %s transfer passage</string>
+    <string name="trip_step2_sub">About %d min on foot</string>
+    <string name="trip_step3">Board at the Line %s platform</string>
+    <string name="trip_step3_sub">Toward %s</string>
+    <string name="trip_pick_next">Pick Line %s train</string>
+
+    <string name="trip_passed_label">You passed your stop</string>
+    <string name="trip_passed_sub">The train has already left it</string>
+    <string name="trip_wrong_label">Check your direction</string>
+    <string name="trip_wrong_title">Wrong-way train</string>
+    <string name="trip_wrong_sub">You need to go toward %s</string>
+    <string name="trip_reroute">New route</string>
+    <string name="trip_reroute_1">Get off at the next stop</string>
+    <string name="trip_reroute_2">Cross to the other platform, toward %s</string>
+    <string name="trip_reroute_3">We\'ll guide you to %s again</string>
+    <string name="trip_keep_going">Keep going</string>
+    <string name="trip_accept_reroute">Use new route</string>
+
+    <string name="trip_delay_title">Live info is delayed</string>
+    <string name="trip_delay_sub">Estimating from the last known position and travel times</string>
+    <string name="trip_offline_title">You\'re offline</string>
+    <string name="trip_offline_sub">Guiding by travel times. We\'ll correct it when you\'re back online</string>
+
+    <string name="trip_arrived">You\'ve arrived</string>
+    <string name="trip_arrived_sub">%1$d min trip · %2$d transfers</string>
+    <string name="trip_planned">Planned</string>
+    <string name="trip_actual">Actual</string>
+    <string name="trip_late">%d min late</string>
+    <string name="trip_on_time">On time</string>
+    <string name="trip_early">%d min early</string>
+    <string name="trip_save">☆ Save route</string>
+    <string name="trip_saved">★ Saved</string>
+    <string name="trip_done">Done</string>
+
+    <string name="trip_end_title">End guidance?</string>
+    <string name="trip_end_body">You won\'t get stop or transfer alerts anymore</string>
+    <string name="trip_end_keep">Keep guiding</string>
+    <string name="trip_end_confirm">End</string>
+
+    <string name="trip_ch_progress">Trip guidance</string>
+    <string name="trip_ch_alert">Stop &amp; transfer alerts</string>
+    <string name="trip_noti_progress">Next stop %1$s · %2$d stops left</string>
+    <string name="trip_noti_soon">Almost there · %d stops left</string>
+    <string name="trip_noti_soon_body">Get off at %s</string>
+    <string name="trip_noti_now">Get off now</string>
+    <string name="trip_say_soon">%1$d stops left. Get ready to get off at %2$s</string>
+    <string name="trip_say_arrived">You\'ve arrived at %s</string>
+
+    <string name="trip_demo_passed">Demo · passed stop</string>
+    <string name="trip_demo_wrong">Demo · wrong way</string>
+    <string name="trip_demo_delay">Demo · live delayed</string>
+    <string name="trip_demo_offline">Demo · offline</string>
+    <string name="trip_demo_live">Demo · normal</string>
+    <string name="trip_say_now_transfer">This is %1$s. Get off now and transfer to Line %2$s</string>
+    <string name="trip_say_transfer">Transfer to Line %1$s toward %2$s. About %3$d min walk through the transfer passage</string>
+    <string name="trip_wait_until">Train arrives in</string>
+    <string name="trip_wait_sub">Line %1$s · waiting for the train toward %2$s</string>
+    <string name="trip_wait_eta">Arrive at %1$s around %2$s · guidance starts when you board</string>
+    <string name="trip_say_board">Starting guidance</string>
+    <string name="trip_board_check_title">Your train is here · Did you board?</string>
+    <string name="trip_board_check_sub">If you don\'t answer, we\'ll assume you did and start guidance</string>
+    <string name="trip_boarded">I\'m on board</string>
+    <string name="trip_missed">I missed it</string>
+    <string name="trip_say_board_check">Your train is here. Did you board?</string>
+    <string name="trip_say_missed">Waiting for the next train. It comes in about %d min</string>
+    <string name="voice_hint_boarded">\"Yes\" or \"I missed it\"</string>
+
+    <!-- Arrival greeting (by time of day) -->
+    <string name="greet_morning">Good morning</string>
+    <string name="greet_morning_sub">Have a great start to your day</string>
+    <string name="greet_lunch">Enjoy your lunch</string>
+    <string name="greet_lunch_sub">Have a pleasant afternoon</string>
+    <string name="greet_afternoon">Keep it up this afternoon</string>
+    <string name="greet_afternoon_sub">You\'re doing great today</string>
+    <string name="greet_evening">Thanks for today</string>
+    <string name="greet_evening_sub">Have a relaxing evening</string>
+    <string name="greet_night">It\'s been a long day</string>
+    <string name="greet_night_sub">Get home safely</string>
+
+    <!-- 접근성(TalkBack) -->
+    <string name="trip_a11y_remain">%2$d stops to %1$s</string>
+    <string name="trip_a11y_sound_on">Sound on</string>
+    <string name="trip_a11y_sound_off">Sound off</string>
+</resources>
